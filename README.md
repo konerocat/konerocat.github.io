@@ -1,4 +1,4 @@
-# konero
+# Me!
 
 Making a personal website hosted on github.
 Here, you can find information about me, my interests, etc.
