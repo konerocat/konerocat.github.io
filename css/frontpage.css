@@ -1,0 +1,63 @@
+
+*{
+    color: var(--purple);
+    text-decoration: none;
+    font-family: "courier prime";
+}
+
+body{
+    background-image: url("../images/cattheme.jpg");
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+.skies{
+    background-color: var(--main-dark);
+    border: solid 6px var(--purple);
+    width: 85vw;
+    max-width: 1300px;
+}
+
+h1{
+    padding: 20px;
+    margin: 5px 0px;
+}
+
+h3{
+    font-size: 1.6em;
+    font-weight: 400;
+}
+
+a > pre#clouds:hover{
+    color: var(--purple);
+    background-color: var(--main-dark);
+}
+
+pre#clouds{
+    font-weight: 400;
+    font-size: 0.5em;
+    font-family: "ms gothic";
+
+    color: var(--pruple);
+    background-color: var(--main-dark);
+    line-height: 11px;
+    
+    border: none;
+    padding: 0px;
+}
+
+.topspacer{
+    height: 10vh;
+}
+
+@media only screen and (orientation: portrait){
+    pre#clouds{
+        font-size: 0.36em;
+        line-height: 10px;
+    }
+
+    .topspacer{
+        height: 20vh;
+    }
+}
