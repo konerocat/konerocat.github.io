@@ -10,6 +10,7 @@ p{
     margin: 12px inherit;
 }
 
+
 .home{
     position: absolute;
     top: 50%;
@@ -66,13 +67,14 @@ p{
 
 
 .logmenu{
+    position: relative;
     width: 30%;
     max-width: 320px;
 
     display: flex;
     flex-direction: column;
 
-    margin-left: -300px; /* Ensures it starts from the left */
+    margin-left: -1500px; /* Ensures it starts from the left */
     align-self: flex-start; /* If it's inside a flex parent */
 }
 
@@ -170,9 +172,10 @@ p{
     .logmenu{
         width: 95%;
         max-width: inherit;
-        height: 55vh;
+        height: 33vh;
 
         margin: auto;
+        margin-top: 1050px;
     
         display: flex;
         flex-direction: column;
