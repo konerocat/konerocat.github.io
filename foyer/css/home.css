@@ -10,19 +10,29 @@ p{
     margin: 12px inherit;
 }
 
-.home{
+
+.home {
     position: absolute;
-    top: 50%;
+    top: calc(50% + 25px);
     left: 50%;
     transform: translate(-50%, -50%);
-
     width: 85vw;
-    height: 88vh;
-
+    height: 80vh;
     display: flex;
     flex-direction: row-reverse;
     justify-content: center;
     align-items: center;
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--main-dark);
+    z-index: 1000;
+    padding: 1px 0;
+    border-bottom: 2px solid var(--purple);
 }
 
 .homebar{
@@ -77,21 +87,6 @@ p{
     margin-left: 20px;
 }
 
-/* .logbox{
-    background-color: var(--transparent-dark);
-    border: ridge 8px var(--second-dark);
-    font-size: 0.88em;
-
-    overflow-y: scroll;
-}
-
-.logbox ul{
-    margin: 15px 20px 15px 0px;
-}
-
-.logbox ul li{
-    padding: 5px 0px;
-} */
 
 .logmenu {
     background-color: rgba(0, 0, 0, 0.7);
@@ -123,6 +118,7 @@ p{
     flex-grow: 1;
     overflow-y: auto;
     font-family: monospace;
+    scrollbar-color: var(--purple) var(--main-dark);
 }
 
 .logbox ul {
@@ -141,9 +137,10 @@ p{
 }
 
 .explorer-window {
+    position: relative;
     background-color: var(--main-dark);
     border: ridge 3px var(--purple);
-    width: 80%;
+    width: 100%;
     max-width: 500px;
     margin: 20px auto;
 }
@@ -157,16 +154,27 @@ p{
 }
 
 .explorer-content {
-    padding: 15px;
+    padding: 25px;
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
+.explorer-window::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
+    pointer-events: none;
+}
+
 .folder-row {
     display: flex;
     justify-content: center;
-    gap: 25px;
+    gap: 50px;
 }
 
 .folder-icon {
@@ -175,7 +183,13 @@ p{
     align-items: center;
     color: var(--main-light);
     text-decoration: none;
-    width: 80px;
+    width: 120px;
+    position: relative;
+    z-index: 1;
+    padding: 7px;
+    box-sizing: border-box;
+    border: 3px solid transparent;
+    margin: -3px;
 }
 
 .folder-icon span:first-child {
@@ -183,8 +197,32 @@ p{
     margin-bottom: 5px;
 }
 
+
+.folder-icon-img {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 5px;
+    image-rendering: pixelated;
+    filter: invert(42%) sepia(16%) saturate(1520%) hue-rotate(225deg) brightness(86%) contrast(87%);
+    
+}
+
+.folder-icon:hover .folder-icon-img {
+    filter: invert(42%) sepia(16%) saturate(1520%) hue-rotate(225deg) brightness(86%) contrast(87%);
+}
+
+
+.folder-icon span:first-child {
+    display: none;
+}
+
+
 .folder-icon:hover {
-    color: var(--purple);
+    background-color: #2e223b;
+    border: solid 3px;
+    border-color: var(--purple);
+    
+    
 }
 
 .ver{
@@ -221,19 +259,26 @@ p{
 }
 
 @media only screen and (orientation: portrait){
-    .home{
-        position: inherit;
-        top: 0%;
-        left: 0%;
+    nav {
+        position: relative;
+        padding: 5px 0;
+    }
+    
+    .home {
+        position: relative;
+        top: 0;
+        left: 0;
         transform: none;
-
         width: 100vw;
-        height: 85%;
-
-        display: inherit;
-        flex-direction: inherit;
-        justify-content: inherit;
-        align-items: inherit;
+        height: auto;
+        margin-top: 20px;
+        flex-direction: column;
+    }
+    
+    .explorer-window, .logmenu {
+        width: 50%;
+        max-width: none;
+        margin: 15px auto;
     }
 
     .main{
@@ -262,7 +307,7 @@ p{
     }
     
     .main, .logmenu {
-        width: 95%;
+        width: 65%;
     }
 
     .homebar a{
