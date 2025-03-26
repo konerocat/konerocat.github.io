@@ -67,7 +67,7 @@ body{
     background-color: var(--main-dark);
     color: var(--main-light);
       
-    background-image: linear-gradient(rgba(0, 0, 0, 0.2),rgba(0, 0, 0, 0.2)), url("../images/cattheme.jpg");
+    /* background-image: linear-gradient(rgba(0, 0, 0, 0.2),rgba(0, 0, 0, 0.2)), url("../images/cattheme.jpg"); */
     background-size: cover;
     background-attachment: fixed;
     background-position: center;
@@ -645,7 +645,7 @@ body::before{
     bottom: 0;
     background-repeat: repeat;
     background-blend-mode: screen;
-    opacity: 7.3%;
+    opacity: 7%;
     background-size: 5%;
 }
 

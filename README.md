@@ -1,7 +1,7 @@
 # Me! :33
 
-Currently making a personal website hosted on github.
-Here, you can find information about me, my interests, etc.
+> Currently working on a personal website hosted on github.
+> Here, you can find information about me, my interests, etc.
 
 
-Check it out at: [https://konerocat.github.io](https://konerocat.github.io)
+**OBSERVE**: [https://konerocat.github.io](https://konerocat.github.io)
