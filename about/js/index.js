@@ -3,6 +3,8 @@ var navbarHTML = `
 <div id="status">WIP</div>
 `
 
+
+
 // var footerHTML = `
 // <a href="/about">/about</a>
 // <a href="/files">/files</a>

@@ -77,7 +77,7 @@ p{
     margin-left: 20px;
 }
 
-.logbox{
+/* .logbox{
     background-color: var(--transparent-dark);
     border: ridge 8px var(--second-dark);
     font-size: 0.88em;
@@ -91,6 +91,100 @@ p{
 
 .logbox ul li{
     padding: 5px 0px;
+} */
+
+.logmenu {
+    background-color: rgba(0, 0, 0, 0.7);
+    width: 30%;
+    max-width: 320px;
+    height: 88%;
+    padding: 0;
+    border: ridge 4px var(--purple);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.logmenu h2 {
+    color: var(--main-light);
+    margin: 0;
+    padding: 12px 20px;
+    background-color: var(--main-dark);
+    border-bottom: 2px solid var(--purple);
+    font-family: "dos", monospace;
+    font-size: 1.6em;
+}
+
+.logbox {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    font-size: 0.9em;
+    flex-grow: 1;
+    overflow-y: auto;
+    font-family: monospace;
+}
+
+.logbox ul {
+    margin: 0;
+    padding: 0 0 0 20px;
+}
+
+.logbox ul li {
+    padding: 8px 0;
+    color: var(--main-light);
+    list-style-type: square;
+}
+
+.logbox ul li strong {
+    color: var(--purple);
+}
+
+.explorer-window {
+    background-color: var(--main-dark);
+    border: ridge 3px var(--purple);
+    width: 80%;
+    max-width: 500px;
+    margin: 20px auto;
+}
+
+.explorer-titlebar {
+    background-color: var(--purple);
+    color: var(--main-light);
+    padding: 5px 10px;
+    font-family: "dos", monospace;
+    font-size: 0.9em;
+}
+
+.explorer-content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.folder-row {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+}
+
+.folder-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--main-light);
+    text-decoration: none;
+    width: 80px;
+}
+
+.folder-icon span:first-child {
+    font-size: 2em;
+    margin-bottom: 5px;
+}
+
+.folder-icon:hover {
+    color: var(--purple);
 }
 
 .ver{
@@ -116,7 +210,7 @@ p{
     padding: 20px 50px;
 
     display: inline-block;
-    text-align: left;
+    text-align: center;
 
     color: var(--purple);
     border: ridge 5px var(--purple);
@@ -156,24 +250,24 @@ p{
         width: 100%;
     }
 
-    .logmenu{
+    .logmenu {
         width: 95%;
-        max-width: inherit;
-        height: 55vh;
-
-        margin: auto;
+        max-width: none;
+        height: auto;
+        margin: 20px auto;
+    }
     
-        display: flex;
+    .home {
         flex-direction: column;
     }
-
-    .logbox {
-        font-size: 0.5em;
+    
+    .main, .logmenu {
+        width: 95%;
     }
 
     .homebar a{
         padding: 10px 20px;
-    }
+    } 
     
 }
 
@@ -181,47 +275,5 @@ p{
     border-color: var(--purple);
 }
 
-pre.heh{
-    font-weight: 200;
-    font-size: 0.5em;
-
-    color: inherit;
-    background-color: inherit;
-    
-    border: none;
-    padding: 0px;
-
-    /* float: right; */
-    margin-left: 20px;
-}
-
-.abouttop{
-    display: flex;
-    align-items: flex-end;
-}
-.aboutbody{
-    /* border: dashed 2px var(--main-light); */
-    padding: 10px;
-    
-    
-}
-
-.aboutbody p{
-    text-align: left;
-}
-
-.aboutlinks{ 
-    justify-content: start;
-    align-items: flex-start;
-    text-align: justify;
-}
-
-.aboutlinks div:first-child{
-    width: 55%;
-}
-
-.aboutstamps{
-    max-width: 45%;
-}
 
 
