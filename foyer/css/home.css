@@ -30,7 +30,7 @@ nav {
     left: 0;
     width: 100%;
     background-color: var(--main-dark);
-    z-index: 1000;
+    z-index: 1;
     padding: 1px 0;
     border-bottom: 2px solid var(--purple);
 }
@@ -63,6 +63,7 @@ nav {
     height: 30px;
     position: fixed;
     bottom: 0%;
+    border-top: 2px solid var(--purple);
 }
 
 .main, .logmenu{
@@ -147,10 +148,42 @@ nav {
 
 .explorer-titlebar {
     background-color: var(--purple);
-    color: var(--main-light);
-    padding: 5px 10px;
     font-family: "dos", monospace;
-    font-size: 0.9em;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px; /* Adjust horizontal padding as needed */
+}
+
+.folder-up-button {
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 20px;
+    margin-right: 9px;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.folder-up-icon {
+
+    width: 25px;
+    height: 25px;
+    image-rendering: pixelated;
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+}
+
+
+.folder-up-button:hover .folder-up-icon {
+    filter: none;
+}
+
+
+.explorer-titlebar > span {
+    flex-grow: 1;
 }
 
 .explorer-content {
@@ -191,6 +224,7 @@ nav {
     border: 3px solid transparent;
     margin: -3px;
 }
+
 
 .folder-icon span:first-child {
     font-size: 2em;
@@ -236,19 +270,17 @@ nav {
 }
 
 
-.fronttitle{
-    text-align: center;
-}
 
-.fronttitle pre{
-    font-size: 0.8vw;
+.explorer-window .frontitle pre{
+    font-size: 1vw;
     font-family: "dos";
-    letter-spacing: 0px;
+    letter-spacing: 1px;
     
     padding: 20px 50px;
 
     display: inline-block;
     text-align: center;
+
 
     color: var(--purple);
     border: ridge 5px var(--purple);
@@ -320,5 +352,61 @@ nav {
     border-color: var(--purple);
 }
 
+.fact-box {
+    display: flex;
+    background-color: var(--main-dark);
+    border-top: ridge 3px var(--purple);
+    margin: auto;
+    max-width: 600px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
 
+.fact-image {
+    flex: 0 0 150px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-right: 2px solid var(--purple);
+}
+
+.fact-image img {
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+    border: 1px solid var(--purple);
+}
+
+.fact-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.fact-titlebar {
+    background-color: var(--purple);
+    color: var(--main-light);
+    padding: 5px 10px;
+    font-family: "dos", monospace;
+    font-size: 1.1em;
+}
+
+.fact-text {
+    padding: 15px;
+    font-family: monospace;
+    color: var(--main-light);
+    flex-grow: 1;
+}
+
+.fact-text p {
+    margin: 0 0 10px 0;
+}
+
+.fact-source {
+    color: var(--purple);
+    font-style: italic;
+    text-align: right;
+    margin-top: 10px;
+}
 

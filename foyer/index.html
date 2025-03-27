@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="css/home.css">
 
     <script src="../js/jquery-3.6.0.min.js"></script>
-    <script src="js/index.js"></script>
+    <script src="../js/home.js"></script>
     <title>i know what you did.</title>
 </head>
 <body>
@@ -15,27 +15,16 @@
 
     
     <div class="home">
-        <!-- <div class="main">
-            <div class="maincenter">
-                <center>
-                <h2 class="frontitle">
-                    <pre>
-                            
-                    </pre>
-                </h2>
-                </center>
-            </div>
-        </div> -->
         <div class="explorer-window">
             <div class="explorer-titlebar">
-                <span>local_branches</span>
+                <a href="/" class="folder-up-button"><img src ="../images/folder_up.png" class="folder-up-icon"></a>
+                <span>/local_branches</span>
             </div>
             <div class="explorer-content">
                 <div class="folder-row">
                     <a href="/about" class="folder-icon">
                         <!-- this will be instead replaced with folder.png -->
                         <img src="../images/doc.png" alt="Folder" class="folder-icon-img">
-                         
                         <span>about</span>
                     </a>
                     <a href="/files" class="folder-icon">
@@ -46,29 +35,53 @@
                 </div>
                 <div class="folder-row">
                     <a href="/logs" class="folder-icon">
-                        <img src="../images/folder.png" alt="Folder" class="folder-icon-img">
+                        <img src="../images/wallpapers_folder.png" alt="Folder" class="folder-icon-img">
                         <span>logs</span>
                     </a>
-                    <a href="/links" class="folder-icon">
+                    <a href="http://users2.smartgb.com/g/g.php?a=s&i=g26-40205-c8" class="folder-icon">
+                        
                         <img src="../images/achievements.png" alt="Folder" class="folder-icon-img">
                         <span>guestbook</span>
                     </a>
+                </div> 
+            </div>
+            
+            
+            <div class="fact-box">
+                <div class="fact-image">
+                    <img src="../images/Niko.png" alt="Random Fact">
+                </div>
+                <div class="fact-content">
+                    <div class="fact-titlebar">Did You Know?</div>
+                    <div class="fact-text">
+                        <p>Loading...</p>
+                        <p class="fact-source">-i love you</p>
+                    </div>
                 </div>
             </div>
+            
+
         </div>
+        
             <!-- this is where the side menu changelog should be  -->
             
             <div class="logmenu">
                 <h2>changelog</h2>
                 <div class="logbox">
                     <ul>
-                        <li><strong>2023-10-15</strong>: MIIINOR website rehaul</li>
+                        <li><strong>2025-03-27</strong>: MIIINOR website rehaul</li>
                     </ul>
                 </div>
             </div>
     </div>
-
-
     </div>
     <div class="fakebotbar"></div>
+    <script>
+        $(function() {
+            showRandomFact();
+            
+        
+            setInterval(showRandomFact, 7000);
+        });
+        </script>
 </body></html>

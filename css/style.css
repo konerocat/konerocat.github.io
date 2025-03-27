@@ -33,9 +33,15 @@
     src: url("../fonts/alagard.ttf");
 }
 
+
 *{
     cursor: crosshair;
 }
+
+
+
+
+
 
 *::selection{
     color: var(--main-dark);
@@ -71,6 +77,8 @@ body{
     background-size: cover;
     background-attachment: fixed;
     background-position: center;
+
+
 }
 
 h4{
@@ -629,13 +637,11 @@ body::before{
     background-size: 100% 5px;
     z-index: 9999;
     pointer-events: none;
-    
     /* animation: scanlines-anim 0.7s linear infinite; */
 }
 
 #overlay {
     z-index: 10;
-    
     position: fixed;
     pointer-events:none;
     background-image: url("../images/static.gif");
