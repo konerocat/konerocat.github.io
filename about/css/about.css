@@ -33,11 +33,41 @@
     scrollbar-color: var(--orange) var(--main-dark);
 }
 
+
 .terminal-bar {
-    background: var(--purple);
-    padding: 5px 10px;
+    background-color: var(--purple);
     font-family: "dos", monospace;
-    color: var(--main-light);
+    height: 30px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+
+}
+
+.folder-up-button {
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 20px;
+    margin-right: 9px;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.folder-up-icon {
+
+    width: 25px;
+    height: 25px;
+    image-rendering: pixelated;
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+}
+
+
+.folder-up-button:hover .folder-up-icon {
+    filter: none;
 }
 
 .terminal-content {
@@ -109,6 +139,7 @@ body {
     height: 30px;
     position: fixed;
     bottom: 0%;
+    border-top: 2px solid var(--purple);
 }
 
 nav {

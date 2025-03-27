@@ -152,7 +152,7 @@ nav {
     height: 30px;
     display: flex;
     align-items: center;
-    padding: 0 10px; /* Adjust horizontal padding as needed */
+    padding: 0 10px;
 }
 
 .folder-up-button {
@@ -240,6 +240,7 @@ nav {
     filter: invert(42%) sepia(16%) saturate(1520%) hue-rotate(225deg) brightness(86%) contrast(87%);
     
 }
+
 
 .folder-icon:hover .folder-icon-img {
     filter: invert(42%) sepia(16%) saturate(1520%) hue-rotate(225deg) brightness(86%) contrast(87%);

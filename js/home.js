@@ -1,15 +1,17 @@
 var navbarHTML = `
 <div id="path"></div>
 <div id="status">date</div>
+
 `
 
-
+// <a href="/about">/about</a>
+// <a href="/files">/files</a>
+// <a href="/logs">/logs</a>
+// <a href="/foyer">/foyer</a>
 
 var footerHTML = `
-<a href="/about">/about</a>
-<a href="/files">/files</a>
-<a href="/logs">/logs</a>
-<a href="/foyer">/foyer</a>
+    <a href="/foyer" class="footer-button"><img src ="../images/window_button.png" class="footer-icon" 
+    ></a>
 `;
 
 $(document).ready(function(){
@@ -203,7 +205,7 @@ function setStatusBar(){
     var time = h + ":" + m;
     var date = weekday[day] + " " + dtday + " " + month[mon] + " " + yr;
 
-    $("#status").text(time);
+    $("#status").html('<span style="color: var(--purple)">' + time + '</span>');
 }
 
 function addZero(n){

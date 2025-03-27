@@ -249,6 +249,7 @@ nav div,
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    border-top: 2px solid var(--purple);
 }
 
 .botbar a{
@@ -690,6 +691,36 @@ body::before{
     }
 }
 
+.footer-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 3px;
+    border: none;
+    background: none !important;
+    width: 29px;
+    height: 29px;
+    padding: 0;
+}
+
+.footer-icon {
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    filter: invert(42%) sepia(16%) saturate(1520%) hue-rotate(225deg) brightness(86%) contrast(87%);
+    
+}
 
 
+.footer-button:hover {
+    background: transparent !important;
+}
+
+.footer-button:hover .footer-icon {
+    filter: 
+        invert(42%) sepia(16%) saturate(1520%) hue-rotate(225deg) 
+        brightness(86%) contrast(87%)
+        opacity(0.4);
+    background: transparent !important;
+}
 
