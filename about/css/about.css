@@ -152,3 +152,7 @@ nav {
     padding: 1px 0;
     border-bottom: 2px solid var(--purple);
 }
+
+a{
+    text-decoration: none;
+}

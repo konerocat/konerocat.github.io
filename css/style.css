@@ -242,7 +242,7 @@ nav div,
 .botbar{
     background-color: var(--main-dark);
     width: 100%;
-
+    
     position: fixed;
     bottom: 0%;
 
@@ -250,6 +250,11 @@ nav div,
     flex-direction: row;
     justify-content: flex-start;
     border-top: 2px solid var(--purple);
+}
+
+.botbar div{
+    padding: 5px;
+    margin: 0 10px;
 }
 
 .botbar a{
@@ -679,11 +684,31 @@ body::before{
         width: 90vw;
     }
     
+    nav, .navbar {
+        height: 6vw;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 3vw;
+        font-size: 1.5em;
+    }
+    
     nav #status,
-    .navbar #status{
-        width: 40%;
+    .navbar #status {
+        width: auto;
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        text-align: right;
+        padding: 1vw 0;
+    }
+
+    .botbar{
+        height: 6vw;
         text-align: right;
     }
+
 
     /********* scanlines **********/
     body::before{
@@ -724,3 +749,9 @@ body::before{
     background: transparent !important;
 }
 
+@media only screen and (orientation: portrait){
+    .footer-button{
+        width: 55px;
+        height: 55px; 
+    }
+}

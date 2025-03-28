@@ -205,7 +205,7 @@ function setStatusBar(){
     var time = h + ":" + m;
     var date = weekday[day] + " " + dtday + " " + month[mon] + " " + yr;
 
-    $("#status").html('<span style="color: var(--purple)">' + time + '</span>');
+    $("#status").html('<span style="color: var(--purple); text-align: center">' + time + '</span>');
 }
 
 function addZero(n){
