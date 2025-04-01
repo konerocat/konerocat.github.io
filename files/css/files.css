@@ -1,6 +1,9 @@
 body {
+
+
     background: 
-        linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5));
+        linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)),
+        url("../../images/pxfuel.jpg");
     background-size: 
         auto,
         auto,
@@ -36,12 +39,183 @@ nav {
     padding: 1px 0;
     border-bottom: 2px solid var(--purple);
 }
-.mainwindow center {
+
+.mainwindows center {
     margin: 0px 70px;
 }
 
-@media only screen and (orientation: portrait){
-    .mainwindow center {
-        margin: 0px 50px;
+
+
+.mainwindows:focus,
+.mainwindows *:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.mainwindows { 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;
+    max-width: 1000px;
+    max-height: 80vh; /* Reduced from 90vh */
+    height: auto; /* Change from fixed height */
+    padding: 0px 20px;
+    border: ridge 6px var(--orange);
+    background-color: var(--transparent-dark);
+    scrollbar-color: var(--orange) var(--main-dark);
+    overflow-y: auto;
+}
+
+.fullheightwindow {
+    min-height: auto;
+}
+
+.mainwindow-wide{
+    max-width: none;
+    width: 80vw;
+}
+
+.mainwindows p{
+    padding: 0px 20px;
+}
+
+.mainwindows::-webkit-scrollbar {
+    width: 8px;
+    background: var(--main-dark);
+}
+
+.mainwindows::-webkit-scrollbar-thumb {
+    background: var(--orange);
+    border: 1px solid var(--main-light);
+}
+
+.fullheightwindow{
+    min-height: 45vh;
+}
+
+@media only screen and (orientation: portrait) {
+    .mainwindow {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        max-height: calc(100vh - 120px);
+        margin: 20px auto;
     }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .botbar {
+        position: relative;
+        margin-top: auto;
+    }
+}
+
+
+.listtable {
+    border-left: 2px solid var(--purple);
+    border-right: 2px solid var(--purple);
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.listtable th {
+    background: var(--purple);
+    color: var(--main-dark);
+    padding: 8px;
+    text-transform: uppercase;
+    
+}
+
+.listtable tr:nth-child(even) {
+    background: rgba(123, 88, 157, 0.1);
+}
+
+.listtable td a {
+    position: relative;
+    padding-left: 30px;
+}
+
+.listtable td a:before {
+    content: ">";
+    position: absolute;
+    left: 10px;
+    color: var(--orange);
+}
+
+.directory-header {
+    font-family: "dos";
+    color: var(--orange);
+    letter-spacing: 3px;
+    border-bottom: 2px dashed var(--purple);
+    padding-bottom: 10px;
+    padding-left: 10px;
+    margin: 20px 0;
+}
+
+.system-msg {
+    font-family: "dos";
+    color: var(--orange);
+    padding: 10px;
+    border: 1px solid var(--orange);
+    margin: 15px 0;
+}
+
+.listtable tr td.directory-header:hover,
+.listtable tr td[colspan="4"]:hover {
+    background: transparent !important;
+    cursor: default;
+}
+
+.listtable tr:not(:first-child):hover td:not([colspan]) {
+    background: rgba(123, 88, 157, 0.3) !important;
+}
+
+
+.listtable tr:hover {
+    background: transparent;
+}
+
+
+.listtable tr:nth-child(even) {
+    background: rgba(123, 88, 157, 0.1);
+}
+
+
+.system-alert {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 15px 0;
+    border-top: 2px dashed var(--purple);
+    text-align: center;
+}
+
+.ascii-art {
+    max-width: 80%;
+    margin: 0 auto;
+    font-size: 0.6em;
+    line-height: 1.2;
+    overflow: hidden;
+}
+
+.system-msg p{
+    margin: 0;
+    padding: 0;
+}
+
+@media (max-width: 768px) {
+    .system-alert {
+        max-width: 90%;
+    }
+    .ascii-art {
+        font-size: 0.4em;
+    }
+}
+.dos-prompt span.purple {
+    letter-spacing: 2px;
 }

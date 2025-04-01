@@ -8,23 +8,228 @@
     <script src="../js/jquery-3.6.0.min.js"></script>
     <script src="../js/home.js"></script>
 
-    <title>404</title>
+
+    <title>THE CATACOMBS</title>
 </head>
 <body>
     <div id="overlay"></div>
     <nav></nav>
-    <div class="mainwindow">
-        <br>
-        <center>
-            <h1>< 404 : work in progress ></h1>
-            
-            <img src="../images/wip.jpg" style="width: 100%;">
-            <h2>sometimes, i waste my time on things that aren't important</h2>
+    <div class="navbar">
+        <div>[ <a href="/">entrance</a>://files ]</div>
+    </div>
 
-        </center>
-        <br>
+    <div class="mainwindows filewindow fullheightwindow">
+        <div class="system-msg">
+            > 3 storage devices active | Capacity: 29.62GB
+        </div>
+
+        <table class="listtable">
+            <colgroup>
+                <col style="width: 45%">
+                <col style="width: 20%">
+                <col style="width: 20%">
+                <col style="width: 15%">
+            </colgroup>
+            <tbody>
+                <tr class="toprow">
+                    <th>NAME</th>
+                    <th>TYPE</th>
+                    <th>MODIFIED</th>
+                    <th>SIZE</th>
+                </tr>
+                <tr>
+                    <td><a href="/foyer">../</a></td>
+                    <td>PARENT</td>
+                    <td>--</td>
+                    <td>--</td>
+                </tr>
+                
+                <!-- Creative Projects -->
+                <tr>
+                    <td colspan="4" class="directory-header">CREATIVE CORRAL</td>
+                </tr>
+                <tr>
+                    <td><a href="/codex">/codex</a></td>
+                    <td>CODE DUMP</td>
+                    <td>2025-04-01</td>
+                    <td class="file-size">???</td>
+                </tr>
+                <tr>
+                    <td><a href="/scrawls">/scrawls</a></td>
+                    <td>ARTWORKS</td>
+                    <td>2025-04-01</td>
+                    <td class="file-size">???</td>
+                </tr>
+                
+                <!-- Digital Garden -->
+                <tr>
+                    <td colspan="4" class="directory-header">DIGITAL GARDEN</td>
+                </tr>
+                <tr>
+                    <td><a href="/photolog">/photolog</a></td>
+                    <td>VISUAL DIARY</td>
+                    <td>2025-04-01</td>
+                    <td class="file-size">???</td>
+                </tr>
+                <!-- <tr>
+                    <td><a href="/echoes">/echoes</a></td>
+                    <td>AUDIO FRAGMENTS</td>
+                    <td>2025-04-01</td>
+                    <td>687MB</td>
+                </tr> -->
+                
+                <!-- Hyperfixations -->
+                <tr>
+                    <td colspan="4" class="directory-header">HYPERFIXATION VAULT</td>
+                </tr>
+                <tr>
+                    <td><a href="/fever_dreams">/fever_dreams</a></td>
+                    <td>TEMPORARY</td>
+                    <td>2025-04-01</td>
+                    <td class="file-size">???</td>
+                </tr>
+                <tr>
+                    <td><a href="/constellations">/constellations</a></td>
+                    <td>LONG-LASTING</td>
+                    <td>2025-04-01</td>
+                    <td class="file-size">???</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="system-msg" id="load-status">
+            
+          <p>> ? objects indexed | Load time: ??? | Last backup: ???<p>
+        </div>
+
+        <div class="system-alert">
+        
+            <pre class="ascii-art">
+                <center>
+⠀⠀⢰⠋⠉⠂⠢⢄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⢸⠀⠀⠀⠀⠀⠀⠙⠔⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡤⠤⠀⠀⠄⠀⠀⣀⡀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⠀⠀⠀
+⠀⠀⠀⡃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠈⠒⠀⠄⠀⠀⠈⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠢⠀⠤⠀⠄⠀⠀⠀⠀⣀⣠⠤⠒⠒⠁⠈⠉⠉⠁⠀⠀⠘⠄⠀⠀⠀
+⠀⠀⠀⡅⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇
+⠀⠀⠀⢰⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⠀
+⠀⠀⠀⠀⡅⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀
+⠀⠀⠀⠀⢣⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠶⠏⠛⠛⠛⢿⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣤⠏⠉⠁⠉⠈⠑⠢⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣇⠀⠀⠀⠀⠀⠀⠀⠀⡐⡯⠊⠀⠀⠀⠀⠀⠀⣯⢧⣣⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⠏⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠇⠀⠀⠀
+⠀⠀⠀⠀⠀⠉⡄⠀⠀⠀⠀⠀⠀⣐⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠣⡇⢣⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⠁⠀⠀⠀
+⠀⠀⠀⠀⠀⡠⠇⠀⠀⠀⠀⠀⠀⡯⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢇⠰⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⡆⠀⠀⠀⠀⠀⠀⠀⠀⡜⠀⠀⠀⠀
+⠀⠀⠀⠀⡞⠀⠀⠀⠀⠀⠀⠀⢰⡖⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡷⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡯⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⡞⠁⠀⠀⠀⠀
+⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠈⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀
+⠀⠀⠀⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⡷⣤⡀⠀⠀⠀⠀⢀⣤⢿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⡇⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⣅⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠓⠧⣭⡟⣛⡻⣏⠝⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢇⢳⡀⠀⠀⠀⠀⠀⠀⠀⣠⡿⠁⠀⠀⠀⠀⠀⠀⠀⠸⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠈⢆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠁⠀⠀⠀⠀⠀⠀⢰⣖⣶⡆⠀⠀⠀⠀⠀⠀⠀⠑⢭⣳⠶⠖⢶⣶⠞⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⡇⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠧⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀
+⠀⠀⠀⠀⠀⠀⠙⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠇⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠑⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠔⠁⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠓⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠒⠦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡠⠌⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠈⠒⠂⠤⢤⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⡤⠤⠒⠊⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣍⣯⣅⢦⠆⠀⠀⠁⠉⠉⠐⠂⠒⠀⠐⠀⠂⠐⠈⠙⠃⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡃⠀⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢘⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢱⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠎⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢪⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣤⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                </center>
+            </pre>
+            <br>
+            <h4 class="fantasy">how i be looking at the shit i make</h4>
+        </div>
+
+
     </div>
 
     <div class="botbar"></div>
+    
+    <script>
+    
+    $(function() {
+    function updateLoadTime() {
+
+        const now = new Date();
+        const backupDate = now.toISOString().split('T')[0];
+        const backupTime = now.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: false
+        });
+
+        if (window.performance && window.performance.timing) {
+            const t = performance.timing;
+            const loadTime = t.loadEventEnd - t.navigationStart;
+            const status = $('#load-status');
+            
+            if (loadTime > 0) {
+                status.html(`> ${Math.floor(Math.random() * (32 - 1 + 1) + 1)} objects indexed | Load time: ${(loadTime/1000).toFixed(2)}s | Last backup: ${backupDate} ${backupTime}`);
+            }
+        }
+    }
+
+    const TOTAL_CAPACITY = 29.62 * 1024 * 1024 * 1024; // Convert GB to bytes
+    let usedSpace = 0;
+    let fileCount = 0;
+    const sizePromises = [];
+
+
+    function formatFileSize(bytes) {
+        if(bytes < 1024) return bytes + 'B';
+        if(bytes < 1048576) return (bytes/1024).toFixed(2) + 'KB';
+        return (bytes/1048576).toFixed(2) + 'MB';
+    }
+
+    function formatGB(bytes) {
+        return (bytes / 1024 / 1024 / 1024).toFixed(2) + 'GB';
+    }
+
+    function updateStorageDisplay() {
+        const freeSpace = TOTAL_CAPACITY - usedSpace;
+        $('.system-msg').first().html(
+            `> ${fileCount} storage devices (in)active | ` +
+            `Capacity: ${formatGB(TOTAL_CAPACITY)} | ` +
+            `Used: ${formatGB(usedSpace)} | ` +
+            `Free: ${formatGB(freeSpace)}`
+        );
+    }
+
+    function updateFileSizes() {
+        $('.listtable tr:has(td > a)').each(function() {
+            const $row = $(this);
+            const $link = $row.find('a');
+            const $sizeCell = $row.find('.file-size');
+            
+            if($link.attr('href') === '/foyer') return;
+
+            const path = $link.attr('href');
+            const promise = fetch(path)
+                .then(response => {
+                    const size = response.headers.get('content-length') || 0;
+                    usedSpace += parseInt(size);
+                    fileCount++;
+                    return size;
+                })
+                .then(size => {
+                    $sizeCell.text(formatFileSize(size));
+                })
+                .catch(() => {
+                    $sizeCell.text('??KB');
+                });
+            
+            sizePromises.push(promise);
+        });
+
+        Promise.allSettled(sizePromises).then(() => {
+            updateStorageDisplay();
+            updateLoadTime();
+        });
+    }
+
+    updateFileSizes();
+    updateLoadTime()
+});
+    </script>
 
 </body></html>

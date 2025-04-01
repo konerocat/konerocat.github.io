@@ -86,7 +86,7 @@ var facts = [
     },
     {
         image: "Niko.png",
-        text: "A cat’s whiskers are not just on its face - they also have them on their front legs.",
+        text: "A cat's whiskers are not just on its face - they also have them on their front legs.",
         source: "- some random website i looked up # ex"
     },
     {
@@ -166,13 +166,8 @@ var facts = [
         source: "- Animal Behavior Research"
     },
     {
-        image: "Niko.png",
-        text: "A cat's purr may help heal broken bones and reduce swelling in muscles.",
-        source: "- Scientific Studies"  
-    },
-    {
         image: "Niko_pancakes.png",
-        text: "'Pancakes are the best food in the world!'",
+        text: "'Pancakes...'",
         source: "- Niko (OneShot)"
     }, 
     {
