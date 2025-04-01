@@ -221,3 +221,69 @@ var month = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT
 function toggleById(id, speed=0){
     $("#"+id).toggle(speed);
 }
+
+
+
+$(function() {
+    const scoldMessages = [
+        "Hey! Stop that!",
+        "Rude!",
+        "Not cool!",
+        "Please don't do that...",
+        "Ouch!",
+        "Be gentle!"
+    ];
+
+    const images = [
+        "Niko_wtf.png",
+        "Niko_wtf2.png",
+        "Niko_distressed_talk.png",
+        "Niko_what.png"
+    ];
+
+    const $factText = $('.fact-text p');
+    const $factSource = $('.fact-source');
+    const $explorer = $('.explorer-window');
+    const $image = $('.fact-image img');
+
+    let originalText = "";
+    let resetTimeout;
+    let isAnimating = false;
+
+
+    $(window).on('load', function() {
+        originalText = $factText.text();
+    });
+
+    $image.on('click', function() {
+        clearTimeout(resetTimeout);
+
+
+        let newMessage;
+        do {
+            newMessage = scoldMessages[Math.floor(Math.random() * scoldMessages.length)];
+        } while (newMessage === $factText.text());
+
+        $factText.text(newMessage);
+        $factSource.text(""); 
+
+        const newImage = `../images/${images[Math.floor(Math.random() * images.length)]}`;
+        $image.attr('src', newImage);
+
+
+        if (!isAnimating) {
+            isAnimating = true;
+            $explorer.css('animation', 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both');
+
+            setTimeout(() => {
+                $explorer.css('animation', 'none');
+                isAnimating = false;
+            }, 500);
+        }
+
+
+        resetTimeout = setTimeout(() => {
+            $factText.text(originalText);
+        }, 5000);
+    });
+});

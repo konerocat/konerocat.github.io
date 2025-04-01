@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head></head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <!-- <script data-goatcounter="" async="" src=""></script> -->
 
@@ -7,24 +9,45 @@
     <link rel="stylesheet" href="../files/css/files.css">
     <script src="../js/jquery-3.6.0.min.js"></script>
     <script src="../js/home.js"></script>
-
     <title>404</title>
+    <style>
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: calc(100vh - 120px);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .error-image {
+            max-width: 100%;
+            max-height: 50vh;
+            object-fit: contain;
+            margin: 20px 0;
+        }
+        
+        .error-text {
+            max-width: 600px;
+            text-align: center;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body>
     <div id="overlay"></div>
     <nav></nav>
-    <div class="mainwindow">
-        <br>
-        <center>
+    <div class="mainwindow" style="overflow: hidden;">
+        <div class="error-container">
             <h1>< 404 : page not found ></h1>
-            
-            <img src="../images/wip.jpg" style="width: 100%;">
-            <h2>sometimes, i waste my time on things that aren't important</h2>
-
-        </center>
-        <br>
+            <img src="../images/wip.jpg" class="error-image" alt="404 illustration">
+            <div class="error-text">
+                <h3>The page you're looking for has vanished into the ether.</h3>
+                <h3>Maybe it never existed, or perhaps it's still under construction.</h3>
+            </div>
+        </div>
     </div>
-
     <div class="botbar"></div>
-
-</body></html>
+</body>
+</html>
