@@ -35,37 +35,106 @@ $(document).ready(function(){
 
 
 
-let previousFacts = [];
-let factPool = [...facts];
-function showRandomFact() {
+if (typeof facts !== 'undefined'){
+    let previousFacts = [];
+    let factPool = [...facts];
+    function showRandomFact() {
 
-    if (factPool.length < 3) {
-        factPool = [...facts.filter(f => !previousFacts.includes(f))];
+        if (factPool.length < 3) {
+            factPool = [...facts.filter(f => !previousFacts.includes(f))];
+        }
+
+
+        const randomIndex = Math.floor(Math.random() * factPool.length);
+        const randomFact = factPool[randomIndex];
+
+
+        previousFacts.unshift(randomFact);
+        if (previousFacts.length > 5) {
+            previousFacts.pop();
+        }
+
+
+        factPool.splice(randomIndex, 1);
+
+        document.querySelector('.fact-image img').src = `../images/${randomFact.image}`;
+        document.querySelector('.fact-text p').textContent = randomFact.text;
+        
+        let sourceText = randomFact.source;
+        if (sourceText.includes("# ex")) {
+            const randomNum = Math.floor(Math.random() * 50) + 1;
+            sourceText = sourceText.replace("# ex", "# " + randomNum);
+        }
+        document.querySelector('.fact-source').textContent = sourceText;
     }
 
-
-    const randomIndex = Math.floor(Math.random() * factPool.length);
-    const randomFact = factPool[randomIndex];
-
-
-    previousFacts.unshift(randomFact);
-    if (previousFacts.length > 5) {
-        previousFacts.pop();
-    }
-
-
-    factPool.splice(randomIndex, 1);
-
-    document.querySelector('.fact-image img').src = `../images/${randomFact.image}`;
-    document.querySelector('.fact-text p').textContent = randomFact.text;
+    $(function() {
+        const scoldMessages = [
+            "Hey! Stop that!",
+            "Rude!",
+            "Not cool!",
+            "Please don't do that...",
+            "Ouch!"
+        ];
     
-    let sourceText = randomFact.source;
-    if (sourceText.includes("# ex")) {
-        const randomNum = Math.floor(Math.random() * 50) + 1;
-        sourceText = sourceText.replace("# ex", "# " + randomNum);
-    }
-    document.querySelector('.fact-source').textContent = sourceText;
+        const images = [
+            "Niko_wtf.png",
+            "Niko_wtf2.png",
+            "Niko_distressed_talk.png",
+            "Niko_what.png"
+        ];
+    
+        const $factText = $('.fact')
+        const $factSource = $('.fact-source')
+        const $explorer = $('.explorer-window')
+        const $image = $('.fact-image img')
+    
+        let resetTimeout
+        let isAnimating = false
+        let factInterval
+    
+        showRandomFact()
+        startFactInterval()
+    
+        function startFactInterval() {
+            clearInterval(factInterval);
+            factInterval = setInterval(showRandomFact, 7000);
+        }
+    
+    
+        $image.on('click', function() { // SCOLDING THE CAT
+            clearTimeout(resetTimeout);
+            clearInterval(factInterval);
+    
+            let newMessage;
+            do {
+                newMessage = scoldMessages[Math.floor(Math.random() * scoldMessages.length)];
+            } while (newMessage === $factText.text());
+    
+            $factText.text(newMessage);
+            $factSource.text("");
+    
+            const newImage = `../images/${images[Math.floor(Math.random() * images.length)]}`;
+            $image.attr('src', newImage);
+    
+            if (!isAnimating) {
+                isAnimating = true;
+                $explorer.css('animation', 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both');
+    
+                setTimeout(() => {
+                    $explorer.css('animation', 'none');
+                    isAnimating = false;
+                }, 500);
+            }
+    
+            resetTimeout = setTimeout(() => {
+                showRandomFact();
+                startFactInterval();
+            }, 5000);
+        });
+    });
 }
+
 
 
 
@@ -121,69 +190,4 @@ function toggleById(id, speed=0){
 }
 
 
-$(function() {
-    const scoldMessages = [
-        "Hey! Stop that!",
-        "Rude!",
-        "Not cool!",
-        "Please don't do that...",
-        "Ouch!"
-    ];
-
-    const images = [
-        "Niko_wtf.png",
-        "Niko_wtf2.png",
-        "Niko_distressed_talk.png",
-        "Niko_what.png"
-    ];
-
-    const $factText = $('.fact')
-    const $factSource = $('.fact-source')
-    const $explorer = $('.explorer-window')
-    const $image = $('.fact-image img')
-
-    let resetTimeout
-    let isAnimating = false
-    let factInterval
-
-    showRandomFact()
-    startFactInterval()
-
-    function startFactInterval() {
-        clearInterval(factInterval);
-        factInterval = setInterval(showRandomFact, 7000);
-    }
-
-
-    $image.on('click', function() { // SCOLDING THE CAT
-        clearTimeout(resetTimeout);
-        clearInterval(factInterval);
-
-        let newMessage;
-        do {
-            newMessage = scoldMessages[Math.floor(Math.random() * scoldMessages.length)];
-        } while (newMessage === $factText.text());
-
-        $factText.text(newMessage);
-        $factSource.text("");
-
-        const newImage = `../images/${images[Math.floor(Math.random() * images.length)]}`;
-        $image.attr('src', newImage);
-
-        if (!isAnimating) {
-            isAnimating = true;
-            $explorer.css('animation', 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both');
-
-            setTimeout(() => {
-                $explorer.css('animation', 'none');
-                isAnimating = false;
-            }, 500);
-        }
-
-        resetTimeout = setTimeout(() => {
-            showRandomFact();
-            startFactInterval();
-        }, 5000);
-    });
-});
 
