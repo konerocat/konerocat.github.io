@@ -1,0 +1,120 @@
+body {
+
+
+    background: 
+        linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)),
+        url("../../images/pxfuel.jpg");
+    background-size: 
+        auto,
+        auto,
+        cover;
+    background-attachment: 
+        fixed, 
+        fixed, 
+        fixed;
+    background-position: 
+        center, 
+        center, 
+        center;
+    background-blend-mode: normal, overlay, normal;
+}
+
+
+.fakebotbar{
+    background-color: var(--main-dark);
+    width: 100%;
+    height: 30px;
+    position: fixed;
+    bottom: 0%;
+    border-top: 2px solid var(--purple);
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--main-dark);
+    z-index: 5;
+    padding: 1px 0;
+    border-bottom: 2px solid var(--purple);
+}
+
+.mainwindow center {
+    margin: 0px 70px;
+}
+
+
+
+.mainwindow:focus,
+.mainwindow *:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.mainwindow { 
+    position: absolute;
+    user-select: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;
+    max-width: 1000px;
+    max-height: 90vh;
+    padding: 0px 20px;
+    border: ridge 6px var(--orange);
+    background-color: var(--transparent-dark);
+    overflow-y: auto;
+    scrollbar-color: var(--orange) var(--main-dark);
+}
+
+.fullheightwindow {
+    min-height: auto;
+}
+
+.mainwindow-wide{
+    max-width: none;
+    width: 80vw;
+}
+
+.mainwindow p{
+    padding: 0px 20px;
+}
+
+.mainwindow::-webkit-scrollbar {
+    width: 8px;
+    background: var(--main-dark);
+}
+
+.mainwindow::-webkit-scrollbar-thumb {
+    background: var(--orange);
+    border: 1px solid var(--main-light);
+}
+
+.fullheightwindow{
+    min-height: 45vh;
+}
+
+@media only screen and (orientation: portrait) {
+    .mainwindow {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        max-height: calc(100vh - 120px);
+        margin: 20px auto;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .botbar {
+        position: relative;
+        margin-top: auto;
+    }
+}
+
+

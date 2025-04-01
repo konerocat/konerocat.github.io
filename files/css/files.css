@@ -54,13 +54,14 @@ nav {
 
 .mainwindows { 
     position: absolute;
+    user-select: none;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90vw;
     max-width: 1000px;
-    max-height: 80vh; /* Reduced from 90vh */
-    height: auto; /* Change from fixed height */
+    max-height: 80vh;
+    height: auto;
     padding: 0px 20px;
     border: ridge 6px var(--orange);
     background-color: var(--transparent-dark);
@@ -96,7 +97,7 @@ nav {
 }
 
 @media only screen and (orientation: portrait) {
-    .mainwindow {
+    .mainwindows {
         position: relative;
         top: auto;
         left: auto;
