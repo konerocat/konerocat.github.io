@@ -61,7 +61,7 @@ nav {
     width: 90vw;
     max-width: 1000px;
     max-height: 80vh;
-    height: auto;
+
     padding: 0px 20px;
     border: ridge 6px var(--orange);
     background-color: var(--transparent-dark);
@@ -98,12 +98,7 @@ nav {
 
 @media only screen and (orientation: portrait) {
     .mainwindows {
-        position: relative;
-        top: auto;
-        left: auto;
-        transform: none;
-        max-height: calc(100vh - 120px);
-        margin: 20px auto;
+        margin: auto;
     }
 
     body {
@@ -112,10 +107,7 @@ nav {
         min-height: 100vh;
     }
 
-    .botbar {
-        position: relative;
-        margin-top: auto;
-    }
+
 }
 
 

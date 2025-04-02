@@ -12,8 +12,9 @@ var navbarHTML = `
 // <a href="/foyer">/foyer</a>
 
 var footerHTML = `
-    <a href="/foyer" class="footer-button"><img src ="../images/window_button.png" class="footer-icon" 
-    ></a>
+    <a href="/foyer" class="footer-button" onclick="if(history.length > 1) { history.back(); return false; }">
+        <img src="../images/window_button.png" class="footer-icon">
+    </a>
 `;
 
 $(document).ready(function(){
