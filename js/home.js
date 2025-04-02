@@ -13,7 +13,7 @@ var navbarHTML = `
 
 var footerHTML = `
     <a href="/foyer" class="footer-button" onclick="if(history.length > 1) { history.back(); return false; }">
-        <img src="../images/window_button.png" class="footer-icon">
+        <img src="/images/window_button.png" class="footer-icon">
     </a>
 `;
 

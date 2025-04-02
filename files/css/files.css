@@ -1,22 +1,10 @@
 body {
-
-
     background: 
         linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)),
         url("../../images/pxfuel.jpg");
-    background-size: 
-        auto,
-        auto,
-        cover;
-    background-attachment: 
-        fixed, 
-        fixed, 
-        fixed;
-    background-position: 
-        center, 
-        center, 
-        center;
-    background-blend-mode: normal, overlay, normal;
+        background-size: cover;
+        background-attachment: fixed;
+        background-position: center;
 }
 
 

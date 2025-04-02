@@ -3,14 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="../images/cat.ico" type="image/x-icon">
-    <link rel="stylesheet" href="../css/style.css">
-    
-    <script src="../js/jquery-3.6.0.min.js"></script>
-    <script src="../js/home.js"></script>
-    <title>wip :3</title>
+    <link rel="shortcut icon" href="../../images/cat.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../css/files.css">
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script src="../../js/home.js"></script>
+    <title>WHAT THE FUCK IS A BOOLEAN</title>
+    <style>
+        body {
+            background: 
+                linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)),
+                url("/images/codex.jpg");
+                background-size: cover; 
+                background-attachment: fixed;
+                background-position: center; 
+        } 
+
+        .codex-nav {
+            border-bottom: 2px dashed var(--purple);
+            padding-bottom: 15px;
+            margin: 15px 0;
+        }
+        
+        .codex-category {
+            display: inline-block;
+            padding: 8px 20px;
+            margin-right: 10px;
+            font-family: "dos";
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .codex-category.active {
+            background: rgba(123, 88, 157, 0.3);
+            border: 1px solid var(--orange);
+        }
+        
+        .codex-content {
+            display: none;
+            padding: 10px;
+        }
+        
+        .codex-content.active {
+            display: block;
+        }
+        
+        .codex-entry {
+            margin: 25px 0;
+            padding: 10px;
+            border-left: 3px solid var(--orange);
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .entry-header {
+            font-family: "dos";
+            color: var(--orange);
+            margin-bottom: 10px;
+        }
+        
+        .entry-date {
+            color: var(--purple);
+            font-size: 0.9em;
+        }
+        
+        .entry-content {
+            line-height: 1.6;
+            color: #ccc;
+        }
+        
+        .entry-tags {
+            margin-top: 10px;
+        }
+        
+        .entry-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            margin-right: 5px;
+            background: rgba(123, 88, 157, 0.2);
+            font-family: "dos";
+            font-size: 0.8em;
+        }
+        
+        .codex-image {
+            max-width: 100%;
+            margin: 15px 0;
+            border: 1px solid var(--purple);
+            padding: 5px;
+        }
+    </style>
 </head>
 <body>
-    whar
+    <div id="overlay"></div>
+    <nav></nav>
+    <div class="navbar"></div>
+
+    <div class="mainwindows filewindow fullheightwindow">
+        <div class="system-msg">
+            > CODELOG v1.33
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="codex-nav">
+            <div class="codex-category active" data-target="projects">/finished_projects</div>
+            <div class="codex-category" data-target="fragments">/dev_fragments</div>
+            
+        </div>
+        <div class="codex-content active" id="projects">
+            <div class="codex-entry">
+                <div class="entry-header">
+                    > BIRTHDAY GAME (PRIVATE) <span class="entry-date">[2025-01-19]</span>
+                </div>
+                <div class="entry-content">
+                    <img src="../../images/bd.png" class="codex-image" alt="Terminal Preview">
+                    <p>> <a href="https://www.roblox.com/games/95812257510333/BIRTHDAY-GAME">a roblox game</a> i made for a friend of mine. the access to game is shared only to them for personal reasons</p>
+                    <div class="entry-tags">
+                        <span class="entry-tag">ROBLOX</span>
+                        <span class="entry-tag">LUAU</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="codex-entry">
+                <div class="entry-header">
+                    > TELEGRAM BOT (UNAVAILABLE) <span class="entry-date">[2024-05-23]</span>
+                </div>
+                <div class="entry-content">
+                    <img src="../../images/tg.png" class="codex-image" alt="Terminal Preview">
+                    <p>> STUPID chatbot i made for my schools final project. code? deleted. grade? pray for me. 🙏 </p>
+                    <div class="entry-tags">
+                        <span class="entry-tag">PYTHON</span>
+                        <span class="entry-tag">TELEGRAM</span>
+                    </div>
+                </div>
+            </div>
+
+        
+            <div class="codex-entry">
+                <div class="entry-header">
+                    > RANDOM COLOR GENERATOR (UNAVAILABLE) <span class="entry-date">[2024-??-??]</span>
+                </div>
+                <div class="entry-content">
+                    
+                    <a href="https://drive.google.com/file/d/1lM1UYGt2lEBEahg0a9cEUyEWrKL_FxfS/view?usp=sharing">google drive video of the last version</a>
+                    <p>> website that i made a year or so ago. its contents are no longer available bc i think i deleted it 💔</p>
+                    <div class="entry-tags">
+                        <span class="entry-tag">CSS</span>
+                        <span class="entry-tag">JAVASCRIPT</span>
+                        <span class="entry-tag">HTML</span>
+                    </div>
+                </div>
+            </div>
+            
+            
+        </div>
+
+        <!-- Code Fragments Section -->
+        <div class="codex-content" id="fragments">
+            <div class="codex-entry">
+                <div class="entry-header">
+                    > COLLABORATION <span class="entry-date">[2024-10-22]</span>
+                </div>
+                <div class="entry-content">
+                    
+                    <img src="../../images/rats.png" class="codex-image" alt="Terminal Preview">
+                    
+                </div>
+            </div>
+
+            <div class="codex-entry">
+                <div class="entry-header">
+                    > RATURAN <span class="entry-date">[2024-09-26]</span>
+                </div>
+                <div class="entry-content">
+                    
+                    <img src="../../images/vro.png" class="codex-image" alt="Terminal Preview">
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="botbar"></div>
+
+    <script>
+    $(document).ready(function() {
+        // Tab switching functionality
+        $('.codex-category').on('click', function() {
+            const target = $(this).data('target');
+            $('.codex-content').removeClass('active');
+            $('#' + target).addClass('active');
+            $('.codex-category').removeClass('active');
+            $(this).addClass('active');
+        });
+
+        // Animate entry appearances
+        $('.codex-entry').each(function(index) {
+            $(this).delay(100 * index).fadeTo(300, 1);
+        });
+    });
+    </script>
 </body>
 </html>

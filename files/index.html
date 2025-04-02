@@ -9,14 +9,12 @@
     <script src="../js/home.js"></script>
 
 
-    <title>THE CATACOMBS</title>
+    <title>THE (CAT)ACOMBS</title>
 </head>
 <body>
     <div id="overlay"></div>
     <nav></nav>
-    <div class="navbar">
-        <div>[ <a href="/">entrance</a>://files ]</div>
-    </div>
+    <div class="navbar"></div>
 
     <div class="mainwindows filewindow fullheightwindow">
         <div class="system-msg">
@@ -194,7 +192,6 @@
 
     function updateStorageDisplay() {
         const freeSpace = TOTAL_CAPACITY - usedSpace;
-        console.log(formatMB(usedSpace))
         $('.system-msg').first().html(
             `> 3 storage directories active | ` +
             `Capacity: ${formatMB(TOTAL_CAPACITY)} | ` +
