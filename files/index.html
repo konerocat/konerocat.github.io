@@ -20,7 +20,7 @@
 
     <div class="mainwindows filewindow fullheightwindow">
         <div class="system-msg">
-            > 3 storage devices active | Capacity: 29.62GB
+            > 3 storage directories active | Capacity: ???MB
         </div>
 
         <table class="listtable">
@@ -137,7 +137,7 @@
                 </center>
             </pre>
             <br>
-            <h4 class="fantasy">how i be looking at the shit i make</h4>
+            <h4 class="fantasy">how i be looking at ts</h4>
         </div>
 
 
@@ -169,11 +169,18 @@
         }
     }
 
-    const TOTAL_CAPACITY = 29.62 * 1024 * 1024 * 1024; // Convert GB to bytes
+    const IMAGE_PATH = '../images/';
+    const TOTAL_CAPACITY = 29.62 * 1024 * 1024 * 1024;
     let usedSpace = 0;
-    let fileCount = 0;
-    const sizePromises = [];
+    
 
+    const directoryImages = { // this is such a dumb quality of life feature
+        'codex': 'wallpaperabout.jpg',
+        'scrawls': 'pxfuel.jpg',
+        'photolog': 'cattheme.png',
+        'fever_dreams': 'rain.gif',
+        'constellations': 'static.gif'
+    };
 
     function formatFileSize(bytes) {
         if(bytes < 1024) return bytes + 'B';
@@ -181,54 +188,50 @@
         return (bytes/1048576).toFixed(2) + 'MB';
     }
 
-    function formatGB(bytes) {
-        return (bytes / 1024 / 1024 / 1024).toFixed(2) + 'GB';
+    function formatMB(bytes) {
+        return (bytes / 1024 / 1024).toFixed(2) + 'MB';
     }
 
     function updateStorageDisplay() {
         const freeSpace = TOTAL_CAPACITY - usedSpace;
+        console.log(formatMB(usedSpace))
         $('.system-msg').first().html(
-            `> ${fileCount} storage devices (in)active | ` +
-            `Capacity: ${formatGB(TOTAL_CAPACITY)} | ` +
-            `Used: ${formatGB(usedSpace)} | ` +
-            `Free: ${formatGB(freeSpace)}`
+            `> 3 storage directories active | ` +
+            `Capacity: ${formatMB(TOTAL_CAPACITY)} | ` +
+            `Used: ${formatMB(usedSpace)} | ` +
+            `Free: ${formatMB(freeSpace)}`
         );
     }
 
-    function updateFileSizes() {
-        $('.listtable tr:has(td > a)').each(function() {
-            const $row = $(this);
-            const $link = $row.find('a');
-            const $sizeCell = $row.find('.file-size');
-            
-            if($link.attr('href') === '/foyer') return;
+    function updateTableSize(directory, size) {
+        $(`a[href$="${directory}/"]`).closest('tr').find('.file-size')
+            .text(formatFileSize(size));
+    }
 
-            const path = $link.attr('href');
-            const promise = fetch(path)
+    function calculateImageSizes() {
+        const sizePromises = Object.entries(directoryImages).map(([dir, filename]) => {
+            return fetch(`${IMAGE_PATH}${filename}`)
                 .then(response => {
                     const size = response.headers.get('content-length') || 0;
                     usedSpace += parseInt(size);
-                    fileCount++;
+                    updateTableSize(dir, size);
                     return size;
                 })
-                .then(size => {
-                    $sizeCell.text(formatFileSize(size));
-                })
-                .catch(() => {
-                    $sizeCell.text('??KB');
+                .catch(error => {
+                    console.error(`Error loading ${filename}:`, error);
+                    updateTableSize(dir, 0);
+                    return 0;
                 });
-            
-            sizePromises.push(promise);
         });
 
-        Promise.allSettled(sizePromises).then(() => {
+        Promise.all(sizePromises).then(() => {
             updateStorageDisplay();
             updateLoadTime();
         });
     }
 
-    updateFileSizes();
-    updateLoadTime()
+    calculateImageSizes();
+    updateLoadTime();
 });
     </script>
 

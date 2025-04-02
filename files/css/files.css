@@ -97,19 +97,33 @@ nav {
 }
 
 @media only screen and (orientation: portrait) {
-    .mainwindows {
-        margin: auto;
-    }
-
     body {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
+        overflow: hidden;
+        height: 100vh;
+        position: fixed;
+        width: 100%;
     }
 
+    .mainwindows {
+        
+        -webkit-overflow-scrolling: touch;
+        
 
+        height: auto;
+    }
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+    }
 }
 
+body {
+    touch-action: none;
+}
+
+.mainwindows {
+    touch-action: auto;
+}
 
 .listtable {
     border-left: 2px solid var(--purple);
