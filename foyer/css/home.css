@@ -418,3 +418,109 @@ nav {
 }
 
 
+@keyframes hard-blink {
+    0%, 40%, 80% { opacity: 0; }
+    20%, 60%, 100% { opacity: 1; }
+}
+
+
+.explorer-window {
+    position: relative;
+    opacity: 0;
+    animation: hard-blink 0.8s steps(1) forwards;
+    
+}
+
+
+.explorer-titlebar {
+    opacity: 0;
+    animation: hard-blink 0.6s 0.3s steps(1) forwards;
+}
+
+.explorer-content {
+    opacity: 0;
+    animation: hard-blink 0.6s 0.5s steps(1) forwards;
+}
+
+.folder-row:nth-child(1) * {
+    opacity: 0;
+    animation: hard-blink 0.4s 0.7s steps(1) forwards;
+}
+
+.folder-row:nth-child(2) * {
+    opacity: 0;
+    animation: hard-blink 0.4s 0.9s steps(1) forwards;
+}
+
+
+
+.logmenu,
+.logmenu * {
+    opacity: 0;
+    animation: hard-blink 0.6s 1.3s steps(1) forwards;
+}
+
+.explorer-window {
+    pointer-events: none; 
+    
+    
+}
+.fact-image {
+    position: relative;
+    overflow: hidden;
+}
+
+
+.fact-image::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0, 0, 0, 0.15) 3px,
+        rgba(0, 0, 0, 0.15) 4px
+    );
+    animation: scanlines-anim 0.7s linear infinite;
+    pointer-events: none;
+    z-index: 999;
+    mix-blend-mode: multiply;
+}
+
+@keyframes scanlines-anim {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 0 4px;
+    }
+}
+
+
+.fact-box {
+    opacity: 0;
+    animation: hard-blink 0.6s 1.1s steps(1) forwards;
+    pointer-events: none;
+}
+
+
+.fact-image img,
+.fact-content {
+    opacity: 0;
+    animation: hard-blink 0.6s 1.1s steps(1) forwards;
+    pointer-events: none;
+}
+
+
+.explorer-window.ready,
+.explorer-window.ready .fact-box,
+.explorer-window.ready .fact-image img,
+.explorer-window.ready .fact-content *{
+    pointer-events: auto;
+    opacity: 1;
+    animation: none;
+}

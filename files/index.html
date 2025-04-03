@@ -2,11 +2,11 @@
     <meta charset="UTF-8">
     <!-- <script data-goatcounter="" async="" src=""></script> -->
 
-    <link rel="shortcut icon" href="../images/cat.ico" type="image/x-icon">
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../files/css/files.css">
-    <script src="../js/jquery-3.6.0.min.js"></script>
-    <script src="../js/home.js"></script>
+    <link rel="shortcut icon" href="/images/cat.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/files/css/files.css">
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/home.js"></script>
 
 
     <title>THE (CAT)ACOMBS</title>
@@ -49,13 +49,13 @@
                 <tr>
                     <td><a href="codex/">/codex</a></td>
                     <td>CODE DUMP</td>
-                    <td>2025-04-01</td>
+                    <td>2025-04-03</td>
                     <td class="file-size">???</td>
                 </tr>
                 <tr>
                     <td><a href="scrawls/">/scrawls</a></td>
                     <td>ARTWORKS</td>
-                    <td>2025-04-01</td>
+                    <td>2025-04-03</td>
                     <td class="file-size">???</td>
                 </tr>
                 
@@ -167,18 +167,7 @@
         }
     }
 
-    const IMAGE_PATH = '../images/';
-    const TOTAL_CAPACITY = 29.62 * 1024 * 1024 * 1024;
-    let usedSpace = 0;
-    
 
-    const directoryImages = { // this is such a dumb quality of life feature
-        'codex': 'wallpaperabout.jpg',
-        'scrawls': 'pxfuel.jpg',
-        'photolog': 'cattheme.png',
-        'fever_dreams': 'rain.gif',
-        'constellations': 'static.gif'
-    };
 
     function formatFileSize(bytes) {
         if(bytes < 1024) return bytes + 'B';
@@ -201,30 +190,54 @@
     }
 
     function updateTableSize(directory, size) {
-        $(`a[href$="${directory}/"]`).closest('tr').find('.file-size')
-            .text(formatFileSize(size));
-    }
+        const $sizeCell = $(`a[href$="${directory}/"]`).closest('tr').find('.file-size');
+        $sizeCell.addClass('loading');
+        $sizeCell.text(formatFileSize(size));
+        $sizeCell.removeClass('loading');
+}
 
-    function calculateImageSizes() {
-        const sizePromises = Object.entries(directoryImages).map(([dir, filename]) => {
-            return fetch(`${IMAGE_PATH}${filename}`)
+    const IMAGE_PATH = '../images/';
+    const TOTAL_CAPACITY = 29.62 * 1024 * 1024 * 1024;
+    let usedSpace = 0;
+
+    const directoryManifest = { // manually add the images here since js doesnt allow you to get the size of a directory apparently
+        'codex': ['codex.jpg', 'bd.png', 'laziness.png', 'rats.png', 'tg.png', 'vro.png'],
+        'scrawls': [],
+        'photolog': [],
+        'fever_dreams': [],
+        'constellations': []
+    };
+
+
+
+    async function calculateDirectorySize(directory, filenames) {
+        let totalSize = 0;
+        
+        const sizePromises = filenames.map(filename => {
+            return fetch(`${IMAGE_PATH}${directory}/${filename}`)
                 .then(response => {
                     const size = response.headers.get('content-length') || 0;
-                    usedSpace += parseInt(size);
-                    updateTableSize(dir, size);
-                    return size;
+                    return parseInt(size);
                 })
-                .catch(error => {
-                    console.error(`Error loading ${filename}:`, error);
-                    updateTableSize(dir, 0);
-                    return 0;
-                });
+                .catch(() => 0);
         });
 
-        Promise.all(sizePromises).then(() => {
-            updateStorageDisplay();
-            updateLoadTime();
+        const sizes = await Promise.all(sizePromises);
+        totalSize = sizes.reduce((acc, size) => acc + size, 0);
+        
+        return totalSize;
+    }
+
+    async function calculateImageSizes() {
+        const directoryPromises = Object.entries(directoryManifest).map(async ([dir, filenames]) => {
+            const dirSize = await calculateDirectorySize(dir, filenames);
+            usedSpace += dirSize;
+            updateTableSize(dir, dirSize);
         });
+
+        await Promise.all(directoryPromises);
+        updateStorageDisplay();
+        updateLoadTime();
     }
 
     calculateImageSizes();

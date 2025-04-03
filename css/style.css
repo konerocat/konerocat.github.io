@@ -33,6 +33,10 @@
     src: url("../fonts/alagard.ttf");
 }
 
+@font-face{
+    font-family: "schnebel";
+    src: url("/fonts/Schnebel\ Sans\ Pro\ Medium\ Italic.ttf");
+}
 
 *{
     cursor: crosshair;

@@ -3,14 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="../images/cat.ico" type="image/x-icon">
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../files/css/files.css">
-    <script src="../js/jquery-3.6.0.min.js"></script>
-    <script src="../js/home.js"></script>
-    <title>wip :3</title>
+    <link rel="shortcut icon" href="/images/cat.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/files/css/files.css">
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/home.js"></script>
+    <style>
+        body{
+            background: 
+                linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)),
+                url("/images/scrawls/starry.gif");
+                background-size: cover; 
+                background-attachment: fixed;
+                background-position: center; 
+        }
+        .sketch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: ridge 4px var(--purple);
+        }
+
+        .sketch-card {
+            position: relative;
+            background: var(--main-dark);
+            border: 2px solid var(--main-light);
+            padding: 15px;
+            min-height: 300px;
+            transition: transform 0.3s ease;
+        }
+
+        .sketch-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--orange);
+        }
+
+        .sketch-progress {
+            font-family: "dos";
+            color: var(--orange);
+            padding: 10px;
+            border-bottom: 2px dashed var(--purple);
+            margin-bottom: 20px;
+        }
+
+        .pixel-loader {
+            width: 100%;
+            height: 200px;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--main-dark),
+                var(--main-dark) 10px,
+                var(--purple) 10px,
+                var(--purple) 20px
+            );
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { background-position: 0 0; }
+            100% { background-position: 200px 200px; }
+        }
+
+        .art-meta {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(17, 17, 17, 0.9);
+            padding: 8px;
+            font-family: "dos";
+            color: var(--main-light);
+        }
+        .temp{
+            font-family: "schnebel";
+        }
+    </style>
+    <title>HAPPY STIM WARNING!!</title>
 </head>
 <body>
+    <div id="overlay"></div>
+    <nav></nav>
+    <div class="navbar"></div>
+
+    <div class="mainwindow filewindow fullheightwindow">
+        <h2 class="temp">i am STILL WORKING ON THIS!!!</h2>
+        <!-- <div class="sketch-progress">
+            > AAAAAAAAAAAA
+        </div>
+
+        <div class="sketch-grid">
+
+            <div class="sketch-card">
+                <div class="pixel-loader"></div>
+                <div class="art-meta">
+                    [001] WIP<br>
+                    
+                </div>
+            </div>
+
+            <div class="sketch-card">
+                <div class="pixel-loader"></div>
+                <div class="art-meta">
+                    [002] WIP<br>
+                    
+                </div>
+            </div>
+
+            <div class="sketch-card">
+                <div class="pixel-loader"></div>
+                <div class="art-meta">
+                    [003] WIP<br>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="system-msg">
+            Help
+        </div>
+    </div> -->
+
     
+
+    </div>
+    <div class="botbar"></div>
 </body>
 </html>

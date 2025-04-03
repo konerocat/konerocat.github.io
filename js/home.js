@@ -93,9 +93,18 @@ if (typeof facts !== 'undefined'){
         let resetTimeout
         let isAnimating = false
         let factInterval
-    
-        showRandomFact()
-        startFactInterval()
+
+        setTimeout(() => {
+            $('.explorer-window').addClass('ready');
+            setTimeout(() => {
+                
+                $('.fact-titlebar').html('Did You Know?')
+                
+
+                showRandomFact();
+                startFactInterval();
+            }, 2000);
+        }, 1500);
     
         function startFactInterval() {
             clearInterval(factInterval);
