@@ -36,38 +36,44 @@
 
 .terminal-bar {
     background-color: var(--purple);
+    border-bottom: 2px solid color-mix(in srgb, var(--purple) 70%, black);
     font-family: "dos", monospace;
-    height: 30px;
+    height: 35px;
     display: flex;
     align-items: center;
     padding: 0 10px;
+    position: relative;
+    padding: 0 10px;
+    font-size: 1.06em;
 
 }
 
-.folder-up-button {
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 20px;
-    margin-right: 9px;
-    padding: 0;
-    border: none;
-    background: none;
+.windowbuttons{
+    display: flex;
+    gap: 3.9px;
+    margin-right: auto;
+    order: 1;
 }
 
-.folder-up-icon {
-
-    width: 25px;
-    height: 25px;
+.windowbuttons img{
+    width: 27px;
+    height: 27px;
     image-rendering: pixelated;
-    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%);
+    filter: 
+    brightness(0) saturate(100%) 
+    invert(89%) 
+    sepia(15%) 
+    hue-rotate(230deg)
+    saturate(400%); 
 }
 
+.windowbuttons img:hover{
+    filter: none; 
+}
 
-.folder-up-button:hover .folder-up-icon {
-    filter: none;
+.terminal-bar > span {
+    flex-grow: 1;
+    letter-spacing: 0.4px;
 }
 
 .terminal-content {
@@ -80,11 +86,37 @@
     margin-top: 30px;
 }
 
+.signature .terminal-bar {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    border-top: 3px ridge var(--purple);
+    border-left: 3px ridge var(--purple);
+    border-right: 3px ridge var(--purple);
+    border-bottom: none;
+}
+
+.signature .terminal-bar > span {
+    flex-grow: 1;
+    text-align: left;
+    margin-left: 1px;
+}
+
+
+.signature .windowbuttons {
+    margin-right: auto;
+    order: 1;
+}
+
 .ascii-art {
     color: var(--purple);
     line-height: 1.2;
     margin: 0 auto;
     font-size: 0.7em;
+    border-top: 2px solid color-mix(in srgb, var(--purple) 70%, black);
+    border-bottom: 3px ridge var(--purple);
+    border-left: 3px ridge var(--purple);
+    border-right: 3px ridge var(--purple);
 }
 
 .copyright {
