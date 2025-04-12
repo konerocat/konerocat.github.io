@@ -3,13 +3,8 @@
 var navbarHTML = `
 <div id="path"></div>
 <div id="status">date</div>
-
 `
 
-// <a href="/about">/about</a>
-// <a href="/files">/files</a>
-// <a href="/logs">/logs</a>
-// <a href="/foyer">/foyer</a>
 
 var footerHTML = `
     <a href="/foyer" class="footer-button" onclick="if(history.length > 1) { history.back(); return false; }">
@@ -31,7 +26,39 @@ $(document).ready(function(){
     setInterval(setStatusBar, 1);
     
     $(".mainwindow").focus();
+    $('.folder-icon').on('click', function (e) {
+        e.preventDefault();
+        const link = $(this).attr('href');
+
+
+        $('.folder-icon').css('pointer-events', 'none');
+        
+
+        $('.fact-text .fact').text("Opening...");
+        $('.fact-titlebar').text("See you soon!");
+        $('.fact-text .fact-source').text("");
+
+
+        $('body').addClass('transitioning');
+
+
+        setTimeout(() => {
+            window.location.href = link;
+        }, 150);
+    });
 });
+
+const farewellMessages = [
+    "See you soon!",
+    "Come back later, okay?",
+    "Goodbye... for now!"
+];
+
+function showFarewellMessage() {
+    const message = farewellMessages[Math.floor(Math.random() * farewellMessages.length)];
+    $('.fact-titlebar').text("Bye bye!")
+    $('.fact-text .fact').text(message);
+}
 
 
 

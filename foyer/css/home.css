@@ -570,3 +570,21 @@ nav {
     opacity: 1;
     animation: none;
 }
+
+body.transitioning #overlay {
+    position: fixed;
+    background: white;
+    mix-blend-mode: difference;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    animation: blinkTransition 0.2s steps(2, end) forwards;
+    pointer-events: none;
+}
+
+@keyframes blinkTransition {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/files/css/files.css">
     <script src="/js/jquery-3.6.0.min.js"></script>
     <script src="/js/home.js"></script>
-
+    <script src="/js/files.js"></script>
 
     <title>THE (CAT)ACOMBS</title>
 </head>
@@ -36,7 +36,7 @@
                     <th>SIZE</th>
                 </tr>
                 <tr>
-                    <td><a href="/foyer">../</a></td>
+                    <td><a href="/foyer" class="folder-click">../</a></td>
                     <td>PARENT</td>
                     <td>--</td>
                     <td>--</td>
@@ -47,13 +47,13 @@
                     <td colspan="4" class="directory-header">CREATIVE CORRAL</td>
                 </tr>
                 <tr>
-                    <td><a href="codex/">/codex</a></td>
+                    <td><a href="codex/" class="folder-click">/codex</a></td>
                     <td>CODE DUMP</td>
                     <td>2025-04-03</td>
                     <td class="file-size">???</td>
                 </tr>
                 <tr>
-                    <td><a href="scrawls/">/scrawls</a></td>
+                    <td><a href="scrawls/" class="folder-click">/scrawls</a></td>
                     <td>ARTWORKS</td>
                     <td>2025-04-03</td>
                     <td class="file-size">???</td>
@@ -64,7 +64,7 @@
                     <td colspan="4" class="directory-header">DIGITAL GARDEN</td>
                 </tr>
                 <tr>
-                    <td><a href="photolog/">/photolog</a></td>
+                    <td><a href="photolog/" class="folder-click">/photolog</a></td>
                     <td>VISUAL DIARY</td>
                     <td>2025-04-01</td>
                     <td class="file-size">???</td>
@@ -81,14 +81,14 @@
                     <td colspan="4" class="directory-header">HYPERFIXATION VAULT</td>
                 </tr>
                 <tr>
-                    <td><a href="fever_dreams/">/fever_dreams</a></td>
-                    <td>TEMPORARY</td>
+                    <td><a href="fever_dreams/" class="folder-click">/fever_dreams</a></td>
+                    <td>INTERESTS</td>
                     <td>2025-04-01</td>
                     <td class="file-size">???</td>
                 </tr>
                 <tr>
-                    <td><a href="constellations/">/constellations</a></td>
-                    <td>LONG-LASTING</td>
+                    <td><a href="constellations/" class="folder-click">/constellations</a></td>
+                    <td>OBSESSIONS</td>
                     <td>2025-04-01</td>
                     <td class="file-size">???</td>
                 </tr>
@@ -202,9 +202,9 @@
 
     const directoryManifest = { // manually add the images here since js doesnt allow you to get the size of a directory apparently
         'codex': ['codex.jpg', 'bd.png', 'laziness.png', 'rats.png', 'tg.png', 'vro.png'],
-        'scrawls': [],
+        'scrawls': ['starry.gif'],
         'photolog': [],
-        'fever_dreams': [],
+        'fever_dreams': ['Aira.jpg', 'Angeldevil.png', 'Hero.png', 'Neuro-sama.png', 'Niko.png', 'Osaka.png', 'Rita.jpg', 'Yotsuba.png'],
         'constellations': []
     };
 
