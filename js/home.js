@@ -7,10 +7,31 @@ var navbarHTML = `
 
 
 var footerHTML = `
-    <a href="/foyer" class="footer-button" onclick="if(history.length > 1) { history.back(); return false; }">
+    <a href="/foyer" class="footer-button" onclick="reloadPrevious()">
         <img src="/images/window_button.png" class="footer-icon">
     </a>
 `;
+
+
+
+function reloadPrevious() {
+    if(history.length > 1) {
+
+        sessionStorage.setItem('refreshBack', 'true');
+        history.back();
+        window.location.reload(true);
+        return false;
+    }
+    return true;
+}
+
+
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted || sessionStorage.getItem('refreshBack')) {
+        sessionStorage.removeItem('refreshBack');
+        window.location.reload();
+    }
+});
 
 $(document).ready(function(){
     $("nav").html(navbarHTML);
