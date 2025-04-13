@@ -14,7 +14,7 @@
     <style>
         body {
           background: none;
-          background-color: black;
+          background-color: var(--main-dark);
         }
     
         .marquee {
@@ -33,13 +33,18 @@
             justify-content: space-around;
             gap: 15px;
             animation: scrollchoppy 26s steps(130) infinite;
+        } 
+
+        .marquee-container.paused {
+            animation-play-state: paused !important;
         }
 
-        
-        .marquee-container:hover {
-            animation-play-state: paused;
+        @media (hover: hover) {
+            .marquee-container:hover {
+                animation-play-state: paused;
+            }
         }
-        
+                
         .marquee-container > div {
             display: flex;
             flex-direction: column;

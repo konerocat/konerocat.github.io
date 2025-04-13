@@ -138,6 +138,8 @@ body {
         linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)),
         url("../../images/rain.gif"),
         url("../../images/wallpaperabout.jpg");
+    
+    background-color: var(--main-dark);
     background-size: 
         auto,
         auto,

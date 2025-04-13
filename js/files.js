@@ -9,4 +9,36 @@ $(document).ready(function() {
         }, 150);
     })
 
+    const $marquee = $('.marquee-container');
+    
+    if ($marquee.length) {
+        let touchTimer;
+        
+        $marquee.hover(
+            function() {
+                $(this).css('animation-play-state', 'paused');
+            },
+            function() {
+                $(this).css('animation-play-state', 'running');
+            }
+        );
+
+
+        $marquee.on('touchstart', function(e) {
+            e.preventDefault();
+            const $this = $(this);
+            $this.css('animation-play-state', 'paused');
+            
+            touchTimer = setTimeout(() => {
+                $this.css('animation-play-state', 'running');
+            }, 3000);
+        });
+
+        $marquee.on('touchend touchcancel', function() {
+            clearTimeout(touchTimer);
+            $(this).css('animation-play-state', 'running');
+        });
+    }
 })
+
+

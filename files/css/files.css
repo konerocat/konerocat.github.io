@@ -2,6 +2,7 @@ body {
     background: 
         linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5)),
         url("../../images/pxfuel.jpg");
+        background-color: var(--main-dark);
         background-size: cover;
         background-attachment: fixed;
         background-position: center;
