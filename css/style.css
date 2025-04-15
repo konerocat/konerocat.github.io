@@ -711,6 +711,7 @@ body::before{
     .botbar{
         height: 6vw;
         text-align: right;
+        z-index: 9999;
     }
 
 

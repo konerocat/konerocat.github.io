@@ -13,8 +13,12 @@
 
     <style>
         body {
-          background: none;
-          background-color: var(--main-dark);
+            background-image: linear-gradient(rgba(0, 0, 0, 0.2),rgba(0, 0, 0, 0.2)), url("/images/fever_dreams/bg.gif");
+            opacity: 95%;
+            background-color: var(--main-dark);
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
         }
     
         .marquee {
@@ -26,6 +30,9 @@
           margin: 30px 0;
           display: flex;
           overflow: hidden;
+          background-color: var(--main-dark);
+          border-right: 2px dashed var(--orange);
+          border-left: 2px dashed var(--orange);
         }
     
         .marquee-container {
@@ -118,6 +125,167 @@
             opacity: 0.7;
         }
 
+        .taglist h1 {
+            text-shadow: 0 0 10px var(--purple);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px var(--purple); }
+            to { text-shadow: 0 0 15px var(--purple); }
+        }
+
+        .liststyle {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            gap: 8px;
+        }
+
+        .liststyle li {
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .liststyle li::before {
+            content: "▹";
+            position: absolute;
+            left: 0;
+            color: var(--purple);
+        }
+
+        .liststyle {
+            list-style-type: '> ';
+            padding-left: 0;
+            font-size: 0.95em;
+            text-align: left;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .main {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            padding: 20px;
+            background-color: var(--transparent-dark);
+            
+            overflow-y: scroll;
+        }
+
+        .page-section {
+            min-height: 100vh;
+            position: relative;
+            padding: 20px;
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        .section-nav {
+            position: relative;
+            width: 100%;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .section-nav img {
+            padding: 25px;
+            width: 4vw;
+            height: 4vw;
+            
+        }
+
+        .nav-arrow {
+            
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            filter: invert(42%) sepia(16%) saturate(1520%) hue-rotate(225deg) brightness(86%) contrast(87%);
+            transition: opacity 0.3s ease, filter 0.3s ease;
+            pointer-events: auto;
+            opacity: 1;
+            animation: arrow-bob 0.5s steps(2) infinite;
+            pointer-events: all;
+        }
+
+        @keyframes arrow-bob {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-5px); }
+        }
+
+        .nav-up {
+            
+            left: 50%;
+            transform: translateX(-50%);
+            rotate: -90deg;
+        }
+
+        .nav-down {
+            left: 50%;
+            transform: translateX(-50%);
+            rotate: 90deg;
+        }   
+
+        .transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('/images/static.gif') repeat;
+                      
+            z-index: 0;
+            
+            background-size: cover;
+
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+
+        .transition-overlay.active {
+            opacity: 1;
+        }
+
+        .nav-arrow {
+            opacity: 1;
+            pointer-events: auto;
+            padding: 10px;
+        }
+
+        .nav-arrow.hidden {
+            opacity: 0 !important;
+            pointer-events: none;
+            animation: none;
+            display: none;
+        }
+
+        .nav-arrow.disabled {
+            filter: grayscale(1) opacity(0.3);
+            pointer-events: none;
+        }
+
+        @media only screen and (orientation: portrait) {
+            .nav-up{
+                padding: 35px;
+            }
+
+            .section-nav img{
+                width: 10vw;
+                height: 10vw;
+            }
+        }
+
         .interest-section {
             margin: 60px auto;
             padding: 20px;
@@ -173,60 +341,7 @@
             gap: 15px;
             margin-top: 20px;
         }
-
-
-
-
-        .taglist h1 {
-            text-shadow: 0 0 10px var(--purple);
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from { text-shadow: 0 0 5px var(--purple); }
-            to { text-shadow: 0 0 15px var(--purple); }
-        }
-
-        .liststyle {
-            list-style: none;
-            padding: 0;
-            display: grid;
-            gap: 8px;
-        }
-
-        .liststyle li {
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .liststyle li::before {
-            content: "▹";
-            position: absolute;
-            left: 0;
-            color: var(--purple);
-        }
-
-        .liststyle {
-            list-style-type: '> ';
-            padding-left: 0;
-            font-size: 0.95em;
-            text-align: left;
-            display: inline-block;
-            margin-top: 10px;
-        }
-
-        .main {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-
-            padding: 20px;
-            background-color: var(--transparent-dark);
-            
-            overflow-y: scroll;
-        }  
+        
       </style>
 
 </head>
@@ -235,151 +350,292 @@
     <nav></nav>
     <div class="navbar"></div>
     <div class="main">
-        <div class="taglist">
-            <h1 class="secret">-`✮´- fever dreams -`✮´-</h1>
-            <p>things that keep me warm and alive</p>
-            <h2>characters i like</h2>
-        </div>
-        
-        <div class="marquee">
-            <div class="marquee-container">
-
-                <div class="character-card">
-                    <div class="image-crop">
-                        <img src="/images/fever_dreams/Niko.png" alt="Niko">
-                    </div>
-                    <div class="character-info">
-                        <div class="character-name">Niko (*)</div>
-                        <div class="game-title">OneShot</div>
-                    </div>
-                </div>
-        
-  
-                <div class="character-card">
-                    <div class="image-crop">
-                        <img src="/images/fever_dreams/Yotsuba.png" alt="Yotsuba">
-                    </div>
-                    <div class="character-info">
-                        <div class="character-name">Yotsuba Koiwai</div>
-                        <div class="game-title">Yotsuba&!</div>
-                    </div>
-                </div>
-
-                <div class="character-card">
-                    <div class="image-crop">
-                        <img src="/images/fever_dreams/Rita.jpg" alt="Rita">
-                    </div>
-                    <div class="character-info">
-                        <div class="character-name">Rita</div>
-                        <div class="game-title">Kindergarten WARS</div>
-                    </div>
-                </div>
-                
-                <div class="character-card">
-                    <div class="image-crop">
-                        <img src="/images/fever_dreams/Hero.png" alt="Hero">
-                    </div>
-                    <div class="character-info">
-                        <div class="character-name">HERO</div>
-                        <div class="game-title">OMORI</div>
-                    </div>
-                </div>
-
-                <div class="character-card">
-                    <div class="image-crop">
-                        <img src="/images/fever_dreams/Osaka.png" alt="Osaka">
-                    </div>
-                    <div class="character-info">
-                        <div class="character-name">Osaka</div>
-                        <div class="game-title">Azumanga Daioh</div>
-                    </div>
-                </div>
-
-                <div class="character-card">
-                    <div class="image-crop">
-                        <img src="/images/fever_dreams/Neuro-sama.png" alt="Neuro-sama">
-                    </div>
-                    <div class="character-info">
-                        <div class="character-name">Neuro-sama</div>
-                        <div class="game-title">AI VTuber</div>
-                    </div>
-                </div>
-
-                <div class="character-card">
-                    <div class="image-crop">
-                        <img src="/images/fever_dreams/Aira.jpg" alt="Aira">
-                    </div>
-                    <div class="character-info">
-                        <div class="character-name">Aira</div>
-                        <div class="game-title">OFF SCRIPT</div>
-                    </div>
-                </div>
-
-                <div class="character-card">
-                    <div class="image-crop">
-                        <img src="/images/fever_dreams/Angeldevil.png" alt="Angel Devil">
-                    </div>  
-                    <div class="character-info">
-                        <div class="character-name">Angel Devil</div>
-                        <div class="game-title">Chainsaw Man</div>
-                    </div>
-                </div>
-
-                <div class="character-card">
-                    <div class="image-crop">
-                        <img src="/images/fever_dreams/Hitori_Gotou.png" alt="Hitori Gotou">
-                    </div>  
-                    <div class="character-info">
-                        <div class="character-name">Hitori Gotō</div>
-                        <div class="game-title">Bocchi the Rock!</div>
-                    </div>
-                </div>
-                <!-- Add other characters similarly -->
+        <div class="page-section">
+            <div class="section-nav">
+                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-up hidden">
             </div>
-        </div>
-        
-        <div class="interest-section">
-            <h2>WO  RK I N P  RO  G RES S</h2>
-            <div class="game-grid">
-                <div class="game-card">
-                    <img src="/images/games/rainworld.jpg" alt="wip">
-                    <div class="game-title">wip</div>
-                    <div class="game-year">wip</div>
+            <div class="taglist">
+                <h1 class="secret">-`✮´- fever dreams -`✮´-</h1>
+                <p>things that keep me warm and alive</p>
+                <h2>characters i like</h2>
+            </div>
+            
+            <div class="marquee">
+                <div class="marquee-container">
+
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Niko.png" alt="Niko">
+                        </div>
+                        <div class="character-info">
+                            <div class="character-name">Niko (*)</div>
+                            <div class="game-title">OneShot</div>
+                        </div>
+                    </div>
+            
+    
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Yotsuba.png" alt="Yotsuba">
+                        </div>
+                        <div class="character-info">
+                            <div class="character-name">Yotsuba Koiwai</div>
+                            <div class="game-title">Yotsuba&!</div>
+                        </div>
+                    </div>
+
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Rita.jpg" alt="Rita">
+                        </div>
+                        <div class="character-info">
+                            <div class="character-name">Rita</div>
+                            <div class="game-title">Kindergarten WARS</div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Hero.png" alt="Hero">
+                        </div>
+                        <div class="character-info">
+                            <div class="character-name">HERO</div>
+                            <div class="game-title">OMORI</div>
+                        </div>
+                    </div>
+
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Osaka.png" alt="Osaka">
+                        </div>
+                        <div class="character-info">
+                            <div class="character-name">Ayumu "Osaka" Kasuga</div>
+                            <div class="game-title">Azumanga Daioh</div>
+                        </div>
+                    </div>
+
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Neuro-sama.png" alt="Neuro-sama">
+                        </div>
+                        <div class="character-info">
+                            <div class="character-name">Neuro-sama</div>
+                            <div class="game-title">AI VTuber</div>
+                        </div>
+                    </div>
+
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Aira.jpg" alt="Aira">
+                        </div>
+                        <div class="character-info">
+                            <div class="character-name">Aira</div>
+                            <div class="game-title">OFF SCRIPT</div>
+                        </div>
+                    </div>
+
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Angeldevil.png" alt="Angel Devil">
+                        </div>  
+                        <div class="character-info">
+                            <div class="character-name">Angel Devil</div>
+                            <div class="game-title">Chainsaw Man</div>
+                        </div>
+                    </div>
+
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Hitori_Gotou.png" alt="Hitori Gotou">
+                        </div>  
+                        <div class="character-info">
+                            <div class="character-name">Hitori Gotō</div>
+                            <div class="game-title">Bocchi the Rock!</div>
+                        </div>
+                    </div>
+
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Pandora.jpg" alt="Pandora">
+                        </div>  
+                        <div class="character-info">
+                            <div class="character-name">Pandora</div>
+                            <div class="game-title">MINDWAVE</div>
+                        </div>
+                    </div>
+
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Osagechan.jpg" alt="Osage-chan">
+                        </div>  
+                        <div class="character-info">
+                            <div class="character-name">Osage-chan</div>
+                            <div class="game-title">Nukunuku Nigirimeshi</div>
+                        </div>
+                    </div>
+
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Ling.png" alt="Ling">
+                        </div>  
+                        <div class="character-info">
+                            <div class="character-name">Ling</div>
+                            <div class="game-title">Nightmargin</div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="game-card">
-                    <img src="/images/games/oneshot.jpg" alt="wip">
-                    <div class="game-title">wip</div>
-                    <div class="game-year">wip</div>
-                </div>
-                <!-- Add more game cards -->
+            </div>             
+            <div class="section-nav">
+                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-down">
             </div>
         </div>
     
-        <div class="interest-section">
-            <h2>something that is wip</h2>
-            <div class="vibe-grid">
-                <div class="vibe-item">
-                    Being alone in a dreamlike space...
-                </div>
-                <div class="vibe-item">
-                    CRT hum vibrating through empty rooms
-                </div>
-                <div class="vibe-item">
-                    The warm flicker of decaying static
-                </div>
-                <div class="vibe-item">
-                    A strange cat that might know your name
-                </div>
-                <div class="vibe-item">
-                    Forgotten data decaying on floppy disks
-                </div>
-                <div class="vibe-item">
-                    The smell of ozone after rain
+        
+
+        <div class="page-section">
+            <div class="section-nav">
+                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-up">
+            </div>
+            <div class="taglist">
+                <h1 class="secret">-something will be here soon-</h1>
+                <p>maybe</p>
+                <h2>:)</h2>
+            </div>
+            <!-- <div class="interest-section">
+                <h2>WO  RK I N P  RO  G RES S</h2>
+                <div class="game-grid">
+                    <div class="game-card">
+                        <img src="/images/games/rainworld.jpg" alt="wip">
+                        <div class="game-title">wip</div>
+                        <div class="game-year">wip</div>
+                    </div>
+                    <div class="game-card">
+                        <img src="/images/games/oneshot.jpg" alt="wip">
+                        <div class="game-title">wip</div>
+                        <div class="game-year">wip</div>
+                    </div>
+                    
                 </div>
             </div>
-        </div>
-    </div>
+        
+            <div class="interest-section">
+                <h2>something that is wip</h2>
+                <div class="vibe-grid">
+                    <div class="vibe-item">
+                        Being alone in a dreamlike space...
+                    </div>
+                    <div class="vibe-item">
+                        CRT hum vibrating through empty rooms
+                    </div>
+                    <div class="vibe-item">
+                        The warm flicker of decaying static
+                    </div>
+                    <div class="vibe-item">
+                        A strange cat that might know your name
+                    </div>
+                    <div class="vibe-item">
+                        Forgotten data decaying on floppy disks
+                    </div>
+                    <div class="vibe-item">
+                        The smell of ozone after rain
+                    </div>
+                </div>
+            </div>
+        </div> -->
+            
+        
 
+            
+            <div class="section-nav">
+                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-down">
+            </div>
+
+        </div>
+        
+        <div class="page-section">
+            <div class="section-nav">
+                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-up">
+            </div>
+            <h2>THATS ALSO WIP</h2>
+            <div class="section-nav">
+                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-down">
+            </div>
+
+        </div>
+        
+    </div>
+        
+        <div class="transition-overlay"></div>
+        
+        <script>
+            $(document).ready(function() {
+                let currentSection = 0;
+                let isTransitioning = false;
+                const $sections = $('.page-section');
+                const $arrows = $('.nav-arrow');
+                
+                function updateArrows() {
+                    $sections.each(function(index) {
+                        const $section = $(this);
+                        const $up = $section.find('.nav-up');
+                        const $down = $section.find('.nav-down');
+                        
+                        $up.toggleClass('hidden', index === 0);
+                        $down.toggleClass('hidden', index === $sections.length - 1);
+                    });
+                }
+            
+                function transitionToSection(newIndex) {
+                    if(isTransitioning || newIndex < 0 || newIndex >= $sections.length) return;
+                    
+                    // Disable all arrows during transition
+                    $arrows.css('pointer-events', 'none');
+                    isTransitioning = true;
+                    $('.transition-overlay').addClass('active');
+                    
+                    setTimeout(() => {
+                        $sections.removeClass('active');
+                        $sections.eq(newIndex).addClass('active');
+                        currentSection = newIndex;
+                        
+                        const scrollPos = $sections.eq(newIndex).offset().top;
+                        const steps = 8;
+                        const stepSize = (scrollPos - window.scrollY) / steps;
+                        
+                        let currentStep = 0;
+                        const choppyScroll = setInterval(() => {
+                            window.scrollTo(0, window.scrollY + stepSize);
+                            if(++currentStep >= steps) {
+                                clearInterval(choppyScroll);
+                                finishTransition();
+                            }
+                        }, 30);
+                    }, 300);
+                }
+            
+                function finishTransition() {
+                    setTimeout(() => {
+                        $('.transition-overlay').removeClass('active');
+                        isTransitioning = false;
+                        $arrows.css('pointer-events', 'auto');
+                        updateArrows();
+                    }, 300);
+                }
+            
+                $(document).on('click', '.nav-up:not(.hidden)', () => transitionToSection(currentSection - 1));
+                $(document).on('click', '.nav-down:not(.hidden)', () => transitionToSection(currentSection + 1));
+            
+                $sections.eq(0).addClass('active');
+                updateArrows();
+            });
+        </script>
+
+        
+    
     <div class="botbar"></div>
+
+
+    
     
 </body></html>
