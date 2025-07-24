@@ -15,23 +15,19 @@ var footerHTML = `
 
 
 function reloadPrevious() {
-    if(history.length > 1) {
-
-        sessionStorage.setItem('refreshBack', 'true');
-        history.back();
-        window.location.reload(true);
+    if (document.referrer) {
+        location.replace(document.referrer);
         return false;
     }
     return true;
 }
 
-
-window.addEventListener('pageshow', function(event) {
-    if (event.persisted || sessionStorage.getItem('refreshBack')) {
-        sessionStorage.removeItem('refreshBack');
-        window.location.reload();
-    }
-});
+// window.addEventListener('pageshow', function(event) {
+//     if (event.persisted || sessionStorage.getItem('refreshBack')) {
+//         sessionStorage.removeItem('refreshBack');
+//         window.location.reload();
+//     }
+// });
 
 $(document).ready(function(){
     $("nav").html(navbarHTML);
@@ -62,9 +58,10 @@ $(document).ready(function(){
 
         $('body').addClass('transitioning');
 
-
+        window.location.href = link;
         setTimeout(() => {
-            window.location.href = link;
+            document.body.classList.remove('transitioning');
+            
         }, 150);
     });
 });

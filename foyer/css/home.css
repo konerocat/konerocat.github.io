@@ -178,6 +178,7 @@ nav {
 
 
 .windowbuttons img{
+
     width: 28px;
     height: 28px;
     image-rendering: pixelated;
@@ -262,8 +263,8 @@ nav {
 }
 
 
-.folder-icon span:first-child {
-    font-size: 2em;
+.folder-icon span {
+    font-size: 1em;
     margin-bottom: 5px;
 }
 
@@ -390,6 +391,10 @@ nav {
 }
 
 .fact-box {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     display: flex;
     background-color: var(--main-dark);
     border-top: ridge 3px var(--purple);
@@ -466,7 +471,10 @@ nav {
     position: relative;
     opacity: 0;
     animation: hard-blink 0.2s steps(1) forwards;
-    
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 
