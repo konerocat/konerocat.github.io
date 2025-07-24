@@ -13,12 +13,12 @@
 
     <style>
         body {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.2),rgba(0, 0, 0, 0.2)), url("/images/fever_dreams/bg.gif");
+            background-image: none;
             opacity: 95%;
             background-color: var(--main-dark);
             background-size: cover;
             background-attachment: fixed;
-            background-position: center; 
+            background-position: center;
         }
     
         .marquee {
@@ -168,15 +168,22 @@
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
-            
+            height: 100vh; 
+            padding: 20px;
+            background-color: var(--transparent-dark);
+            overflow: hidden;
+        }
+
+        .glitch-overlay{
+            position: absolute;
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
-            padding: 20px;
-            background-color: var(--transparent-dark);
-            
-            overflow: hidden;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            opacity: 7%;
         }
 
         .page-section {
@@ -352,6 +359,7 @@
     <nav></nav>
     <div class="navbar"></div>
     <div class="main">
+        <img src="/images/fever_dreams/bg.gif" class="glitch-overlay">
         <div class="page-section">
             <div class="section-nav">
                 <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-up hidden">
@@ -374,8 +382,7 @@
                             <div class="game-title">OneShot</div>
                         </div>
                     </div>
-            
-    
+
                     <div class="character-card">
                         <div class="image-crop">
                             <img src="/images/fever_dreams/Yotsuba.png" alt="Yotsuba">
@@ -398,21 +405,21 @@
                     
                     <div class="character-card">
                         <div class="image-crop">
-                            <img src="/images/fever_dreams/Hero.png" alt="Hero">
+                            <img src="/images/fever_dreams/Ryo.png" alt="Ryo">
                         </div>
                         <div class="character-info">
-                            <div class="character-name">HERO</div>
-                            <div class="game-title">OMORI</div>
+                            <div class="character-name">Ryō Yamada (*)</div>
+                            <div class="game-title">Bocchi the Rock!</div>
                         </div>
                     </div>
 
                     <div class="character-card">
                         <div class="image-crop">
-                            <img src="/images/fever_dreams/Ryo.gif" alt="Ryo">
+                            <img src="/images/fever_dreams/Hero.png" alt="Hero">
                         </div>
                         <div class="character-info">
-                            <div class="character-name">Ryō Yamada (*)</div>
-                            <div class="game-title">Bocchi the Rock!</div>
+                            <div class="character-name">HERO</div>
+                            <div class="game-title">OMORI</div>
                         </div>
                     </div>
 
