@@ -13,8 +13,7 @@
 
     <style>
         body {
-            background-image: none;
-            opacity: 95%;
+            background-image: none;     
             background-color: var(--main-dark);
             background-size: cover;
             background-attachment: fixed;
@@ -23,7 +22,6 @@
     
         .marquee {
           display: flex;
-          overflow: hidden;
           border-top: 2px dashed var(--orange);
           border-bottom: 2px dashed var(--orange);
           padding: 12px 0;
@@ -80,6 +78,10 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         .character-card {
@@ -171,7 +173,13 @@
             height: 100vh; 
             padding: 20px;
             background-color: var(--transparent-dark);
-            overflow: hidden;
+            overflow-x: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .main::-webkit-scrollbar {
+            display: none;
         }
 
         .glitch-overlay{
@@ -455,7 +463,7 @@
 
                     <div class="character-card">
                         <div class="image-crop">
-                            <img src="/images/fever_dreams/Nijika.png" alt="Angel Devil">
+                            <img src="/images/fever_dreams/Nijika.png" alt="Nijika">
                         </div>  
                         <div class="character-info">
                             <div class="character-name">Nijika Ijichi</div>

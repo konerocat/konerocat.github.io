@@ -35,7 +35,6 @@ nav {
 .homebar{
     background-color: var(--main-dark);
     width: fit-content;
-
     display: flex;
     flex-direction: row;
     justify-content: center;
