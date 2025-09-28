@@ -22,12 +22,6 @@ function reloadPrevious() {
     return true;
 }
 
-// window.addEventListener('pageshow', function(event) {
-//     if (event.persisted || sessionStorage.getItem('refreshBack')) {
-//         sessionStorage.removeItem('refreshBack');
-//         window.location.reload();
-//     }
-// });
 
 $(document).ready(function(){
     $("nav").html(navbarHTML);

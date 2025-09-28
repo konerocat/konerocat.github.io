@@ -84,8 +84,62 @@
             user-select: none;
         }
 
+
+        .character-card.special-character .image-crop {
+            border-color: var(--orange);    
+        }
+
+        .character-card.special-character .character-name {
+            color: var(--orange);
+        }
+
+        .niko-character .image-crop {
+            border: 4px solid var(--orange);
+            box-shadow: 0 0 15px #b68c5d;
+            position: relative;
+        }
+
+        .niko-character:hover .image-crop {
+            border-color: #fac07e;
+            box-shadow: 0 0 25px #b68c5d;
+            animation: niko-glow 1.5s ease-in-out infinite alternate;
+        }
+
+        .niko-character:hover .character-name {
+            color: #fac07e;
+            text-shadow: 0 0 10px #b68c5d;
+        }
+
+        @keyframes niko-glow {
+            from { box-shadow: 0 0 15px #fac07e; }
+            to { box-shadow: 0 0 30px #fac07e; }
+        }
+
+
+        .ryo-character .image-crop {
+            border: 4px dashed var(--orange);
+            
+            position: relative;
+        }
+
+
+        .ryo-character:hover .image-crop {
+            border-color: #4061A0;
+            box-shadow: 0 0 20px #4061A0;
+        }
+
+        .ryo-character:hover .character-name {
+            color: #4061A0;
+            text-shadow: 0 0 8px #4061A0;
+        }
+
+        .character-card.special-character .game-title {
+            color: var(--orange);
+        }
+
         .character-card {
             flex-direction: column;
+            
         }
         .character-info {
             text-align: center;
@@ -95,7 +149,7 @@
 
         .character-name {
             font-family: "schnebel";
-            font-size: 1.1em;
+            font-size: 1.2em;
         }
 
         .game-title {
@@ -358,6 +412,11 @@
             gap: 15px;
             margin-top: 20px;
         }
+
+        .notice {
+            color: var(--orange);
+            opacity: 45%;
+        }
         
       </style>
 
@@ -381,7 +440,7 @@
             <div class="marquee">
                 <div class="marquee-container">
 
-                    <div class="character-card">
+                    <div class="character-card special-character niko-character">
                         <div class="image-crop">
                             <img src="/images/fever_dreams/Niko.png" alt="Niko">
                         </div>
@@ -410,8 +469,18 @@
                             <div class="game-title">Kindergarten WARS</div>
                         </div>
                     </div>
-                    
+
                     <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/YuuriChito.jpg" alt="ChitoYuuri">
+                        </div>
+                        <div class="character-info">
+                            <div class="character-name">Chito & Yuuri</div>
+                            <div class="game-title">Girls' Last Tour</div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-card special-character ryo-character">
                         <div class="image-crop">
                             <img src="/images/fever_dreams/Ryo.png" alt="Ryo">
                         </div>
@@ -511,9 +580,23 @@
                         </div>
                     </div>
 
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Sachie.jpg" alt="Sachie">
+                        </div>  
+                        <div class="character-info">
+                            <div class="character-name">Sachie Shinohata</div>
+                            <div class="game-title">HamsterFragment</div>
+                        </div>
+                    </div>
+                    
                 </div>
-            </div>             
+            </div>  
+            <div class="notice">
+                <span><center>*characters with (*) are going to be put in constellations (WIP)</center></span>
+            </div>           
             <div class="section-nav">
+                
                 <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-down">
             </div>
         </div>
@@ -584,7 +667,7 @@
             <div class="section-nav">
                 <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-up">
             </div>
-            <h2>THATS ALSO WIP</h2>
+                <img src="/images/fever_dreams/ishowspeed-speed-backflip.gif">
             <div class="section-nav">
                 <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-down">
             </div>
