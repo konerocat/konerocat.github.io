@@ -595,3 +595,8 @@ body.transitioning #overlay {
     0% { opacity: 1; }
     100% { opacity: 0; }
 }
+
+
+img.folder-icon-img.disabled {
+    opacity: 0.3 !important
+}
