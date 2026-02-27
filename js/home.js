@@ -15,10 +15,13 @@ var footerHTML = `
 
 
 function reloadPrevious() {
-    if (document.referrer) {
-        location.replace(document.referrer);
-        return false;
-    }
+    try {
+        const ref = document.referrer;
+        if (ref && new URL(ref).origin === window.location.origin) {
+            location.replace(ref);
+            return false;
+        }
+    } catch (_) {}
     return true;
 }
 
@@ -34,7 +37,8 @@ $(document).ready(function(){
     //     $("[infolder=" + folder + "]").toggle();
     // });
     
-    setInterval(setStatusBar, 1);
+    // OPT: was 1ms (heavy). Clock only needs per-second updates.
+    setInterval(setStatusBar, 1000);
     
     $(".mainwindow").focus();
     $('.folder-icon').on('click', function (e) {
@@ -57,6 +61,14 @@ $(document).ready(function(){
             document.body.classList.remove('transitioning');
             
         }, 150);
+    });
+
+    // Restore interactive state when returning via Back (bfcache restores DOM as-is)
+    window.addEventListener('pageshow', function (event) {
+        if (event.persisted) {
+            $('.folder-icon').css('pointer-events', '');
+            document.body.classList.remove('transitioning');
+        }
     });
 });
 
@@ -97,7 +109,7 @@ if (typeof facts !== 'undefined'){
 
         factPool.splice(randomIndex, 1);
 
-        document.querySelector('.fact-image img').src = `../images/${randomFact.image}`;
+        document.querySelector('.fact-image img').src = `/images/${randomFact.image}`;
         document.querySelector('.fact-text p').textContent = randomFact.text;
         
         let sourceText = randomFact.source;
@@ -163,7 +175,7 @@ if (typeof facts !== 'undefined'){
             $factText.text(newMessage);
             $factSource.text("");
     
-            const newImage = `../images/${images[Math.floor(Math.random() * images.length)]}`;
+            const newImage = `/images/${images[Math.floor(Math.random() * images.length)]}`;
             $image.attr('src', newImage);
     
             if (!isAnimating) {

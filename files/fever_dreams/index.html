@@ -1,7 +1,5 @@
 <!DOCTYPE html><html lang="en"><head></head>
     <meta charset="UTF-8">
-    <!-- <script data-goatcounter="" async="" src=""></script> -->
-
     <link rel="shortcut icon" href="/images/cat.ico" type="image/x-icon">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/files/css/files.css">
@@ -738,6 +736,16 @@
             
                 $sections.eq(0).addClass('active');
                 updateArrows();
+
+                // Restore state when returning via Back (bfcache)
+                window.addEventListener('pageshow', function (event) {
+                    if (event.persisted) {
+                        isTransitioning = false;
+                        $arrows.css('pointer-events', 'auto');
+                        $('.transition-overlay').removeClass('active');
+                        updateArrows();
+                    }
+                });
             });
         </script>
 
