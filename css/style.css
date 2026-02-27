@@ -243,6 +243,11 @@ nav div,
     margin: 0 10px;
 }
 
+nav #status,
+.navbar #status {
+    color: var(--purple);
+}
+
 .botbar{
     background-color: var(--main-dark);
     width: 100%;

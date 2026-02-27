@@ -1,6 +1,6 @@
 var navbarHTML = `
 <div id="path"></div>
-<div id="status">date</div>
+<div id="status">xx:xx</div>
 `
 
 
@@ -29,7 +29,7 @@ $(document).ready(function(){
     buildNavbarPath();
     $(".botbar").html(footerHTML);
 
-
+    setStatusBar();
     setInterval(setStatusBar, 1000);
     
     $(".mainwindow").focus();
