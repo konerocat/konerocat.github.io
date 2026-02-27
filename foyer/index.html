@@ -65,9 +65,16 @@
             
             <div class="logmenu">
                 <h2>changelog</h2>
+                <div class="visit-counter" id="visit-counter-wrap" data-goatcounter="konerocat" title="Unique visitors (GoatCounter)">
+                    <span class="visit-counter-eyeball" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M12 4.5C7 4.5 3 8 2 12c1 4 5 7.5 10 7.5s9-3.5 10-7.5c-1-4-5-7.5-10-7.5zm0 11.5c-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5-2 4.5-4.5 4.5zm0-7c-1.4 0-2.5 1.1-2.5 2.5s1.1 2.5 2.5 2.5 2.5-1.1 2.5-2.5-1.1-2.5-2.5-2.5z"/></svg>
+                    </span>
+                    <span id="visit-count" class="visit-count-num">???</span>
+                </div>
                 <div class="logbox">
                     <ul>
                         <!-- <li><strong>date / (name)</strong>: </li> -->
+                        <li class="changelog-latest"><strong>2026-02-28 / The Return</strong>: website tweaks, updated <a href="/files/fever_dreams">fever dreams</a>, added <a href="/files/constellations">constellations</a> (wip), visitor counter, bug fixes, easter egg, blaaaahhhhh</li>
                         <li><strong>2025-09-28(29) / the flavor of noncommitment</strong>: slight changes to the first page of <a href="/files/fever_dreams">fever dreams</a></li>
                         <li><strong>2025-07-24 / (unnamed)</strong>: minor fixes. maybe ill get to working on constellations/fever dreams soon</li>
                         <li><strong>2025-04-12 / (unnamed)</strong>: first debug version of <a href="/files/fever_dreams">fever dreams</a> (verrrryyyy work in progress). added some transitions between pages</li>
@@ -81,5 +88,29 @@
             </div>
     </div>
     </div>
+    <script>
+        
+    (function() {
+        var wrap = document.getElementById('visit-counter-wrap');
+        var code = wrap && wrap.getAttribute('data-goatcounter');
+        if (!code || !code.trim()) return;
+        code = code.trim();
+        if (code.indexOf('http') === 0) {
+            try { code = new URL(code).hostname.split('.')[0]; } catch (e) { return; }
+        }
+        var script = document.createElement('script');
+        script.setAttribute('data-goatcounter', 'https://' + code + '.goatcounter.com/count');
+        script.async = true;
+        script.src = '//gc.zgo.at/count.js';
+        document.head.appendChild(script);
+        fetch('https://' + code + '.goatcounter.com/counter/TOTAL.json').then(function(r) { return r.json(); }).then(function(d) {
+            var el = document.getElementById('visit-count');
+            if (el && d && d.count != null) el.textContent = d.count;
+        }).catch(function() {
+            var el = document.getElementById('visit-count');
+            if (el) el.textContent = '???';
+        });
+    })();
+    </script>
     <div class="fakebotbar"></div>
 </body></html>

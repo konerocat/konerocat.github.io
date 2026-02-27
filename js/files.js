@@ -9,7 +9,7 @@ $(document).ready(function() {
         }, 150);
     });
 
-    // Restore state when returning via Back (bfcache)
+
     window.addEventListener('pageshow', function (event) {
         if (event.persisted) {
             $('.listtable').removeClass('transitioning');

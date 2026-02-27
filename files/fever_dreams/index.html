@@ -7,7 +7,7 @@
     <script src="/js/home.js"></script>
     <script src="/js/files.js"></script>
 
-    <title>i think i.. like you</title>
+    <title>fever dreams</title>
 
     <style>
         body {
@@ -35,15 +35,20 @@
             display: flex;
             justify-content: space-around;
             gap: 15px;
-            animation: scrollchoppy 26s steps(130) infinite;
+            --marquee-duration: 26s;
+            animation: scrollchoppy var(--marquee-duration) steps(130) infinite;
         } 
 
         .marquee-container.paused {
             animation-play-state: paused !important;
         }
 
+        .marquee-container.marquee-js-control {
+            animation: none !important;
+        }
+
         @media (hover: hover) {
-            .marquee-container:hover {
+            .marquee-container:hover:not(.marquee-js-control) {
                 animation-play-state: paused;
             }
         }
@@ -97,38 +102,12 @@
             position: relative;
         }
 
-        .niko-character:hover .image-crop {
-            border-color: #fac07e;
-            box-shadow: 0 0 25px #b68c5d;
-            animation: niko-glow 1.5s ease-in-out infinite alternate;
-        }
-
-        .niko-character:hover .character-name {
-            color: #fac07e;
-            text-shadow: 0 0 10px #b68c5d;
-        }
-
-        @keyframes niko-glow {
-            from { box-shadow: 0 0 15px #fac07e; }
-            to { box-shadow: 0 0 30px #fac07e; }
-        }
 
 
         .ryo-character .image-crop {
             border: 4px dashed var(--orange);
             
             position: relative;
-        }
-
-
-        .ryo-character:hover .image-crop {
-            border-color: #4061A0;
-            box-shadow: 0 0 20px #4061A0;
-        }
-
-        .ryo-character:hover .character-name {
-            color: #4061A0;
-            text-shadow: 0 0 8px #4061A0;
         }
 
         .character-card.special-character .game-title {
@@ -138,6 +117,15 @@
         .character-card {
             flex-direction: column;
             
+        }
+        a.character-card {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+        }
+        a.character-card:hover {
+            background-color: transparent;
+            color: inherit;
         }
         .character-info {
             text-align: center;
@@ -438,7 +426,7 @@
             <div class="marquee">
                 <div class="marquee-container">
 
-                    <div class="character-card special-character niko-character">
+                    <a href="/files/constellations/?char=niko" class="character-card special-character niko-character">
                         <div class="image-crop">
                             <img src="/images/fever_dreams/Niko.png" alt="Niko">
                         </div>
@@ -446,7 +434,7 @@
                             <div class="character-name">Niko (*)</div>
                             <div class="game-title">OneShot</div>
                         </div>
-                    </div>
+                    </a>
 
                     <div class="character-card">
                         <div class="image-crop">
@@ -455,6 +443,37 @@
                         <div class="character-info">
                             <div class="character-name">Yotsuba Koiwai</div>
                             <div class="game-title">Yotsuba&!</div>
+                        </div>
+                    </div>
+
+                    
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Marina.png" alt="Marina">
+                        </div>
+                        <div class="character-info">
+                            <div class="character-name">Marina Kaplan</div>
+                            <div class="game-title">Z.A.T.O // ILTWAEIT</div>
+                        </div>
+                    </div>
+
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Aya.png" alt="Aya">
+                        </div>
+                        <div class="character-info">
+                            <div class="character-name">Aya</div>
+                            <div class="game-title">MAHOUTEQ!</div>
+                        </div>
+                    </div>
+
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Kaori.png" alt="Kaori">
+                        </div>
+                        <div class="character-info">
+                            <div class="character-name">Kaori Hayasaki</div>
+                            <div class="game-title">MAHOUTEQ!</div>
                         </div>
                     </div>
 
@@ -478,7 +497,7 @@
                         </div>
                     </div>
                    
-                    <div class="character-card special-character ryo-character">
+                    <a href="/files/constellations/?char=ryo" class="character-card special-character ryo-character">
                         <div class="image-crop">
                             <img src="/images/fever_dreams/Ryo.png" alt="Ryo">
                         </div>
@@ -486,7 +505,7 @@
                             <div class="character-name">Ryō Yamada (*)</div>
                             <div class="game-title">Bocchi the Rock!</div>
                         </div>
-                    </div>
+                    </a>
 
                     <div class="character-card">
                         <div class="image-crop">
@@ -591,7 +610,7 @@
                 </div>
             </div>  
             <div class="notice">
-                <span><center>*characters with (*) are going to be put in constellations (WIP)</center></span>
+                <span><center>*characters with (*) are in constellations; hold click (tap) to increase speed</center></span>
             </div>           
             <div class="section-nav">
                 
@@ -682,7 +701,9 @@
                 let isTransitioning = false;
                 const $sections = $('.page-section');
                 const $arrows = $('.nav-arrow');
-                
+                const $marquee = $('.marquee');
+                const $marqueeContainer = $('.marquee-container');
+
                 function updateArrows() {
                     $sections.each(function(index) {
                         const $section = $(this);
@@ -737,7 +758,103 @@
                 $sections.eq(0).addClass('active');
                 updateArrows();
 
-                // Restore state when returning via Back (bfcache)
+
+                function isOnSpecialCard(el) {
+                    return $(el).closest('.character-card.special-character').length > 0;
+                }
+                var isHolding = false;
+                var isHovering = false;
+                var marqueeRafId = null;
+                var containerEl = $marqueeContainer[0];
+
+                function getMarqueeTranslateX() {
+                    var s = window.getComputedStyle(containerEl).transform;
+                    if (!s || s === 'none') return window.innerWidth;
+                    var m = s.match(/matrix\(([^)]+)\)/);
+                    if (!m) return window.innerWidth;
+                    var parts = m[1].split(',').map(function(x) { return parseFloat(x.trim()); });
+                    return parts[4];
+                }
+
+                function resumeMarqueeAnimation() {
+                    var tx = getMarqueeTranslateX();
+                    var vwPx = window.innerWidth;
+                    var cw = containerEl.offsetWidth;
+                    var totalDistance = vwPx + cw;
+                    var progress = (vwPx - tx) / totalDistance;
+                    progress = ((progress % 1) + 1) % 1;
+                    var delaySec = -progress * 26;
+                    containerEl.style.animation = 'scrollchoppy 26s steps(130) infinite';
+                    containerEl.style.animationDelay = delaySec + 's';
+                    containerEl.style.transform = '';
+                    $marqueeContainer.removeClass('marquee-js-control');
+                }
+
+                $marquee.on('mouseenter', function() { isHovering = true; });
+                $marquee.on('mouseleave', function() {
+                    isHovering = false;
+                    if ($marqueeContainer.hasClass('marquee-js-control') && !isHolding) {
+                        resumeMarqueeAnimation();
+                    }
+                });
+
+                $marquee.on('mousedown touchstart', function(e) {
+                    if (isOnSpecialCard(e.target)) return;
+                    e.preventDefault();
+                    isHolding = true;
+                    var tx = getMarqueeTranslateX();
+                    $marqueeContainer.addClass('marquee-js-control');
+                    containerEl.style.transform = 'translateX(' + tx + 'px)';
+                    var vwPx = window.innerWidth;
+                    var cw = containerEl.offsetWidth;
+                    var totalDistance = vwPx + cw;
+                    var speedPxPerSec = (totalDistance / 26) * 4;
+                    var lastTime = performance.now();
+                    function tick(now) {
+                        if (!isHolding) return;
+                        var dt = (now - lastTime) / 1000;
+                        lastTime = now;
+                        tx -= speedPxPerSec * dt;
+                        if (tx < -cw) tx += totalDistance;
+                        containerEl.style.transform = 'translateX(' + tx + 'px)';
+                        marqueeRafId = requestAnimationFrame(tick);
+                    }
+                    marqueeRafId = requestAnimationFrame(tick);
+                });
+
+                $(document).on('mouseup touchend', function() {
+                    if (!isHolding) return;
+                    isHolding = false;
+                    if (marqueeRafId != null) {
+                        cancelAnimationFrame(marqueeRafId);
+                        marqueeRafId = null;
+                    }
+                    if (isHovering) {
+
+                    } else {
+                        resumeMarqueeAnimation();
+                    }
+                });
+
+
+                (function() {
+                    var ayaImg = document.querySelector('.marquee-container img[alt="Aya"]');
+                    if (!ayaImg) return;
+                    var baseSrc = '/images/fever_dreams/Aya.png';
+                    var altSrc = '/images/fever_dreams/Aya1.png';
+                    function scheduleFlicker() {
+                        var delay = 800 + Math.random() * 2200;
+                        setTimeout(function() {
+                            ayaImg.src = altSrc;
+                            setTimeout(function() {
+                                ayaImg.src = baseSrc;
+                                scheduleFlicker();
+                            }, 40 + Math.random() * 60);
+                        }, delay);
+                    }
+                    scheduleFlicker();
+                })();
+
                 window.addEventListener('pageshow', function (event) {
                     if (event.persisted) {
                         isTransitioning = false;

@@ -2,22 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="/images/cat.ico" type="image/x-icon">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/files/css/files.css">
+    <link rel="stylesheet" href="/files/css/constellations.css">
     <script src="/js/jquery-3.6.0.min.js"></script>
     <script src="/js/home.js"></script>
-    <script src="/js/files.js"></script>
-
-    <title>still wip..</title>
+    <script defer src="/js/constellations.js"></script>
+    <title>constellations</title>
 </head>
-<body>
+<body class="constellations-page">
     <div id="overlay"></div>
     <nav></nav>
-    <div class="navbar"></div>
+    <canvas id="starfield" aria-hidden="true"></canvas>
+    <svg id="constellation-lines" class="constellation-lines-hidden" aria-hidden="true"></svg>
 
-    
+    <main class="constellations-stage">
+        <div id="cards-layer" aria-label="Constellation avatars"></div>
+    </main>
+
+    <div class="constellation-modal" id="character-modal" aria-hidden="true">
+        <div class="backdrop"></div>
+        <div class="window" role="dialog" aria-modal="true" aria-label="Character details">
+            <div class="windowbar">
+                <div class="label" data-modal-label>readme.txt</div>
+                <button type="button" data-close aria-label="Close"><img src="/images/X.png" alt="" width="22" height="22"></button>
+            </div>
+            <div class="content">
+                <div class="portrait">
+                    <img data-portrait src="/images/wip.jpg" alt="">
+                </div>
+                <div class="text">
+                    <h2 data-name>Character</h2>
+                    <div class="source" data-source>Source</div>
+                    <div class="body" data-details></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="botbar"></div>
-    
-</body></html>
+</body>
+</html>

@@ -107,6 +107,34 @@ nav {
     font-size: 1.6em;
 }
 
+.visit-counter {
+    padding: 8px 20px;
+    font-family: "dos", monospace;
+    font-size: 1em;
+    color: var(--main-light);
+    background-color: rgba(0, 0, 0, 0.4);
+    border-bottom: 1px dashed var(--purple);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.visit-counter-eyeball {
+    color: var(--purple);
+    display: inline-flex;
+    line-height: 0;
+    flex-shrink: 0;
+}
+
+.visit-counter-eyeball svg {
+    display: block;
+}
+
+.visit-count-num {
+    font-variant-numeric: tabular-nums;
+    min-width: 1.5em;
+}
+
 .logbox {
     background-color: rgba(0, 0, 0, 0.5);
     padding: 15px;
@@ -130,6 +158,11 @@ nav {
 
 .logbox ul li strong {
     color: var(--purple);
+}
+
+.logbox ul li.changelog-latest strong {
+    color: var(--orange);
+    text-shadow: 0 0 8px rgba(197, 140, 101, 0.7), 0 0 16px rgba(197, 140, 101, 0.4);
 }
 
 .explorer-window {
@@ -454,9 +487,11 @@ nav {
 }
 
 @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-    20%, 40%, 60%, 80% { transform: translateX(5px); }
+    0%, 24% { transform: translateX(0); }
+    25%, 49% { transform: translateX(-6px); }
+    50%, 74% { transform: translateX(6px); }
+    75%, 99% { transform: translateX(-6px); }
+    100% { transform: translateX(0); }
 }
 
 
@@ -599,4 +634,42 @@ body.transitioning #overlay {
 
 img.folder-icon-img.disabled {
     opacity: 0.3 !important
+}
+
+/* Niko leave easter egg: only the fact-box glitches out (Niko leaves), rest of page stays */
+.explorer-window.ready .fact-box.niko-leaving,
+.fact-box.niko-leaving {
+  transform-origin: center center;
+  animation: fact-box-glitch-out 420ms steps(2, end) forwards;
+}
+
+.fact-box.niko-left .fact-image,
+.fact-box.niko-left .fact-content .fact-titlebar {
+  display: none;
+}
+
+.fact-box.niko-left .fact-content {
+  padding: 15px;
+  display: block;
+  text-align: center;
+}
+
+.fact-box.niko-left .fact-text p {
+  margin: 0;
+}
+
+.fact-box.niko-left .fact-source {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.fact-box.niko-left {
+  opacity: 1;
+  min-height: 80px;
+}
+
+@keyframes fact-box-glitch-out {
+  0%   { opacity: 1; transform: scale(1); filter: brightness(1) contrast(1); }
+  50%  { opacity: 1; transform: scale(0.98) scaleY(0.92) skewX(-6deg); filter: brightness(1.2); }
+  100% { opacity: 0; transform: scale(1.14) scaleY(0.04); filter: brightness(2.2) contrast(1.2); }
 }

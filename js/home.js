@@ -1,5 +1,3 @@
-
-
 var navbarHTML = `
 <div id="path"></div>
 <div id="status">date</div>
@@ -31,13 +29,7 @@ $(document).ready(function(){
     buildNavbarPath();
     $(".botbar").html(footerHTML);
 
-    // $(".folder").click(function(){
-    //     console.log("ok");
-    //     var folder = $(this).attr("folder");
-    //     $("[infolder=" + folder + "]").toggle();
-    // });
-    
-    // OPT: was 1ms (heavy). Clock only needs per-second updates.
+
     setInterval(setStatusBar, 1000);
     
     $(".mainwindow").focus();
@@ -63,7 +55,7 @@ $(document).ready(function(){
         }, 150);
     });
 
-    // Restore interactive state when returning via Back (bfcache restores DOM as-is)
+
     window.addEventListener('pageshow', function (event) {
         if (event.persisted) {
             $('.folder-icon').css('pointer-events', '');
@@ -145,13 +137,81 @@ if (typeof facts !== 'undefined'){
         let isAnimating = false
         let factInterval
 
+        let nikoClickTimes = []
+        let nikoTotalClicks = 0
+        let nikoHasLeft = false
+        let introTimeoutId = null
+        const NIKO_LEAVE_RAPID = 8
+        const NIKO_LEAVE_RAPID_MS = 4000
+        const NIKO_LEAVE_TOTAL = 14
+
+        const NIKO_LEAVE_QUOTES = [
+            "I'm getting out of here...",
+            "I have to go.",
+            "This is too much... I'm leaving.",
+            "Sorry, I can't stay.",
+            "I'm going. Bye.",
+            "I don't want to be here anymore.",
+            "I have to leave. Take care of the sun.",
+            "It's too loud here. I'm leaving.",
+            "I'm out.",
+            "...I'm going home.",
+        ]
+
+        function playHitSound() {
+            try {
+                var ctx = new (window.AudioContext || window.webkitAudioContext)()
+                var osc = ctx.createOscillator();
+                var gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = "square";
+                osc.frequency.setValueAtTime(80, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.06);
+                gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.08);
+            } catch (e) {}
+        }
+
+        function nikoLeave() {
+            if (nikoHasLeft) return
+            nikoHasLeft = true
+            clearInterval(factInterval)
+            clearTimeout(resetTimeout)
+            if (introTimeoutId != null) clearTimeout(introTimeoutId)
+            var quote = NIKO_LEAVE_QUOTES[Math.floor(Math.random() * NIKO_LEAVE_QUOTES.length)]
+            $('.fact-titlebar').text('...')
+            $factText.text(quote)
+            $factSource.text("")
+            $image.attr('src', '/images/Niko.png')
+            var $factBox = $('.fact-box')
+            $factBox.css('pointer-events', 'none')
+            setTimeout(function() {
+                $factBox.addClass('niko-leaving')
+                var leaveDone = false
+                function finishLeave() {
+                    if (leaveDone) return
+                    leaveDone = true
+                    $factBox.off('animationend webkitAnimationEnd')
+                    $factBox.removeClass('niko-leaving').addClass('niko-left')
+                    $factText.text("")
+                    $factSource.text("Niko has left.")
+                    $factBox.css('pointer-events', 'auto')
+                }
+                $factBox.on('animationend webkitAnimationEnd', function(e) {
+                    if (e.animationName === 'fact-box-glitch-out') finishLeave()
+                })
+                setTimeout(finishLeave, 500)
+            }, 1800)
+        }
+    
         setTimeout(() => {
             $('.explorer-window').addClass('ready');
-            setTimeout(() => {
-                
+            introTimeoutId = setTimeout(() => {
+                introTimeoutId = null
                 $('.fact-titlebar').html('Did You Know?')
-                
-
                 showRandomFact();
                 startFactInterval();
             }, 2000);
@@ -164,6 +224,22 @@ if (typeof facts !== 'undefined'){
     
     
         $image.on('click', function() { // SCOLDING THE CAT
+            if (nikoHasLeft) return
+            if (introTimeoutId != null) {
+                clearTimeout(introTimeoutId)
+                introTimeoutId = null
+            }
+            nikoTotalClicks++
+            var now = Date.now()
+            nikoClickTimes.push(now)
+            nikoClickTimes = nikoClickTimes.filter(function(t) { return now - t < NIKO_LEAVE_RAPID_MS })
+            if (nikoClickTimes.length >= NIKO_LEAVE_RAPID || nikoTotalClicks >= NIKO_LEAVE_TOTAL) {
+                nikoLeave()
+                return
+            }
+
+            playHitSound()
+
             clearTimeout(resetTimeout);
             clearInterval(factInterval);
     
@@ -180,15 +256,16 @@ if (typeof facts !== 'undefined'){
     
             if (!isAnimating) {
                 isAnimating = true;
-                $explorer.css('animation', 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both');
+                $explorer.css('animation', 'shake 0.32s steps(4, end) both');
     
                 setTimeout(() => {
                     $explorer.css('animation', 'none');
                     isAnimating = false;
-                }, 500);
+                }, 320);
             }
     
             resetTimeout = setTimeout(() => {
+                $('.fact-titlebar').html('Did You Know?');
                 showRandomFact();
                 startFactInterval();
             }, 5000);
