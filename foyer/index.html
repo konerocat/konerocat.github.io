@@ -89,7 +89,9 @@
     </div>
     </div>
     <script>
-        
+    // GoatCounter: (1) count.js sends page views. If it fails to load (e.g. Adblock Plus blocking gc.zgo.at),
+    // disable the blocker for this site or whitelist gc.zgo.at. (2) TOTAL.json shows the number; if you see CORS
+    // error, add your site URL in GoatCounter dashboard → your site → Settings → "Allow" (e.g. https://konerocat.github.io).
     (function() {
         var wrap = document.getElementById('visit-counter-wrap');
         var code = wrap && wrap.getAttribute('data-goatcounter');
@@ -101,15 +103,20 @@
         var script = document.createElement('script');
         script.setAttribute('data-goatcounter', 'https://' + code + '.goatcounter.com/count');
         script.async = true;
-        script.src = '//gc.zgo.at/count.js';
+        script.src = 'https://gc.zgo.at/count.js';
+        script.onerror = function() { /* blocked e.g. by ad blocker */ };
         document.head.appendChild(script);
-        fetch('https://' + code + '.goatcounter.com/counter/TOTAL.json').then(function(r) { return r.json(); }).then(function(d) {
-            var el = document.getElementById('visit-count');
-            if (el && d && d.count != null) el.textContent = d.count;
-        }).catch(function() {
-            var el = document.getElementById('visit-count');
-            if (el) el.textContent = '???';
-        });
+        fetch('https://' + code + '.goatcounter.com/counter/TOTAL.json', { mode: 'cors' })
+            .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+            .then(function(d) {
+                var el = document.getElementById('visit-count');
+                if (el && d && (d.count != null || d.count_unique != null))
+                    el.textContent = d.count_unique != null ? d.count_unique : d.count;
+            })
+            .catch(function() {
+                var el = document.getElementById('visit-count');
+                if (el) el.textContent = '???';
+            });
     })();
     </script>
     <div class="fakebotbar"></div>

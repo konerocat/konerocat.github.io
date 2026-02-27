@@ -153,7 +153,7 @@ if (typeof facts !== 'undefined'){
             "I'm going. Bye.",
             "I don't want to be here anymore.",
             "I have to leave. Take care of the sun.",
-            "It's too loud here. I'm leaving.",
+            "Sorry, I'm leaving.",
             "I'm out.",
             "...I'm going home.",
         ]
