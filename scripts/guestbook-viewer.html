@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guestbook Viewer (local)</title>
+<style>
+  :root { --bg: #111; --fg: #EAE7DE; --purple: #78589d; --orange: #c58c65; --dark2: #181818; }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--fg); font-family: "Courier New", monospace; margin: 0; padding: 20px; }
+  h1 { color: var(--purple); font-size: 1.6em; margin-bottom: 10px; }
+  p.hint { color: var(--orange); font-size: 0.9em; opacity: 0.8; margin-bottom: 20px; }
+  textarea { width: 100%; max-width: 800px; height: 120px; font-family: monospace; font-size: 0.9em; background: var(--dark2); color: var(--fg); border: 2px solid var(--purple); padding: 10px; resize: vertical; }
+  button { font-family: monospace; padding: 8px 20px; background: var(--purple); color: var(--fg); border: ridge 3px var(--purple); cursor: pointer; margin-top: 10px; font-size: 1em; }
+  button:hover { background: var(--fg); color: var(--purple); }
+  .entry { margin-top: 30px; border: ridge 3px var(--purple); padding: 20px; background: rgba(10,10,10,0.7); max-width: 800px; }
+  .entry-name { color: var(--orange); font-size: 1.1em; font-weight: bold; }
+  .entry-name.anon { color: var(--purple); font-style: italic; }
+  .entry-vis { font-size: 0.85em; padding: 2px 8px; border-radius: 2px; margin-left: 10px; }
+  .entry-vis.pub { background: var(--purple); color: var(--fg); }
+  .entry-vis.priv { background: var(--orange); color: var(--bg); }
+  .entry-message { white-space: pre-wrap; word-break: break-word; margin: 14px 0; line-height: 1.5; }
+  canvas { border: 2px solid var(--purple); background: var(--bg); display: block; margin-top: 12px; max-width: 100%; }
+  .error { color: #e88; margin-top: 10px; }
+  .labels { margin-top: 8px; font-size: 0.85em; color: var(--purple); }
+</style>
+</head>
+<body>
+<h1>Guestbook Viewer</h1>   
+<textarea id="json-input" placeholder='{"name":"...","message":"...","public":true,"drawing":{...}}'></textarea>
+<br>
+<button onclick="renderEntry()">Render</button>
+<div id="output"></div>
+<script>
+function drawStroke(ctx, s) {
+  if (!s.points || !s.points.length) return;
+  ctx.strokeStyle = s.color || '#78589d';
+  ctx.lineWidth = s.width || 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(s.points[0].x, s.points[0].y);
+  for (var i = 1; i < s.points.length; i++) ctx.lineTo(s.points[i].x, s.points[i].y);
+  ctx.stroke();
+}
+function renderEntry() {
+  var out = document.getElementById('output');
+  var raw = document.getElementById('json-input').value.trim();
+  out.innerHTML = '';
+  if (!raw) { out.innerHTML = '<p class="error">Paste JSON first.</p>'; return; }
+  var data;
+  try { data = JSON.parse(raw); } catch (e) { out.innerHTML = '<p class="error">Invalid JSON: ' + e.message + '</p>'; return; }
+  var el = document.createElement('div');
+  el.className = 'entry';
+  var name = data.name || '';
+  var html = '<div><span class="entry-name' + (name ? '' : ' anon') + '">' + esc(name || 'Anonymous') + '</span>';
+  html += '<span class="entry-vis ' + (data.public ? 'pub' : 'priv') + '">' + (data.public ? 'public' : 'private') + '</span></div>';
+  if (data.message) html += '<div class="entry-message">' + esc(data.message) + '</div>';
+  el.innerHTML = html;
+  if (data.drawing && data.drawing.strokes && data.drawing.strokes.length) {
+    var c = document.createElement('canvas');
+    c.width = data.drawing.width || 400;
+    c.height = data.drawing.height || 300;
+    el.appendChild(c);
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = data.drawing.backgroundColor || '#111111';
+    ctx.fillRect(0, 0, c.width, c.height);
+    data.drawing.strokes.forEach(function (s) { drawStroke(ctx, s); });
+  }
+  out.appendChild(el);
+}
+function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+</script>
+</body>
+</html>

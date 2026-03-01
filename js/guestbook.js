@@ -1,410 +1,498 @@
-
 (function () {
     'use strict';
 
-    var GUESTBOOK_API_BASE = typeof window !== 'undefined' && window.GUESTBOOK_API_URL ? window.GUESTBOOK_API_URL : '';
+    var API_BASE = (typeof window !== 'undefined' && window.GUESTBOOK_API_URL) ? window.GUESTBOOK_API_URL : '';
 
-    document.addEventListener('DOMContentLoaded', function () { init(); });
+    document.addEventListener('DOMContentLoaded', init);
 
     function init() {
-    var CANVAS_WIDTH = 400;
-    var CANVAS_HEIGHT = 300;
-    var MAX_STROKES = 80;
-    var MAX_POINTS_PER_STROKE = 400;
-    var MAX_TOTAL_POINTS = 8000;
-    var DOWNSAMPLE_EVERY = 2;
+        var CANVAS_W = 400;
+        var CANVAS_H = 250;
+        var CANVAS_H_EXP = 400;
+        var MAX_STROKES = 100;
+        var MAX_POINTS = 400;
+        var MAX_TOTAL = 10000;
+        var DOWNSAMPLE = 3;
 
-    var drawing = {
-        strokes: [],
-        currentStroke: null,
-        tool: 'pen',
-        color: '#78589d',
-        penWidth: 2,
-        eraserWidth: 20,
-        undoStack: []
-    };
-
-    var canvasEl = document.getElementById('gb-canvas');
-    var ctx = canvasEl ? canvasEl.getContext('2d') : null;
-
-    function getCanvasDrawing() {
-        if (!drawing.strokes.length) return null;
-        var strokes = drawing.strokes.map(function (s) {
-            var points = s.points;
-            if (DOWNSAMPLE_EVERY > 1) {
-                points = points.filter(function (_, i) { return i % DOWNSAMPLE_EVERY === 0 || i === points.length - 1; });
-            }
-            return { color: s.color, width: s.width, points: points };
-        });
-        return {
-            width: CANVAS_WIDTH,
-            height: CANVAS_HEIGHT,
-            backgroundColor: null,
-            strokes: strokes
+        var expanded = false;
+        var drawing = {
+            strokes: [],
+            current: null,
+            tool: 'pen',
+            color: '#EAE7DE',
+            penWidth: 2,
+            eraserWidth: 20,
+            undoStack: []
         };
-    }
 
-    function drawStroke(ctx, stroke) {
-        if (!stroke.points.length) return;
-        ctx.strokeStyle = stroke.color;
-        ctx.lineWidth = stroke.width;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.beginPath();
-        ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
-        for (var i = 1; i < stroke.points.length; i++) {
-            ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
+        var canvasEl = document.getElementById('gb-canvas');
+        var ctx = canvasEl ? canvasEl.getContext('2d') : null;
+
+
+
+        var modal = document.getElementById('gb-modal');
+        var openBtn = document.getElementById('gb-open-form');
+        var closeBtn = modal ? modal.querySelector('[data-close]') : null;
+        var backdrop = modal ? modal.querySelector('.gb-modal-backdrop') : null;
+
+        function openModal() {
+            if (!modal) return;
+            modal.classList.add('is-open');
+            modal.setAttribute('aria-hidden', 'false');
         }
-        ctx.stroke();
-    }
 
-    function redrawCanvas() {
-        if (!ctx || !canvasEl) return;
-        ctx.fillStyle = '#111111';
-        ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
-        drawing.strokes.forEach(function (s) { drawStroke(ctx, s); });
-    }
-
-    function getPos(e) {
-        var rect = canvasEl.getBoundingClientRect();
-        var scaleX = canvasEl.width / rect.width;
-        var scaleY = canvasEl.height / rect.height;
-        var clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        var clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return {
-            x: (clientX - rect.left) * scaleX,
-            y: (clientY - rect.top) * scaleY,
-            t: Date.now()
-        };
-    }
-
-    function startStroke(x, y, t) {
-        if (drawing.strokes.length >= MAX_STROKES) return;
-        var color = drawing.tool === 'eraser' ? '#111111' : drawing.color;
-        var width = drawing.tool === 'eraser' ? drawing.eraserWidth : drawing.penWidth;
-        drawing.currentStroke = { color: color, width: width, points: [{ x: x, y: y, t: t }] };
-    }
-
-    function addPoint(x, y, t) {
-        if (!drawing.currentStroke) return;
-        var pts = drawing.currentStroke.points;
-        if (pts.length >= MAX_POINTS_PER_STROKE) return;
-        var total = drawing.strokes.reduce(function (sum, s) { return sum + s.points.length; }, 0) + pts.length;
-        if (total >= MAX_TOTAL_POINTS) return;
-        pts.push({ x: x, y: y, t: t });
-        drawStroke(ctx, { color: drawing.currentStroke.color, width: drawing.currentStroke.width, points: pts.slice(-2) });
-    }
-
-    function endStroke() {
-        if (drawing.currentStroke && drawing.currentStroke.points.length > 0) {
-            drawing.strokes.push(drawing.currentStroke);
+        function closeModal() {
+            if (!modal) return;
+            modal.classList.remove('is-open');
+            modal.setAttribute('aria-hidden', 'true');
         }
-        drawing.currentStroke = null;
-    }
 
-    function initCanvas() {
-        if (!canvasEl || !ctx) return;
-        redrawCanvas();
-
-        canvasEl.addEventListener('mousedown', function (e) {
-            e.preventDefault();
-            var p = getPos(e);
-            startStroke(p.x, p.y, p.t);
+        if (openBtn) openBtn.addEventListener('click', openModal);
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        if (backdrop) backdrop.addEventListener('click', closeModal);
+        window.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeModal();
         });
-        canvasEl.addEventListener('mousemove', function (e) {
-            if (!drawing.currentStroke) return;
-            e.preventDefault();
-            var p = getPos(e);
-            addPoint(p.x, p.y, p.t);
-        });
-        canvasEl.addEventListener('mouseup', endStroke);
-        canvasEl.addEventListener('mouseleave', endStroke);
-        canvasEl.addEventListener('touchstart', function (e) {
-            e.preventDefault();
-            var p = getPos(e);
-            startStroke(p.x, p.y, p.t);
-        }, { passive: false });
-        canvasEl.addEventListener('touchmove', function (e) {
-            if (!drawing.currentStroke) return;
-            e.preventDefault();
-            var p = getPos(e);
-            addPoint(p.x, p.y, p.t);
-        }, { passive: false });
-        canvasEl.addEventListener('touchend', function (e) {
-            e.preventDefault();
-            endStroke();
-        }, { passive: false });
-    }
 
 
-    function setTool(tool) {
-        drawing.tool = tool;
-        document.querySelectorAll('.gb-tool-btn').forEach(function (btn) {
-            btn.classList.toggle('active', btn.getAttribute('data-tool') === tool);
-        });
-    }
 
-    function setColor(color) {
-        drawing.color = color;
-        document.querySelectorAll('.color-btn').forEach(function (btn) {
-            btn.classList.toggle('active', btn.getAttribute('data-color') === color);
-        });
-    }
-
-    document.querySelectorAll('.gb-tool-btn').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var t = btn.getAttribute('data-tool');
-            if (t === 'undo') {
-                if (drawing.strokes.length) {
-                    drawing.undoStack.push(drawing.strokes.pop());
-                    redrawCanvas();
+        function getCanvasDrawing() {
+            if (!drawing.strokes.length) return null;
+            var out = drawing.strokes.map(function (s) {
+                var pts = s.points;
+                if (DOWNSAMPLE > 1) {
+                    pts = pts.filter(function (_, i) { return i % DOWNSAMPLE === 0 || i === pts.length - 1; });
                 }
-            } else if (t === 'clear') {
-                drawing.undoStack = [];
-                drawing.strokes = [];
-                drawing.currentStroke = null;
-                redrawCanvas();
-            } else {
-                setTool(t);
-            }
-        });
-    });
-
-    document.querySelectorAll('.color-btn').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            setColor(btn.getAttribute('data-color'));
-            setTool('pen');
-        });
-    });
-
-
-    var messageEl = document.getElementById('gb-message');
-    var countEl = document.getElementById('message-count');
-    if (messageEl && countEl) {
-        function updateCount() {
-            countEl.textContent = messageEl.value.length + ' / 2000';
-        }
-        messageEl.addEventListener('input', updateCount);
-        updateCount();
-    }
-
-
-    function escapeHtml(text) {
-        if (text == null || text === '') return '';
-        var div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-
-    function renderDrawingToCanvas(canvas, data, fit) {
-        if (!data || !data.strokes || !data.strokes.length) return;
-        var w = data.width || CANVAS_WIDTH;
-        var h = data.height || CANVAS_HEIGHT;
-        canvas.width = w;
-        canvas.height = h;
-        var c = canvas.getContext('2d');
-        c.fillStyle = data.backgroundColor || '#111111';
-        c.fillRect(0, 0, w, h);
-        var scale = 1;
-        var offsetX = 0, offsetY = 0;
-        if (fit && canvas.parentElement) {
-            var maxW = canvas.parentElement.clientWidth || w;
-            var maxH = 200;
-            scale = Math.min(maxW / w, maxH / h, 1);
-            offsetX = (maxW - w * scale) / 2;
-            offsetY = (maxH - h * scale) / 2;
-        }
-        c.save();
-        c.translate(offsetX, offsetY);
-        c.scale(scale, scale);
-        data.strokes.forEach(function (s) { drawStroke(c, s); });
-        c.restore();
-    }
-
-
-    var GUESTBOOK_JSON_URL = '/public/guestbook.json';
-
-    function loadEntries() {
-        var container = document.getElementById('guestbook-entries');
-        var loading = document.getElementById('entries-loading');
-        if (!container) return;
-
-        function showError(msg) {
-            if (loading) loading.remove();
-            container.innerHTML = '<p class="entries-loading">' + escapeHtml(msg) + '</p>';
-        }
-
-        function renderEntries(entries) {
-            if (loading) loading.remove();
-            if (!entries || !entries.length) {
-                container.innerHTML = '<p class="entries-loading">No messages yet. Be the first!</p>';
-                return;
-            }
-            container.innerHTML = '';
-            entries.forEach(function (entry) {
-                var card = document.createElement('div');
-                card.className = 'entry-card';
-                var name = entry.displayName != null && entry.displayName !== '' ? entry.displayName : '';
-                var date = entry.created_at ? entry.created_at : '';
-                var msg = entry.message != null ? entry.message : '';
-                var html = '<div class="entry-header">';
-                html += '<span class="entry-name' + (name ? '' : ' empty') + '"></span>';
-                if (date) html += '<span class="entry-date"></span>';
-                html += '</div>';
-                if (msg) html += '<p class="entry-message"></p>';
-                if (entry.drawing && entry.drawing.strokes && entry.drawing.strokes.length) {
-                    html += '<div class="entry-drawing-wrap">';
-                    html += '<canvas class="entry-drawing-thumb" width="' + (entry.drawing.width || 400) + '" height="' + (entry.drawing.height || 300) + '" role="img" aria-label="User drawing"></canvas>';
-                    html += '</div>';
-                }
-                if (entry.ownerReply && entry.ownerReply.text) {
-                    html += '<div class="entry-reply">';
-                    html += '<div class="entry-reply-label">Reply from me</div>';
-                    html += '<div class="entry-reply-text"></div>';
-                    html += '</div>';
-                }
-                card.innerHTML = html;
-                var nameEl = card.querySelector('.entry-name');
-                var dateEl = card.querySelector('.entry-date');
-                var msgEl = card.querySelector('.entry-message');
-                var replyEl = card.querySelector('.entry-reply-text');
-                if (nameEl) nameEl.textContent = name || 'Anonymous';
-                if (dateEl) dateEl.textContent = date;
-                if (msgEl) msgEl.textContent = msg;
-                if (replyEl) replyEl.textContent = entry.ownerReply.text;
-                var thumb = card.querySelector('.entry-drawing-thumb');
-                if (thumb && entry.drawing) {
-                    renderDrawingToCanvas(thumb, entry.drawing, true);
-                    thumb.addEventListener('click', function () {
-                        if (thumb.classList.contains('expanded')) {
-                            thumb.classList.remove('expanded');
-                            renderDrawingToCanvas(thumb, entry.drawing, true);
-                        } else {
-                            thumb.classList.add('expanded');
-                            renderDrawingToCanvas(thumb, entry.drawing, false);
-                        }
-                    });
-                }
-                container.appendChild(card);
+                pts = pts.map(function (p) { return { x: Math.round(p.x), y: Math.round(p.y) }; });
+                return { color: s.color, width: s.width, points: pts };
             });
+            return { width: canvasEl.width, height: canvasEl.height, backgroundColor: null, strokes: out };
         }
 
-        fetch(GUESTBOOK_JSON_URL, { cache: 'default' })
-            .then(function (r) {
-                if (!r.ok) throw new Error('Could not load guestbook.');
-                return r.json();
-            })
-            .then(function (data) {
-                var list = Array.isArray(data) ? data : (data.entries || []);
-                renderEntries(list);
-            })
-            .catch(function () {
-                showError('Could not load guestbook. Try again later.');
-            });
-    }
-
-
-    var form = document.getElementById('guestbook-form');
-    var submitBtn = document.getElementById('gb-submit');
-    var formStatus = document.getElementById('form-status');
-
-    function setStatus(msg, isError) {
-        var el = formStatus || document.getElementById('form-status');
-        if (el) {
-            el.textContent = msg;
-            el.className = 'form-status' + (isError ? ' error' : ' success');
-            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        } else {
-            console.error('[Guestbook]', msg);
+        function drawStroke(c, s) {
+            if (!s.points || !s.points.length) return;
+            c.strokeStyle = s.color;
+            c.lineWidth = s.width;
+            c.lineCap = 'round';
+            c.lineJoin = 'round';
+            c.beginPath();
+            c.moveTo(s.points[0].x, s.points[0].y);
+            for (var i = 1; i < s.points.length; i++) c.lineTo(s.points[i].x, s.points[i].y);
+            c.stroke();
         }
-    }
 
-    if (form) {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            doSubmit();
-            return false;
-        });
-        if (submitBtn) submitBtn.addEventListener('click', function () { doSubmit(); });
-    }
+        function redraw() {
+            if (!ctx || !canvasEl) return;
+            ctx.fillStyle = '#111111';
+            ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
+            drawing.strokes.forEach(function (s) { drawStroke(ctx, s); });
+        }
 
-    function doSubmit() {
-            try {
-                setStatus('Checking…', false);
-            } catch (e) {}
-            try {
-            if (!form) { setStatus('Form not found.', true); return; }
-            var name = (document.getElementById('gb-name') && document.getElementById('gb-name').value) || '';
-            var message = (document.getElementById('gb-message') && document.getElementById('gb-message').value) || '';
-            var visibility = form && form.querySelector('input[name="visibility"]:checked');
-            var isPublic = visibility ? visibility.value === 'public' : true;
-            var honeypot = document.getElementById('website_url');
-            if (honeypot && honeypot.value) {
-                setStatus('Submission ignored.', true);
-                return;
-            }
-
-            var drawingData = getCanvasDrawing();
-            if (!message.trim() && (!drawingData || !drawingData.strokes.length)) {
-                setStatus('Please add a message and/or a drawing.', true);
-                return;
-            }
-
-            var turnstileResponse = null;
-            var tw = document.querySelector('[name="cf-turnstile-response"]');
-            if (tw) turnstileResponse = tw.value;
-            if (!turnstileResponse && typeof window.__gbTurnstileToken === 'string') turnstileResponse = window.__gbTurnstileToken;
-            if (!turnstileResponse) {
-                setStatus('Verification required. Complete the checkbox above. If it never appears or shows an error, add konerocat.github.io in Cloudflare Turnstile → Hostname Management, then refresh or try Chrome.', true);
-                return;
-            }
-           
-            if (submitBtn) submitBtn.disabled = true;
-            setStatus('Sending...', false);
-
-            var url = GUESTBOOK_API_BASE + '/api/guestbook/submit';
-            if (typeof console !== 'undefined' && console.log) console.log('[Guestbook] Token found, sending to', url);
-            var payload = {
-                name: name.slice(0, 80),
-                message: message.slice(0, 2000),
-                public: isPublic,
-                drawing: drawingData,
-                'cf-turnstile-response': turnstileResponse
+        function getPos(e) {
+            var rect = canvasEl.getBoundingClientRect();
+            var sx = canvasEl.width / rect.width;
+            var sy = canvasEl.height / rect.height;
+            var cx = e.touches && e.touches.length ? e.touches[0].clientX : e.clientX;
+            var cy = e.touches && e.touches.length ? e.touches[0].clientY : e.clientY;
+            var x = (cx - rect.left) * sx;
+            var y = (cy - rect.top) * sy;
+            return {
+                x: Math.max(0, Math.min(canvasEl.width, x)),
+                y: Math.max(0, Math.min(canvasEl.height, y))
             };
+        }
 
-            fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
+        function beginStroke(x, y) {
+            if (drawing.strokes.length >= MAX_STROKES) return;
+            var col = drawing.tool === 'eraser' ? '#111111' : drawing.color;
+            var w = drawing.tool === 'eraser' ? drawing.eraserWidth : drawing.penWidth;
+            drawing.current = { color: col, width: w, points: [{ x: x, y: y }] };
+        }
+
+        function extendStroke(x, y) {
+            if (!drawing.current) return;
+            var pts = drawing.current.points;
+            if (pts.length >= MAX_POINTS) return;
+            var total = drawing.strokes.reduce(function (n, s) { return n + s.points.length; }, 0) + pts.length;
+            if (total >= MAX_TOTAL) return;
+            pts.push({ x: x, y: y });
+            drawStroke(ctx, { color: drawing.current.color, width: drawing.current.width, points: pts.slice(-2) });
+        }
+
+        function finishStroke() {
+            if (drawing.current && drawing.current.points.length > 0) {
+                drawing.strokes.push(drawing.current);
+                drawing.undoStack = [];
+            }
+            drawing.current = null;
+        }
+
+
+
+        function initCanvas() {
+            if (!canvasEl || !ctx) return;
+            redraw();
+
+            if (window.PointerEvent) {
+                canvasEl.addEventListener('pointerdown', function (e) {
+                    e.preventDefault();
+                    canvasEl.setPointerCapture(e.pointerId);
+                    var p = getPos(e);
+                    beginStroke(p.x, p.y);
+                });
+                canvasEl.addEventListener('pointermove', function (e) {
+                    if (!drawing.current) return;
+                    e.preventDefault();
+                    var p = getPos(e);
+                    extendStroke(p.x, p.y);
+                });
+                canvasEl.addEventListener('pointerup', function (e) {
+                    finishStroke();
+                    canvasEl.releasePointerCapture(e.pointerId);
+                });
+                canvasEl.addEventListener('pointercancel', function () { finishStroke(); });
+            } else {
+                canvasEl.addEventListener('mousedown', function (e) {
+                    e.preventDefault();
+                    var p = getPos(e);
+                    beginStroke(p.x, p.y);
+                });
+                document.addEventListener('mousemove', function (e) {
+                    if (!drawing.current) return;
+                    var p = getPos(e);
+                    extendStroke(p.x, p.y);
+                });
+                document.addEventListener('mouseup', finishStroke);
+
+                canvasEl.addEventListener('touchstart', function (e) {
+                    e.preventDefault();
+                    var p = getPos(e);
+                    beginStroke(p.x, p.y);
+                }, { passive: false });
+                canvasEl.addEventListener('touchmove', function (e) {
+                    if (!drawing.current) return;
+                    e.preventDefault();
+                    var p = getPos(e);
+                    extendStroke(p.x, p.y);
+                }, { passive: false });
+                canvasEl.addEventListener('touchend', function (e) {
+                    e.preventDefault();
+                    finishStroke();
+                }, { passive: false });
+            }
+        }
+
+
+
+        function setActiveTool(name) {
+            drawing.tool = name;
+            document.querySelectorAll('.gb-tool[data-tool]').forEach(function (b) {
+                if (b.dataset.tool === 'pen' || b.dataset.tool === 'eraser') {
+                    b.classList.toggle('active', b.dataset.tool === name);
+                }
+            });
+        }
+
+        function setActiveColor(color) {
+            drawing.color = color;
+            document.querySelectorAll('.gb-color').forEach(function (b) {
+                b.classList.toggle('active', b.dataset.color === color);
+            });
+        }
+
+        document.querySelectorAll('.gb-tool[data-tool]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var t = btn.dataset.tool;
+                if (t === 'undo') {
+                    if (drawing.strokes.length) {
+                        drawing.undoStack.push(drawing.strokes.pop());
+                        redraw();
+                    }
+                } else if (t === 'clear') {
+                    drawing.undoStack = [];
+                    drawing.strokes = [];
+                    drawing.current = null;
+                    redraw();
+                } else {
+                    setActiveTool(t);
+                }
+            });
+        });
+
+        document.querySelectorAll('.gb-color').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                setActiveColor(btn.dataset.color);
+                setActiveTool('pen');
+            });
+        });
+
+        var sizeSlider = document.getElementById('gb-pen-size');
+        var sizeVal = document.getElementById('gb-pen-size-val');
+        if (sizeSlider) {
+            sizeSlider.addEventListener('input', function () {
+                drawing.penWidth = parseInt(sizeSlider.value, 10);
+                if (sizeVal) sizeVal.textContent = sizeSlider.value;
+            });
+        }
+
+
+
+        var expandBtn = document.getElementById('gb-expand');
+        if (expandBtn && canvasEl) {
+            expandBtn.addEventListener('click', function () {
+                expanded = !expanded;
+                canvasEl.height = expanded ? CANVAS_H_EXP : CANVAS_H;
+                expandBtn.textContent = expanded ? 'shrink' : 'expand';
+                redraw();
+            });
+        }
+
+
+
+        var palette = document.querySelector('.gb-palette');
+        if (palette) {
+            var wrap = document.createElement('div');
+            wrap.className = 'gb-custom-color-wrap';
+            var swatch = document.createElement('div');
+            swatch.className = 'gb-custom-color-swatch';
+            var picker = document.createElement('input');
+            picker.type = 'color';
+            picker.value = '#ff69b4';
+            picker.title = 'Custom color';
+            wrap.appendChild(picker);
+            wrap.appendChild(swatch);
+            palette.appendChild(wrap);
+
+            picker.addEventListener('input', function () {
+                drawing.color = picker.value;
+                swatch.style.background = picker.value;
+                document.querySelectorAll('.gb-color').forEach(function (b) { b.classList.remove('active'); });
+                setActiveTool('pen');
+            });
+        }
+
+
+
+        var messageEl = document.getElementById('gb-message');
+        var countEl = document.getElementById('message-count');
+        if (messageEl && countEl) {
+            messageEl.addEventListener('input', function () {
+                countEl.textContent = messageEl.value.length + ' / 2000';
+            });
+        }
+
+
+        function renderDrawingToCanvas(canvas, data) {
+            if (!data || !data.strokes || !data.strokes.length) return;
+            var w = data.width || CANVAS_W;
+            var h = data.height || CANVAS_H;
+            canvas.width = w;
+            canvas.height = h;
+            var c = canvas.getContext('2d');
+            c.fillStyle = data.backgroundColor || '#111111';
+            c.fillRect(0, 0, w, h);
+            data.strokes.forEach(function (s) { drawStroke(c, s); });
+        }
+
+        function loadEntries() {
+            var container = document.getElementById('guestbook-entries');
+            var loading = document.getElementById('entries-loading');
+            if (!container) return;
+
+            fetch('/public/guestbook.json', { cache: 'default' })
+                .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+                .then(function (data) {
+                    var list = Array.isArray(data) ? data : (data.entries || []);
+                    if (loading) loading.remove();
+                    if (!list.length) {
+                        container.innerHTML = '<p class="gb-entries-empty">no transmissions received yet.</p>';
+                        return;
+                    }
+                    container.innerHTML = '';
+                    list.forEach(function (entry, idx) {
+                        var el = document.createElement('div');
+                        el.className = 'gb-entry';
+                        el.style.animationDelay = Math.min(idx * 0.04, 0.24) + 's';
+
+                        var name = entry.displayName || '';
+                        var date = entry.created_at || '';
+
+                        var bar = document.createElement('div');
+                        bar.className = 'gb-entry-bar';
+
+                        var nameSpan = document.createElement('span');
+                        nameSpan.className = 'gb-entry-name' + (name ? '' : ' anon');
+                        nameSpan.textContent = name || 'anonymous';
+                        bar.appendChild(nameSpan);
+
+                        if (date) {
+                            var dateSpan = document.createElement('span');
+                            dateSpan.className = 'gb-entry-date';
+                            dateSpan.textContent = date;
+                            bar.appendChild(dateSpan);
+                        }
+                        el.appendChild(bar);
+
+                        var body = document.createElement('div');
+                        body.className = 'gb-entry-body';
+
+                        if (entry.message) {
+                            var msgP = document.createElement('p');
+                            msgP.className = 'gb-entry-message';
+                            msgP.textContent = entry.message;
+                            body.appendChild(msgP);
+                        }
+
+                        if (entry.drawing && entry.drawing.strokes && entry.drawing.strokes.length) {
+                            var dWrap = document.createElement('div');
+                            dWrap.className = 'gb-entry-drawing';
+                            var cv = document.createElement('canvas');
+                            cv.className = 'gb-entry-canvas';
+                            cv.setAttribute('role', 'img');
+                            cv.setAttribute('aria-label', 'Drawing by ' + (name || 'anonymous'));
+                            dWrap.appendChild(cv);
+
+                            var hint = document.createElement('span');
+                            hint.className = 'gb-drawing-hint';
+                            
+                            dWrap.appendChild(hint);
+
+                            body.appendChild(dWrap);
+                            renderDrawingToCanvas(cv, entry.drawing);
+
+                            cv.addEventListener('click', function () {
+                                openLightbox(entry.drawing);
+                            });
+                        }
+
+                        if (entry.ownerReply && entry.ownerReply.text) {
+                            var reply = document.createElement('div');
+                            reply.className = 'gb-entry-reply';
+                            var label = document.createElement('div');
+                            label.className = 'gb-entry-reply-label';
+                            label.textContent = 'konero:';
+                            reply.appendChild(label);
+                            var rtxt = document.createElement('div');
+                            rtxt.className = 'gb-entry-reply-text';
+                            rtxt.textContent = entry.ownerReply.text;
+                            reply.appendChild(rtxt);
+                            body.appendChild(reply);
+                        }
+
+                        el.appendChild(body);
+                        container.appendChild(el);
+                    });
+                })
+                .catch(function () {
+                    if (loading) loading.textContent = 'could not load transmissions.';
+                });
+        }
+
+        /* ── drawing lightbox ── */
+
+        var lightbox = null;
+
+        function openLightbox(drawingData) {
+            if (!lightbox) {
+                lightbox = document.createElement('div');
+                lightbox.className = 'gb-lightbox';
+                lightbox.innerHTML = '<div class="gb-lightbox-backdrop"></div>';
+                document.body.appendChild(lightbox);
+                lightbox.addEventListener('click', function () {
+                    lightbox.classList.remove('is-open');
+                });
+            }
+            var old = lightbox.querySelector('canvas');
+            if (old) old.remove();
+
+            var cv = document.createElement('canvas');
+            lightbox.appendChild(cv);
+            renderDrawingToCanvas(cv, drawingData);
+            lightbox.classList.add('is-open');
+        }
+
+        /* ── form submit ── */
+
+        var form = document.getElementById('guestbook-form');
+        var submitBtn = document.getElementById('gb-submit');
+        var formStatus = document.getElementById('form-status');
+
+        function setStatus(msg, isError) {
+            var el = formStatus || document.getElementById('form-status');
+            if (el) {
+                el.textContent = msg;
+                el.className = 'gb-status' + (isError ? ' error' : ' success');
+                el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        function doSubmit() {
+            try { setStatus('Checking…', false); } catch (_) {}
+            try {
+                if (!form) { setStatus('Form not found.', true); return; }
+
+                var name = (document.getElementById('gb-name') || {}).value || '';
+                var message = (document.getElementById('gb-message') || {}).value || '';
+                var vis = form.querySelector('input[name="visibility"]:checked');
+                var isPublic = vis ? vis.value === 'public' : true;
+
+                var hp = document.getElementById('website_url');
+                if (hp && hp.value) { setStatus('Submission ignored.', true); return; }
+
+                var drawingData = getCanvasDrawing();
+                if (!message.trim() && (!drawingData || !drawingData.strokes.length)) {
+                    setStatus('Please add a message and/or a drawing.', true);
+                    return;
+                }
+
+                var token = null;
+                var tw = document.querySelector('[name="cf-turnstile-response"]');
+                if (tw) token = tw.value;
+                if (!token && typeof window.__gbTurnstileToken === 'string') token = window.__gbTurnstileToken;
+                if (!token) {
+                    setStatus('Verification required. If it never appears, try Chrome or disable extensions.', true);
+                    return;
+                }
+
+                if (submitBtn) submitBtn.disabled = true;
+                setStatus('Sending...', false);
+
+                var url = API_BASE + '/api/guestbook/submit';
+                var payload = {
+                    name: name.slice(0, 80),
+                    message: message.slice(0, 2000),
+                    public: isPublic,
+                    drawing: drawingData,
+                    'cf-turnstile-response': token
+                };
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                })
                 .then(function (r) {
-                    return r.text().then(function (text) {
-                        try { var j = JSON.parse(text); return { ok: r.ok, status: r.status, json: j }; } catch (e) { return { ok: false, status: r.status, json: null, raw: text }; }
+                    return r.text().then(function (t) {
+                        try { return { ok: r.ok, status: r.status, json: JSON.parse(t) }; }
+                        catch (_) { return { ok: false, status: r.status, json: null, raw: t }; }
                     });
                 })
                 .then(function (res) {
-                    if (typeof console !== 'undefined' && console.log) console.log('[Guestbook] Response', res.status, res.json || res.raw);
                     if (res.ok && res.json && res.json.success) {
-                        setStatus('Thanks! Your entry was submitted.');
+                        setStatus('Thank you! Your message was submitted.', false);
                         form.reset();
                         if (countEl) countEl.textContent = '0 / 2000';
                         drawing.strokes = [];
                         drawing.undoStack = [];
-                        redrawCanvas();
+                        redraw();
                         if (typeof turnstile !== 'undefined' && turnstile.reset) turnstile.reset();
                     } else {
-                        var errMsg = (res.json && res.json.error) ? res.json.error : ('Server returned ' + res.status + (res.raw ? ': ' + res.raw.slice(0, 100) : ''));
-                        setStatus(errMsg, true);
+                        var msg = (res.json && res.json.error) ? res.json.error : ('Server returned ' + res.status);
+                        setStatus(msg, true);
                     }
                 })
                 .catch(function (err) {
-                    if (typeof console !== 'undefined' && console.error) console.error('[Guestbook] Request failed', err);
-                    var msg = 'Request failed. ';
-                    if (err && err.message) msg += err.message;
-                    else msg += 'Check Network tab for CORS or connection errors.';
-                    setStatus(msg, true);
+                    setStatus('Request failed. ' + (err && err.message ? err.message : 'Check your connection.'), true);
                 })
                 .finally(function () {
                     if (submitBtn) submitBtn.disabled = false;
@@ -413,10 +501,21 @@
                 setStatus('Error: ' + (e && e.message ? e.message : 'Something went wrong'), true);
                 if (submitBtn) submitBtn.disabled = false;
             }
-    }
+        }
+
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                doSubmit();
+                return false;
+            });
+            if (submitBtn) submitBtn.addEventListener('click', doSubmit);
+        }
 
 
-    initCanvas();
-    loadEntries();
+
+        initCanvas();
+        loadEntries();
     }
 })();

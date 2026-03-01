@@ -10,102 +10,124 @@
     <script src="/js/jquery-3.6.0.min.js"></script>
     <script src="/js/home.js"></script>
     <script>window.GUESTBOOK_API_URL = 'https://konerocat-github-io.pages.dev';</script>
-    <script src="/js/guestbook.js"></script>
-
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script>
-      window.__gbTurnstileSuccess = function (token) { window.__gbTurnstileReady = true; window.__gbTurnstileToken = token || null; var s = document.getElementById('turnstile-status'); if (s) s.textContent = ''; s && s.classList.remove('turnstile-status-error'); };
-      window.__gbTurnstileError = function (code) { window.__gbTurnstileReady = false; window.__gbTurnstileToken = null; var s = document.getElementById('turnstile-status'); if (s) { s.textContent = 'Verification failed' + (code ? ' (' + code + '). ' : '. ') + 'Try Chrome, a private window, or disable VPN/extensions. Add konerocat.github.io in Turnstile → Hostname Management.'; s.classList.add('turnstile-status-error'); } };
+      window.__gbTurnstileSuccess = function (token) { window.__gbTurnstileReady = true; window.__gbTurnstileToken = token || null; var s = document.getElementById('turnstile-status'); if (s) { s.textContent = ''; s.classList.remove('turnstile-status-error'); } };
+      window.__gbTurnstileError = function (code) { window.__gbTurnstileReady = false; window.__gbTurnstileToken = null; var s = document.getElementById('turnstile-status'); if (s) { s.textContent = 'Verification failed' + (code ? ' (' + code + '). ' : '. ') + 'Try Chrome, a private window, or disable extensions.'; s.classList.add('turnstile-status-error'); } };
     </script>
+    <script defer src="/js/guestbook.js"></script>
 </head>
-<body>
+<body class="guestbook-page">
     <div id="overlay"></div>
     <nav></nav>
-    <div class="mainwindow guestbook-window">
-        <div class="mainwindowbar"></div>
-        <br>
-        <h1 class="guestbook-title">guestbook</h1>
-        <p class="guestbook-intro">Leave a message, a drawing, or both. Public entries appear below after approval; private entries are only visible to me.</p>
 
-
-        <section class="guestbook-form-section retro-terminal" aria-labelledby="form-heading">
-            <div class="terminal-bar">
-                <a class="windowbuttons"><img src="/images/underscore.png" alt=""><img src="/images/X.png" alt=""></a>
-                <span id="form-heading">sign the guestbook</span>
+    <div class="gb-stage">
+        <div class="gb-terminal">
+            <div class="gb-terminal-bar">
+                <span class="gb-terminal-label">guest_log.sys</span>
             </div>
-            <div class="terminal-content form-content">
-                <form id="guestbook-form" novalidate action="#" method="post" onsubmit="event.preventDefault(); return false;">
+            <div class="gb-terminal-body">
+                <div class="gb-header">
+                    <h1 class="gb-title">archives of a cat lover</h1>
+                    <div class="gb-intro">
+                        <p>A gentle mist swirls in your palm, taking the form of an open book.</p>
+                        <p>You reach out to write, yet no ink graces the pages.</p>
+                        <p>A pen materializes between your fingers, waiting for your thoughts.</p>
+                    </div>
+                    <button type="button" id="gb-open-form" class="gb-sign-btn">sign the guestbook</button>
+                </div>
 
+                <div class="gb-divider" role="separator"></div>
+
+                <section class="gb-entries-section" aria-label="Guestbook messages">
+                    <div class="gb-section-label">transmission log</div>
+                    <div id="guestbook-entries" class="gb-entries">
+                        <p class="gb-entries-empty" id="entries-loading">loading...</p>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <div class="gb-modal" id="gb-modal" aria-hidden="true">
+        <div class="gb-modal-backdrop"></div>
+        <div class="gb-modal-window" role="dialog" aria-modal="true" aria-label="Sign the guestbook">
+            <button type="button" class="gb-modal-close" data-close aria-label="Close"><img src="/images/X.png" alt="" width="22" height="22"></button>
+            <div class="gb-modal-body">
+                <form id="guestbook-form" novalidate action="#" method="post" onsubmit="event.preventDefault();return false;">
                     <div class="hp" aria-hidden="true">
-                        <label for="website_url">Leave this blank</label>
+                        <label for="website_url">Leave blank</label>
                         <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off">
                     </div>
 
-                    <div class="form-row">
-                        <label for="gb-name">Name <span class="optional">(optional)</span></label>
+                    <div class="gb-field">
+                        <label for="gb-name">name <span class="gb-optional">(optional)</span></label>
                         <input type="text" id="gb-name" name="name" maxlength="80" autocomplete="name" class="gb-input">
                     </div>
 
-                    <div class="form-row">
-                        <label for="gb-message">Message <span class="optional">(optional if you add a drawing)</span></label>
-                        <textarea id="gb-message" name="message" rows="4" maxlength="2000" class="gb-input gb-textarea" placeholder="Say something..."></textarea>
-                        <span class="char-count" id="message-count">0 / 2000</span>
+                    <div class="gb-field">
+                        <label for="gb-message">message <span class="gb-optional">(optional if drawing)</span></label>
+                        <textarea id="gb-message" name="message" rows="3" maxlength="2000" class="gb-input gb-textarea" placeholder="say something..."></textarea>
+                        <span class="gb-charcount" id="message-count">0 / 2000</span>
                     </div>
 
-                    <div class="form-row">
-                        <label>Drawing <span class="optional">(optional)</span></label>
-                        <div class="canvas-wrap">
-                            <canvas id="gb-canvas" width="400" height="300" aria-label="Drawing canvas"></canvas>
-                            <div class="canvas-toolbar" role="toolbar" aria-label="Drawing tools">
-                                <button type="button" class="gb-tool-btn active" data-tool="pen" title="Pen">Pen</button>
-                                <button type="button" class="gb-tool-btn" data-tool="eraser" title="Eraser">Eraser</button>
-                                <button type="button" class="gb-tool-btn" data-tool="undo" title="Undo">Undo</button>
-                                <button type="button" class="gb-tool-btn" data-tool="clear" title="Clear">Clear</button>
-                                <div class="color-swatch" role="group" aria-label="Pen color">
-                                    <button type="button" class="color-btn" data-color="#EAE7DE" title="Light" style="background:#EAE7DE"></button>
-                                    <button type="button" class="color-btn" data-color="#78589d" title="Purple" style="background:#78589d"></button>
-                                    <button type="button" class="color-btn" data-color="#c58c65" title="Orange" style="background:#c58c65"></button>
-                                    <button type="button" class="color-btn" data-color="#111111" title="Dark" style="background:#111111"></button>
-                                </div>
+                    <div class="gb-field">
+                        <label>drawing <span class="gb-optional">(optional)</span></label>
+                        <div class="gb-canvas-container" id="gb-canvas-container">
+                            <canvas id="gb-canvas" width="400" height="250" aria-label="Drawing canvas"></canvas>
+                        </div>
+                        <div class="gb-toolbar">
+                            <div class="gb-tools">
+                                <button type="button" class="gb-tool active" data-tool="pen" title="Pen">pen</button>
+                                <button type="button" class="gb-tool" data-tool="eraser" title="Eraser">eraser</button>
+                                <button type="button" class="gb-tool" data-tool="undo" title="Undo">undo</button>
+                                <button type="button" class="gb-tool" data-tool="clear" title="Clear">clear</button>
                             </div>
+                            <div class="gb-palette" role="group" aria-label="Colors">
+                                <button type="button" class="gb-color active" data-color="#EAE7DE" style="background:#EAE7DE" title="Light"></button>
+                                <button type="button" class="gb-color" data-color="#78589d" style="background:#78589d" title="Purple"></button>
+                                <button type="button" class="gb-color" data-color="#c58c65" style="background:#c58c65" title="Orange"></button>
+                                <button type="button" class="gb-color" data-color="#e06060" style="background:#e06060" title="Red"></button>
+                                <button type="button" class="gb-color" data-color="#5b9bd5" style="background:#5b9bd5" title="Blue"></button>
+                                <button type="button" class="gb-color" data-color="#6bc76b" style="background:#6bc76b" title="Green"></button>
+                                <button type="button" class="gb-color" data-color="#e8d44d" style="background:#e8d44d" title="Yellow"></button>
+                                <button type="button" class="gb-color" data-color="#111111" style="background:#111111;border-color:#444" title="Dark"></button>
+                            </div>
+                            <div class="gb-size-row">
+                                <label for="gb-pen-size">size</label>
+                                <input type="range" id="gb-pen-size" min="1" max="12" value="2" class="gb-size-slider">
+                                <span id="gb-pen-size-val" class="gb-size-val">2</span>
+                            </div>
+                            <button type="button" class="gb-tool gb-expand-btn" id="gb-expand" title="Expand canvas">expand</button>
                         </div>
                     </div>
 
-                    <div class="form-row privacy-row">
-                        <fieldset class="privacy-fieldset">
-                            <legend>Visibility</legend>
-                            <label class="privacy-option">
-                                <input type="radio" name="visibility" value="public" checked>
-                                <span>Public</span> — Shown in the guestbook list (after approval).
-                            </label>
-                            <label class="privacy-option">
-                                <input type="radio" name="visibility" value="private">
-                                <span>Private</span> — Only visible to me. I can still reply; you won’t get a notification.
-                            </label>
-                        </fieldset>
+                    <fieldset class="gb-privacy">
+                        <legend>visibility</legend>
+                        <label class="gb-priv-opt">
+                            <input type="radio" name="visibility" value="public" checked>
+                            <span class="gb-priv-tag">public</span> — shown after approval
+                        </label>
+                        <label class="gb-priv-opt">
+                            <input type="radio" name="visibility" value="private">
+                            <span class="gb-priv-tag priv">private</span> — only visible to me (if you want my reply add ur socials/email)
+                        </label>
+                    </fieldset>
+
+                    <div class="gb-turnstile-row">
+                        <div class="cf-turnstile" id="turnstile-widget" data-sitekey="0x4AAAAAACkdA6oxedLvFrgL" data-theme="dark" data-appearance="execute" data-callback="window.__gbTurnstileSuccess" data-error-callback="window.__gbTurnstileError"></div>
+                        <p class="turnstile-status" id="turnstile-status" aria-live="polite"></p>
                     </div>
 
-                    <div class="form-row turnstile-row">
-                        <div class="cf-turnstile" id="turnstile-widget" data-sitekey="0x4AAAAAACkdA6oxedLvFrgL" data-theme="dark"></div>
-                    </div>
-
-                    <div class="form-row submit-row">
-                        <button type="button" id="gb-submit" class="gb-submit-btn">Submit</button>
-                        <span class="form-status" id="form-status" aria-live="polite"></span>
+                    <div class="gb-submit-row">
+                        <button type="button" id="gb-submit" class="gb-submit-btn">submit</button>
+                        <span class="gb-status" id="form-status" aria-live="polite"></span>
                     </div>
                 </form>
             </div>
-        </section>
-
-
-        <section class="guestbook-entries-section" aria-labelledby="entries-heading">
-            <h2 id="entries-heading" class="entries-title">messages</h2>
-            <div id="guestbook-entries" class="guestbook-entries">
-                <p class="entries-loading" id="entries-loading">Loading...</p>
-            </div>
-        </section>
+        </div>
     </div>
+
     <div class="botbar"></div>
-    
 </body>
 </html>
