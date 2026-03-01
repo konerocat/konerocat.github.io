@@ -559,7 +559,7 @@
                             container.appendChild(buildEntryEl(entry, idx));
                         });
                     }
-                    loadStats(all.length);
+                    loadStats(list.length);
                 })
                 .catch(function () {
                     if (loading) loading.remove();
@@ -567,7 +567,7 @@
                     legacyEntries.forEach(function (entry, idx) {
                         container.appendChild(buildEntryEl(entry, idx));
                     });
-                    loadStats(legacyEntries.length);
+                    loadStats(0);
                 });
         }
 
