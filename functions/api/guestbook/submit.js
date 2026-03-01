@@ -185,6 +185,7 @@ export async function onRequestPost(context) {
         'Accept': 'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28',
         'Content-Type': 'application/json',
+        'User-Agent': 'konerocat-guestbook',
       },
       body: JSON.stringify({
         title: title.slice(0, 255),
