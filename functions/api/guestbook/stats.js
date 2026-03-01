@@ -39,8 +39,9 @@ export async function onRequest(context) {
         });
         const html = await res.text();
 
-        const match = html.match(/Total\s+(\d[\d,]*)\s+visitors?\s+and\s+(\d[\d,]*)\s+messages?/i);
-        const lastMatch = html.match(/Last message was posted at\s+(.+?)[\.\n<]/i);
+        const stripped = html.replace(/<[^>]*>/g, '');
+        const match = stripped.match(/Total\s+(\d[\d,]*)\s+visitors?\s+and\s+(\d[\d,]*)\s+messages?/i);
+        const lastMatch = stripped.match(/Last message was posted at\s+(.+?)[\.\n]/i);
         const data = {
             visitors: match ? parseInt(match[1].replace(/,/g, ''), 10) : null,
             legacy_messages: match ? parseInt(match[2].replace(/,/g, ''), 10) : null,
