@@ -308,10 +308,14 @@
     var formStatus = document.getElementById('form-status');
 
     function setStatus(msg, isError) {
-        if (!formStatus) return;
-        formStatus.textContent = msg;
-        formStatus.className = 'form-status' + (isError ? ' error' : ' success');
-        formStatus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        var el = formStatus || document.getElementById('form-status');
+        if (el) {
+            el.textContent = msg;
+            el.className = 'form-status' + (isError ? ' error' : ' success');
+            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+            console.error('[Guestbook]', msg);
+        }
     }
 
     if (form) {
@@ -325,7 +329,11 @@
     }
 
     function doSubmit() {
-            if (!form) return;
+            try {
+                setStatus('Checking…', false);
+            } catch (e) {}
+            try {
+            if (!form) { setStatus('Form not found.', true); return; }
             var name = (document.getElementById('gb-name') && document.getElementById('gb-name').value) || '';
             var message = (document.getElementById('gb-message') && document.getElementById('gb-message').value) || '';
             var visibility = form && form.querySelector('input[name="visibility"]:checked');
@@ -389,6 +397,10 @@
                 .finally(function () {
                     if (submitBtn) submitBtn.disabled = false;
                 });
+            } catch (e) {
+                setStatus('Error: ' + (e && e.message ? e.message : 'Something went wrong'), true);
+                if (submitBtn) submitBtn.disabled = false;
+            }
     }
 
 
