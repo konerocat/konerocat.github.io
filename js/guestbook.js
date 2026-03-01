@@ -508,6 +508,16 @@
 
 
 
+        var legacyEntries = [
+            { displayName: 'Shaymihgn', message: 'Hhhhhhh', created_at: '2026-02-15' },
+            { displayName: 'OLA', message: 'asdfasdfasdfasdf', created_at: '2026-01-02' },
+            { displayName: ';3', message: 'wow', created_at: '2025-05-19' },
+            { displayName: 'rat', message: 'squeak', created_at: '2025-05-15' },
+            { displayName: ':D', message: ': [', created_at: '2025-04-20' },
+            { displayName: 'kat', message: 'wadadsaa hi', created_at: '2025-03-27' },
+            { displayName: 'ME', message: 'HIP', created_at: '2025-03-27' }
+        ];
+
         function loadStats(entryCount) {
             var statsEl = document.getElementById('gb-stats');
             if (!statsEl) return;
@@ -539,20 +549,25 @@
                 .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
                 .then(function (data) {
                     var list = Array.isArray(data) ? data : (data.entries || []);
+                    var all = list.concat(legacyEntries);
                     if (loading) loading.remove();
-                    if (!list.length) {
+                    if (!all.length) {
                         container.innerHTML = '<p class="gb-entries-empty">no transmissions received yet.</p>';
                     } else {
                         container.innerHTML = '';
-                        list.forEach(function (entry, idx) {
+                        all.forEach(function (entry, idx) {
                             container.appendChild(buildEntryEl(entry, idx));
                         });
                     }
-                    loadStats(list.length);
+                    loadStats(all.length);
                 })
                 .catch(function () {
-                    if (loading) loading.textContent = 'could not load messages.';
-                    loadStats(0);
+                    if (loading) loading.remove();
+                    container.innerHTML = '';
+                    legacyEntries.forEach(function (entry, idx) {
+                        container.appendChild(buildEntryEl(entry, idx));
+                    });
+                    loadStats(legacyEntries.length);
                 });
         }
 

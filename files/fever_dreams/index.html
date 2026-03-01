@@ -143,7 +143,93 @@
             font-size: 0.9em;
             opacity: 0.8;
         }
-        
+
+        .band-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+            margin: 0 10px;
+        }
+
+        .band-members {
+            display: flex;
+            gap: 12px;
+        }
+
+        .band-member-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .band-member-wrap .image-crop {
+            width: 200px;
+            height: 280px;
+        }
+
+        .band-member-wrap .image-crop img {
+            width: 200px;
+            height: 280px;
+        }
+
+        .band-member-name {
+            font-family: "schnebel";
+            font-size: 1em;
+            color: var(--main-light);
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        .band-member-wrap:first-child .band-member-name {
+            color: var(--orange);
+        }
+
+        .band-connector-line {
+            width: 2px;
+            height: 20px;
+            background: var(--purple);
+            margin-top: 4px;
+        }
+
+        .band-trunk-line {
+            width: calc(100% - 200px);
+            height: 2px;
+            background: var(--purple);
+            position: relative;
+        }
+
+        .band-trunk-line::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 2px;
+            height: 18px;
+            background: var(--purple);
+            transform: translateX(-50%);
+        }
+
+        .band-label {
+            text-align: center;
+            margin-top: 18px;
+        }
+
+        .band-name {
+            font-family: "schnebel";
+            font-size: 1.3em;
+            color: var(--orange);
+            letter-spacing: 1px;
+        }
+
+        .band-source {
+            font-style: italic;
+            font-size: 0.9em;
+            color: var(--main-light);
+            opacity: 0.7;
+        }
+
         @keyframes scrollchoppy {
             from { transform: translateX(100vw); }
             to   { transform: translateX(-100%); }
@@ -497,15 +583,51 @@
                         </div>
                     </div>
                    
-                    <a href="/files/constellations/?char=ryo" class="character-card special-character ryo-character">
-                        <div class="image-crop">
-                            <img src="/images/fever_dreams/Ryo.png" alt="Ryo">
+                    <div class="band-group">
+                        <div class="band-members">
+                            <div class="band-member-wrap">
+                                <a href="/files/constellations/?char=ryo" class="character-card special-character ryo-character">
+                                    <div class="image-crop">
+                                        <img src="/images/fever_dreams/Ryo.png" alt="Ryo">
+                                    </div>
+                                </a>
+                                <div class="band-member-name">Ryō Yamada (*)</div>
+                                <div class="band-connector-line"></div>
+                            </div>
+                            <div class="band-member-wrap">
+                                <div class="character-card">
+                                    <div class="image-crop">
+                                        <img src="/images/fever_dreams/Nijika.png" alt="Nijika">
+                                    </div>
+                                </div>
+                                <div class="band-member-name">Nijika Ijichi</div>
+                                <div class="band-connector-line"></div>
+                            </div>
+                            <div class="band-member-wrap">
+                                <div class="character-card">
+                                    <div class="image-crop">
+                                        <img src="/images/fever_dreams/Hitori_Gotou.png" alt="Hitori Gotou">
+                                    </div>
+                                </div>
+                                <div class="band-member-name">Hitori Gotō</div>
+                                <div class="band-connector-line"></div>
+                            </div>
+                            <div class="band-member-wrap">
+                                <div class="character-card">
+                                    <div class="image-crop">
+                                        <img src="/images/fever_dreams/Kita.jpg" alt="Kita">
+                                    </div>
+                                </div>
+                                <div class="band-member-name">Kita Ikuyo</div>
+                                <div class="band-connector-line"></div>
+                            </div>
                         </div>
-                        <div class="character-info">
-                            <div class="character-name">Ryō Yamada (*)</div>
-                            <div class="game-title">Bocchi the Rock!</div>
+                        <div class="band-trunk-line"></div>
+                        <div class="band-label">
+                            <div class="band-name">Kessoku Band</div>
+                            <div class="band-source">Bocchi the Rock!</div>
                         </div>
-                    </a>
+                    </div>
 
                     <div class="character-card">
                         <div class="image-crop">
@@ -547,25 +669,6 @@
                         </div>
                     </div>
 
-                    <div class="character-card">
-                        <div class="image-crop">
-                            <img src="/images/fever_dreams/Nijika.png" alt="Nijika">
-                        </div>  
-                        <div class="character-info">
-                            <div class="character-name">Nijika Ijichi</div>
-                            <div class="game-title">Bocchi the Rock!</div>
-                        </div>
-                    </div>
-
-                    <div class="character-card">
-                        <div class="image-crop">
-                            <img src="/images/fever_dreams/Hitori_Gotou.png" alt="Hitori Gotou">
-                        </div>  
-                        <div class="character-info">
-                            <div class="character-name">Hitori Gotō</div>
-                            <div class="game-title">Bocchi the Rock!</div>
-                        </div>
-                    </div>
 
                     <div class="character-card">
                         <div class="image-crop">

@@ -473,6 +473,8 @@ nav {
     font-family: monospace;
     color: var(--main-light);
     flex-grow: 1;
+    min-height: 0;
+    overflow-y: auto;
 }
 
 .fact-text p {

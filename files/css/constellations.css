@@ -70,6 +70,7 @@ body.constellations-page .botbar {
   width: 64px;
   height: 64px;
   overflow: visible;
+  z-index: 1;
 }
 
 .constellation-avatar {
@@ -126,6 +127,10 @@ body.constellations-page .botbar {
   object-position: center 22%;
   image-rendering: pixelated;
   filter: contrast(1.35) saturate(0.9);
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
 }
 
 .constellation-card {
