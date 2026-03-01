@@ -432,7 +432,7 @@
                         </div>
                         <div class="character-info">
                             <div class="character-name">Niko (*)</div>
-                            <div class="game-title">OneShot</div>
+                            <div class="game-title">OneShot (Nightmargin)</div>
                         </div>
                     </a>
 
@@ -842,18 +842,46 @@
                     if (!ayaImg) return;
                     var baseSrc = '/images/fever_dreams/Aya.png';
                     var altSrc = '/images/fever_dreams/Aya1.png';
-                    function scheduleFlicker() {
-                        var delay = 800 + Math.random() * 2200;
+                    function doFlicker(count) {
+                        ayaImg.src = altSrc;
                         setTimeout(function() {
-                            ayaImg.src = altSrc;
-                            setTimeout(function() {
-                                ayaImg.src = baseSrc;
+                            ayaImg.src = baseSrc;
+                            if (count > 1) {
+                                setTimeout(function() { doFlicker(count - 1); }, 60 + Math.random() * 80);
+                            } else {
                                 scheduleFlicker();
-                            }, 40 + Math.random() * 60);
+                            }
+                        }, 35 + Math.random() * 50);
+                    }
+                    function scheduleFlicker() {
+                        var delay = 250 + Math.random() * 900;
+                        setTimeout(function() {
+                            var bursts = Math.random() < 0.4 ? (2 + Math.floor(Math.random() * 3)) : 1;
+                            doFlicker(bursts);
                         }, delay);
                     }
                     scheduleFlicker();
                 })();
+
+                var specialTouchStart = null;
+                $('.character-card.special-character').on('touchstart', function(e) {
+                    var touch = e.originalEvent.touches[0];
+                    specialTouchStart = { x: touch.clientX, y: touch.clientY, time: Date.now() };
+                });
+                $('.character-card.special-character').on('touchend', function(e) {
+                    if (!specialTouchStart) return;
+                    var touch = e.originalEvent.changedTouches[0];
+                    var dx = Math.abs(touch.clientX - specialTouchStart.x);
+                    var dy = Math.abs(touch.clientY - specialTouchStart.y);
+                    var dt = Date.now() - specialTouchStart.time;
+                    specialTouchStart = null;
+                    if (dx < 20 && dy < 20 && dt < 600) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var href = $(this).attr('href');
+                        if (href) window.location.href = href;
+                    }
+                });
 
                 window.addEventListener('pageshow', function (event) {
                     if (event.persisted) {
