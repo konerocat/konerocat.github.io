@@ -30,7 +30,7 @@
                 <span id="form-heading">sign the guestbook</span>
             </div>
             <div class="terminal-content form-content">
-                <form id="guestbook-form" novalidate>
+                <form id="guestbook-form" novalidate action="#" method="post" onsubmit="event.preventDefault(); return false;">
 
                     <div class="hp" aria-hidden="true">
                         <label for="website_url">Leave this blank</label>
@@ -86,7 +86,7 @@
                     </div>
 
                     <div class="form-row submit-row">
-                        <button type="submit" id="gb-submit" class="gb-submit-btn">Submit</button>
+                        <button type="button" id="gb-submit" class="gb-submit-btn">Submit</button>
                         <span class="form-status" id="form-status" aria-live="polite"></span>
                     </div>
                 </form>
@@ -102,5 +102,6 @@
         </section>
     </div>
     <div class="botbar"></div>
+    
 </body>
 </html>

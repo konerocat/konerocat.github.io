@@ -316,10 +316,17 @@
     if (form) {
         form.addEventListener('submit', function (e) {
             e.preventDefault();
+            e.stopPropagation();
+            doSubmit();
+            return false;
+        });
+        if (submitBtn) submitBtn.addEventListener('click', function () { doSubmit(); });
+    }
 
+    function doSubmit() {
             var name = (document.getElementById('gb-name') && document.getElementById('gb-name').value) || '';
             var message = (document.getElementById('gb-message') && document.getElementById('gb-message').value) || '';
-            var visibility = form.querySelector('input[name="visibility"]:checked');
+            var visibility = form && form.querySelector('input[name="visibility"]:checked');
             var isPublic = visibility ? visibility.value === 'public' : true;
             var honeypot = document.getElementById('website_url');
             if (honeypot && honeypot.value) {
@@ -371,13 +378,12 @@
                         setStatus((res.json && res.json.error) || 'Submission failed. Try again.', true);
                     }
                 })
-                .catch(function () {
-                    setStatus('Network error. Try again later.', true);
+                .catch(function (err) {
+                    setStatus('Network or CORS error. Check console. ' + (err && err.message ? err.message : ''), true);
                 })
                 .finally(function () {
                     if (submitBtn) submitBtn.disabled = false;
                 });
-        });
     }
 
 
