@@ -311,6 +311,7 @@
         if (!formStatus) return;
         formStatus.textContent = msg;
         formStatus.className = 'form-status' + (isError ? ' error' : ' success');
+        formStatus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     if (form) {
@@ -324,6 +325,7 @@
     }
 
     function doSubmit() {
+            if (!form) return;
             var name = (document.getElementById('gb-name') && document.getElementById('gb-name').value) || '';
             var message = (document.getElementById('gb-message') && document.getElementById('gb-message').value) || '';
             var visibility = form && form.querySelector('input[name="visibility"]:checked');

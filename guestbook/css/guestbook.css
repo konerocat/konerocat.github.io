@@ -250,6 +250,9 @@
 .form-status {
     color: var(--orange);
     font-size: 0.95em;
+    min-height: 2.5em;
+    display: block;
+    padding: 4px 0;
 }
 
 .form-status.error {
