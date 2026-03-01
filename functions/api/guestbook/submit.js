@@ -194,7 +194,9 @@ export async function onRequestPost(context) {
     });
 
     if (!createRes.ok) {
-      return new Response(JSON.stringify({ success: false, error: 'Could not save submission.' }), { status: 500, headers: { ...headers, 'Content-Type': 'application/json' } });
+      const errBody = await createRes.text();
+      const detail = createRes.status + ': ' + errBody.slice(0, 200);
+      return new Response(JSON.stringify({ success: false, error: 'Could not save submission. GitHub: ' + detail }), { status: 500, headers: { ...headers, 'Content-Type': 'application/json' } });
     }
     return new Response(JSON.stringify({ success: true }), { status: 200, headers: { ...headers, 'Content-Type': 'application/json' } });
   } catch (e) {
