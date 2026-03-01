@@ -523,12 +523,10 @@
                         parts.push('<span class="gb-stats-num">' + visitors + '</span> visitors');
                     }
                     parts.push('<span class="gb-stats-num">' + totalMsgs + '</span> messages');
-                    statsEl.innerHTML = parts.join(' · ');
+                    statsEl.innerHTML = parts.join(' &middot; ');
                 })
                 .catch(function () {
-                    if (entryCount > 0) {
-                        statsEl.innerHTML = '<span class="gb-stats-num">' + entryCount + '</span> messages';
-                    }
+                    statsEl.innerHTML = '<span class="gb-stats-num">' + entryCount + '</span> messages';
                 });
         }
 

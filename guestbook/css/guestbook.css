@@ -832,8 +832,20 @@ body.guestbook-page .botbar {
 }
 
 @media (orientation: portrait) {
+    body.guestbook-page nav,
+    body.guestbook-page .navbar {
+        
+        font-size: 0.8em;
+        padding: 2px 2px;
+    }
+
+    body.guestbook-page .botbar {
+        
+        padding: 1px 2px;
+    }
+
     .gb-stage {
-        padding-top: calc(6vw + 6px);
-        padding-bottom: calc(6vw + 6px);
+        padding-top: 36px;
+        padding-bottom: 40px;
     }
 }
