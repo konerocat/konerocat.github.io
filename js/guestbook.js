@@ -305,7 +305,7 @@
             data.strokes.forEach(function (s) { drawStroke(c, s); });
         }
 
-        function buildEntryEl(entry, idx) {
+        function buildEntryEl(entry, idx, chronoNum) {
             var el = document.createElement('div');
             el.className = 'gb-entry';
             el.style.animationDelay = Math.min(idx * 0.04, 0.24) + 's';
@@ -315,6 +315,7 @@
 
             var bar = document.createElement('div');
             bar.className = 'gb-entry-bar';
+            bar.setAttribute('data-num', '#' + (chronoNum < 10 ? '0' : '') + chronoNum);
 
             var nameSpan = document.createElement('span');
             nameSpan.className = 'gb-entry-name' + (name ? '' : ' anon');
@@ -379,8 +380,6 @@
             return el;
         }
 
-        /* ── drawing lightbox ── */
-
         var lightbox = null;
 
         function openLightbox(drawingData) {
@@ -401,8 +400,6 @@
             renderDrawingToCanvas(cv, drawingData);
             lightbox.classList.add('is-open');
         }
-
-        /* ── form submit ── */
 
         var form = document.getElementById('guestbook-form');
         var submitBtn = document.getElementById('gb-submit');
@@ -540,6 +537,59 @@
                 });
         }
 
+        var PER_PAGE = 10;
+        var allEntries = [];
+        var currentPage = 0;
+
+        function renderPage(page) {
+            var container = document.getElementById('guestbook-entries');
+            var paginationEl = document.getElementById('gb-pagination');
+            if (!container) return;
+
+            var totalPages = Math.max(1, Math.ceil(allEntries.length / PER_PAGE));
+            page = Math.max(0, Math.min(page, totalPages - 1));
+            currentPage = page;
+
+            var start = page * PER_PAGE;
+            var pageEntries = allEntries.slice(start, start + PER_PAGE);
+
+            var total = allEntries.length;
+            container.innerHTML = '';
+            pageEntries.forEach(function (entry, idx) {
+                var chronoNum = total - (start + idx);
+                container.appendChild(buildEntryEl(entry, idx, chronoNum));
+            });
+
+            if (paginationEl) {
+                paginationEl.innerHTML = '';
+                if (totalPages > 1) {
+                    var prev = document.createElement('button');
+                    prev.className = 'gb-page-btn';
+                    prev.textContent = '<';
+                    prev.disabled = page === 0;
+                    prev.addEventListener('click', function () { renderPage(page - 1); });
+                    paginationEl.appendChild(prev);
+
+                    for (var i = 0; i < totalPages; i++) {
+                        var btn = document.createElement('button');
+                        btn.className = 'gb-page-btn' + (i === page ? ' active' : '');
+                        btn.textContent = i + 1;
+                        btn.addEventListener('click', (function (p) {
+                            return function () { renderPage(p); };
+                        })(i));
+                        paginationEl.appendChild(btn);
+                    }
+
+                    var next = document.createElement('button');
+                    next.className = 'gb-page-btn';
+                    next.textContent = '>';
+                    next.disabled = page === totalPages - 1;
+                    next.addEventListener('click', function () { renderPage(page + 1); });
+                    paginationEl.appendChild(next);
+                }
+            }
+        }
+
         function loadEntriesAndStats() {
             var container = document.getElementById('guestbook-entries');
             var loading = document.getElementById('entries-loading');
@@ -549,24 +599,20 @@
                 .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
                 .then(function (data) {
                     var list = Array.isArray(data) ? data : (data.entries || []);
-                    var all = list.concat(legacyEntries);
+                    list.reverse();
+                    allEntries = list.concat(legacyEntries);
                     if (loading) loading.remove();
-                    if (!all.length) {
+                    if (!allEntries.length) {
                         container.innerHTML = '<p class="gb-entries-empty">no transmissions received yet.</p>';
                     } else {
-                        container.innerHTML = '';
-                        all.forEach(function (entry, idx) {
-                            container.appendChild(buildEntryEl(entry, idx));
-                        });
+                        renderPage(0);
                     }
                     loadStats(list.length);
                 })
                 .catch(function () {
                     if (loading) loading.remove();
-                    container.innerHTML = '';
-                    legacyEntries.forEach(function (entry, idx) {
-                        container.appendChild(buildEntryEl(entry, idx));
-                    });
+                    allEntries = legacyEntries.slice();
+                    renderPage(0);
                     loadStats(0);
                 });
         }
