@@ -57,15 +57,41 @@ function renderEntry() {
   html += '<span class="entry-vis ' + (data.public ? 'pub' : 'priv') + '">' + (data.public ? 'public' : 'private') + '</span></div>';
   if (data.message) html += '<div class="entry-message">' + esc(data.message) + '</div>';
   el.innerHTML = html;
-  if (data.drawing && data.drawing.strokes && data.drawing.strokes.length) {
+  var hasStrokes = data.drawing && data.drawing.strokes && data.drawing.strokes.length;
+  var hasImages = data.drawing && data.drawing.images && data.drawing.images.length;
+  if (hasStrokes || hasImages) {
     var c = document.createElement('canvas');
     c.width = data.drawing.width || 400;
     c.height = data.drawing.height || 300;
     el.appendChild(c);
     var ctx = c.getContext('2d');
-    ctx.fillStyle = data.drawing.backgroundColor || '#111111';
-    ctx.fillRect(0, 0, c.width, c.height);
-    data.drawing.strokes.forEach(function (s) { drawStroke(ctx, s); });
+
+    function paintAll(loadedImgs) {
+      ctx.fillStyle = data.drawing.backgroundColor || '#111111';
+      ctx.fillRect(0, 0, c.width, c.height);
+      if (loadedImgs) {
+        loadedImgs.forEach(function (item) {
+          if (item.el) ctx.drawImage(item.el, item.x, item.y, item.w, item.h);
+        });
+      }
+      if (hasStrokes) data.drawing.strokes.forEach(function (s) { drawStroke(ctx, s); });
+    }
+
+    if (!hasImages) { paintAll(null); }
+    else {
+      var pending = data.drawing.images.length;
+      var loaded = [];
+      data.drawing.images.forEach(function (imgData, idx) {
+        var img = new Image();
+        img.onload = img.onerror = function () {
+          loaded[idx] = { el: img.complete && img.naturalWidth ? img : null, x: imgData.x, y: imgData.y, w: imgData.w, h: imgData.h };
+          pending--;
+          if (pending <= 0) paintAll(loaded);
+        };
+        img.src = imgData.src;
+      });
+      paintAll(null);
+    }
   }
   out.appendChild(el);
 }
