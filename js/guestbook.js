@@ -20,6 +20,7 @@
             current: null,
             tool: 'pen',
             color: '#EAE7DE',
+            bgColor: '#111111',
             penWidth: 2,
             eraserWidth: 20,
             undoStack: []
@@ -66,7 +67,7 @@
                 pts = pts.map(function (p) { return { x: Math.round(p.x), y: Math.round(p.y) }; });
                 return { color: s.color, width: s.width, points: pts };
             });
-            return { width: canvasEl.width, height: canvasEl.height, backgroundColor: null, strokes: out };
+            return { width: canvasEl.width, height: canvasEl.height, backgroundColor: drawing.bgColor, strokes: out };
         }
 
         function drawStroke(c, s) {
@@ -83,7 +84,7 @@
 
         function redraw() {
             if (!ctx || !canvasEl) return;
-            ctx.fillStyle = '#111111';
+            ctx.fillStyle = drawing.bgColor;
             ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
             drawing.strokes.forEach(function (s) { drawStroke(ctx, s); });
         }
@@ -104,7 +105,7 @@
 
         function beginStroke(x, y) {
             if (drawing.strokes.length >= MAX_STROKES) return;
-            var col = drawing.tool === 'eraser' ? '#111111' : drawing.color;
+            var col = drawing.tool === 'eraser' ? drawing.bgColor : drawing.color;
             var w = drawing.tool === 'eraser' ? drawing.eraserWidth : drawing.penWidth;
             drawing.current = { color: col, width: w, points: [{ x: x, y: y }] };
         }
@@ -200,6 +201,12 @@
             });
         }
 
+        var bgPreview = document.getElementById('gb-bg-preview');
+
+        function updateBgPreview() {
+            if (bgPreview) bgPreview.style.background = drawing.bgColor;
+        }
+
         document.querySelectorAll('.gb-tool[data-tool]').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 var t = btn.dataset.tool;
@@ -212,6 +219,10 @@
                     drawing.undoStack = [];
                     drawing.strokes = [];
                     drawing.current = null;
+                    redraw();
+                } else if (t === 'bg') {
+                    drawing.bgColor = drawing.color;
+                    updateBgPreview();
                     redraw();
                 } else {
                     setActiveTool(t);
@@ -294,98 +305,78 @@
             data.strokes.forEach(function (s) { drawStroke(c, s); });
         }
 
-        function loadEntries() {
-            var container = document.getElementById('guestbook-entries');
-            var loading = document.getElementById('entries-loading');
-            if (!container) return;
+        function buildEntryEl(entry, idx) {
+            var el = document.createElement('div');
+            el.className = 'gb-entry';
+            el.style.animationDelay = Math.min(idx * 0.04, 0.24) + 's';
 
-            fetch('/public/guestbook.json', { cache: 'default' })
-                .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
-                .then(function (data) {
-                    var list = Array.isArray(data) ? data : (data.entries || []);
-                    if (loading) loading.remove();
-                    if (!list.length) {
-                        container.innerHTML = '<p class="gb-entries-empty">no transmissions received yet.</p>';
-                        return;
-                    }
-                    container.innerHTML = '';
-                    list.forEach(function (entry, idx) {
-                        var el = document.createElement('div');
-                        el.className = 'gb-entry';
-                        el.style.animationDelay = Math.min(idx * 0.04, 0.24) + 's';
+            var name = entry.displayName || '';
+            var date = entry.created_at || '';
 
-                        var name = entry.displayName || '';
-                        var date = entry.created_at || '';
+            var bar = document.createElement('div');
+            bar.className = 'gb-entry-bar';
 
-                        var bar = document.createElement('div');
-                        bar.className = 'gb-entry-bar';
+            var nameSpan = document.createElement('span');
+            nameSpan.className = 'gb-entry-name' + (name ? '' : ' anon');
+            nameSpan.textContent = name || 'anonymous';
+            bar.appendChild(nameSpan);
 
-                        var nameSpan = document.createElement('span');
-                        nameSpan.className = 'gb-entry-name' + (name ? '' : ' anon');
-                        nameSpan.textContent = name || 'anonymous';
-                        bar.appendChild(nameSpan);
+            if (date) {
+                var dateSpan = document.createElement('span');
+                dateSpan.className = 'gb-entry-date';
+                dateSpan.textContent = date;
+                bar.appendChild(dateSpan);
+            }
+            el.appendChild(bar);
 
-                        if (date) {
-                            var dateSpan = document.createElement('span');
-                            dateSpan.className = 'gb-entry-date';
-                            dateSpan.textContent = date;
-                            bar.appendChild(dateSpan);
-                        }
-                        el.appendChild(bar);
+            var body = document.createElement('div');
+            body.className = 'gb-entry-body';
 
-                        var body = document.createElement('div');
-                        body.className = 'gb-entry-body';
+            if (entry.message) {
+                var msgP = document.createElement('p');
+                msgP.className = 'gb-entry-message';
+                msgP.textContent = entry.message;
+                body.appendChild(msgP);
+            }
 
-                        if (entry.message) {
-                            var msgP = document.createElement('p');
-                            msgP.className = 'gb-entry-message';
-                            msgP.textContent = entry.message;
-                            body.appendChild(msgP);
-                        }
+            if (entry.drawing && entry.drawing.strokes && entry.drawing.strokes.length) {
+                var dWrap = document.createElement('div');
+                dWrap.className = 'gb-entry-drawing';
+                var cv = document.createElement('canvas');
+                cv.className = 'gb-entry-canvas';
+                cv.setAttribute('role', 'img');
+                cv.setAttribute('aria-label', 'Drawing by ' + (name || 'anonymous'));
+                dWrap.appendChild(cv);
 
-                        if (entry.drawing && entry.drawing.strokes && entry.drawing.strokes.length) {
-                            var dWrap = document.createElement('div');
-                            dWrap.className = 'gb-entry-drawing';
-                            var cv = document.createElement('canvas');
-                            cv.className = 'gb-entry-canvas';
-                            cv.setAttribute('role', 'img');
-                            cv.setAttribute('aria-label', 'Drawing by ' + (name || 'anonymous'));
-                            dWrap.appendChild(cv);
+                var hint = document.createElement('span');
+                hint.className = 'gb-drawing-hint';
 
-                            var hint = document.createElement('span');
-                            hint.className = 'gb-drawing-hint';
-                            
-                            dWrap.appendChild(hint);
+                dWrap.appendChild(hint);
 
-                            body.appendChild(dWrap);
-                            renderDrawingToCanvas(cv, entry.drawing);
+                body.appendChild(dWrap);
+                renderDrawingToCanvas(cv, entry.drawing);
 
-                            cv.addEventListener('click', function () {
-                                openLightbox(entry.drawing);
-                            });
-                        }
-
-                        if (entry.ownerReply && entry.ownerReply.text) {
-                            var reply = document.createElement('div');
-                            reply.className = 'gb-entry-reply';
-                            var label = document.createElement('div');
-                            label.className = 'gb-entry-reply-label';
-                            label.textContent = 'konero:';
-                            reply.appendChild(label);
-                            var rtxt = document.createElement('div');
-                            rtxt.className = 'gb-entry-reply-text';
-                            rtxt.textContent = entry.ownerReply.text;
-                            reply.appendChild(rtxt);
-                            body.appendChild(reply);
-                        }
-
-                        el.appendChild(body);
-                        container.appendChild(el);
-                    });
-                })
-                .catch(function () {
-                    if (loading) loading.textContent = 'could not load transmissions.';
+                cv.addEventListener('click', function () {
+                    openLightbox(entry.drawing);
                 });
+            }
+
+            if (entry.ownerReply && entry.ownerReply.text) {
+                var reply = document.createElement('div');
+                reply.className = 'gb-entry-reply';
+                var label = document.createElement('div');
+                label.className = 'gb-entry-reply-label';
+                label.textContent = 'konero:';
+                reply.appendChild(label);
+                var rtxt = document.createElement('div');
+                rtxt.className = 'gb-entry-reply-text';
+                rtxt.textContent = entry.ownerReply.text;
+                reply.appendChild(rtxt);
+                body.appendChild(reply);
+            }
+
+            el.appendChild(body);
+            return el;
         }
 
         /* ── drawing lightbox ── */
@@ -484,6 +475,8 @@
                         if (countEl) countEl.textContent = '0 / 2000';
                         drawing.strokes = [];
                         drawing.undoStack = [];
+                        drawing.bgColor = '#111111';
+                        updateBgPreview();
                         redraw();
                         if (typeof turnstile !== 'undefined' && turnstile.reset) turnstile.reset();
                     } else {
@@ -515,7 +508,57 @@
 
 
 
+        function loadStats(entryCount) {
+            var statsEl = document.getElementById('gb-stats');
+            if (!statsEl) return;
+
+            fetch(API_BASE + '/api/guestbook/stats', { cache: 'default' })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    var visitors = data.visitors;
+                    var legacyMsgs = data.legacy_messages || 0;
+                    var totalMsgs = legacyMsgs + entryCount;
+                    var parts = [];
+                    if (visitors != null) {
+                        parts.push('<span class="gb-stats-num">' + visitors + '</span> visitors');
+                    }
+                    parts.push('<span class="gb-stats-num">' + totalMsgs + '</span> messages');
+                    statsEl.innerHTML = parts.join(' · ');
+                })
+                .catch(function () {
+                    if (entryCount > 0) {
+                        statsEl.innerHTML = '<span class="gb-stats-num">' + entryCount + '</span> messages';
+                    }
+                });
+        }
+
+        function loadEntriesAndStats() {
+            var container = document.getElementById('guestbook-entries');
+            var loading = document.getElementById('entries-loading');
+            if (!container) return;
+
+            fetch('/public/guestbook.json', { cache: 'default' })
+                .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+                .then(function (data) {
+                    var list = Array.isArray(data) ? data : (data.entries || []);
+                    if (loading) loading.remove();
+                    if (!list.length) {
+                        container.innerHTML = '<p class="gb-entries-empty">no transmissions received yet.</p>';
+                    } else {
+                        container.innerHTML = '';
+                        list.forEach(function (entry, idx) {
+                            container.appendChild(buildEntryEl(entry, idx));
+                        });
+                    }
+                    loadStats(list.length);
+                })
+                .catch(function () {
+                    if (loading) loading.textContent = 'could not load messages.';
+                    loadStats(0);
+                });
+        }
+
         initCanvas();
-        loadEntries();
+        loadEntriesAndStats();
     }
 })();

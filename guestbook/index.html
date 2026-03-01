@@ -35,12 +35,13 @@
                         <p>A pen materializes between your fingers, waiting for your thoughts.</p>
                     </div>
                     <button type="button" id="gb-open-form" class="gb-sign-btn">sign the guestbook</button>
+                    <div class="gb-stats" id="gb-stats"></div>
                 </div>
 
                 <div class="gb-divider" role="separator"></div>
 
                 <section class="gb-entries-section" aria-label="Guestbook messages">
-                    <div class="gb-section-label">transmission log</div>
+                    <div class="gb-section-label"><center>message logs</center></div>
                     <div id="guestbook-entries" class="gb-entries">
                         <p class="gb-entries-empty" id="entries-loading">loading...</p>
                     </div>
@@ -82,6 +83,7 @@
                                 <button type="button" class="gb-tool" data-tool="eraser" title="Eraser">eraser</button>
                                 <button type="button" class="gb-tool" data-tool="undo" title="Undo">undo</button>
                                 <button type="button" class="gb-tool" data-tool="clear" title="Clear">clear</button>
+                                <button type="button" class="gb-tool" data-tool="bg" title="Fill background with selected color">bg <span class="gb-bg-preview" id="gb-bg-preview" style="background:#111111"></span></button>
                             </div>
                             <div class="gb-palette" role="group" aria-label="Colors">
                                 <button type="button" class="gb-color active" data-color="#EAE7DE" style="background:#EAE7DE" title="Light"></button>

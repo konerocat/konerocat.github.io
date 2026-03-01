@@ -67,9 +67,9 @@ body.guestbook-page .botbar {
 
 .gb-terminal-label {
     font-family: "dos", monospace;
-    font-size: 14px;
+    font-size: 17px;
     color: var(--purple);
-    opacity: 0.55;
+    opacity: 0.8;
     letter-spacing: 1px;
 }
 
@@ -139,9 +139,9 @@ body.guestbook-page .botbar {
 }
 
 .gb-sign-btn::before {
-    content: "> ";
+    content: ">";
     color: var(--purple);
-    margin-right: 2px;
+    margin-right: 8px;
 }
 
 .gb-sign-btn::after {
@@ -173,6 +173,33 @@ body.guestbook-page .botbar {
     100% { opacity: 1; transform: translateY(0); }
 }
 
+/* ── stats counter ── */
+
+.gb-stats {
+    font-family: "dos", monospace;
+    font-size: 14px;
+    color: var(--purple);
+    text-align: center;
+    margin-top: 18px;
+    opacity: 0.6;
+    letter-spacing: 0.5px;
+}
+
+.gb-stats-num {
+    color: var(--orange);
+}
+
+/* ── bg tool indicator ── */
+
+.gb-tool[data-tool="bg"] .gb-bg-preview {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border: 1px solid rgba(234, 231, 222, 0.4);
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
 /* ── divider ── */
 
 .gb-divider {
@@ -185,11 +212,11 @@ body.guestbook-page .botbar {
 
 .gb-section-label {
     font-family: "dos", monospace;
-    font-size: 14px;
+    font-size: 17px;
     color: var(--purple);
     letter-spacing: 1.5px;
     margin-bottom: 16px;
-    opacity: 0.6;
+    opacity: 0.8;
     text-transform: uppercase;
 }
 
@@ -250,9 +277,9 @@ body.guestbook-page .botbar {
 .gb-entry-bar::before {
     content: "#" counter(gb-log, decimal-leading-zero);
     font-family: "dos", monospace;
-    font-size: 13px;
+    font-size: 16px;
     color: var(--purple);
-    opacity: 0.4;
+    opacity: 0.8;
     flex-shrink: 0;
 }
 
@@ -404,7 +431,7 @@ body.guestbook-page .botbar {
     z-index: 2;
     background: none;
     border: none;
-    padding: 6px;
+    padding: 0px;
     cursor: pointer;
     opacity: 0.45;
 }
