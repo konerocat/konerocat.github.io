@@ -4,7 +4,9 @@
 
     var GUESTBOOK_API_BASE = typeof window !== 'undefined' && window.GUESTBOOK_API_URL ? window.GUESTBOOK_API_URL : '';
 
+    document.addEventListener('DOMContentLoaded', function () { init(); });
 
+    function init() {
     var CANVAS_WIDTH = 400;
     var CANVAS_HEIGHT = 300;
     var MAX_STROKES = 80;
@@ -352,20 +354,18 @@
 
             var turnstileResponse = null;
             var tw = document.querySelector('[name="cf-turnstile-response"]');
-            if (tw) turnstileResponse = tw.value || tw.innerText;
-            var topWin = typeof window !== 'undefined' && window.top ? window.top : window;
-            if (!turnstileResponse && topWin.__gbTurnstileToken) turnstileResponse = topWin.__gbTurnstileToken;
+            if (tw) turnstileResponse = tw.value;
             if (!turnstileResponse && typeof window.__gbTurnstileToken === 'string') turnstileResponse = window.__gbTurnstileToken;
             if (!turnstileResponse) {
                 setStatus('Verification required. Complete the checkbox above. If it never appears or shows an error, add konerocat.github.io in Cloudflare Turnstile → Hostname Management, then refresh or try Chrome.', true);
                 return;
             }
+            if (typeof console !== 'undefined' && console.log) console.log('[Guestbook] Token found, sending to', url);
 
             if (submitBtn) submitBtn.disabled = true;
             setStatus('Sending...', false);
 
             var url = GUESTBOOK_API_BASE + '/api/guestbook/submit';
-            if (typeof console !== 'undefined' && console.log) console.log('[Guestbook] Token found, sending to', url);
             var payload = {
                 name: name.slice(0, 80),
                 message: message.slice(0, 2000),
@@ -418,4 +418,5 @@
 
     initCanvas();
     loadEntries();
+    }
 })();

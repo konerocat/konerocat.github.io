@@ -14,9 +14,8 @@
 
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script>
-      window.addEventListener('message', function (e) { if (e.data && e.data.type === 'gb-turnstile-token' && e.data.token) window.__gbTurnstileToken = e.data.token; });
-      window.__gbTurnstileSuccess = function (token) { try { var w = window.top || window; w.__gbTurnstileToken = token || null; if (w !== window && token) w.postMessage({ type: 'gb-turnstile-token', token: token }, '*'); } catch (err) { try { window.top.postMessage({ type: 'gb-turnstile-token', token: token }, '*'); } catch (e) {} } window.__gbTurnstileReady = true; var s = document.getElementById('turnstile-status'); if (s) s.textContent = ''; s && s.classList.remove('turnstile-status-error'); };
-      window.__gbTurnstileError = function (code) { try { var w = window.top || window; w.__gbTurnstileToken = null; } catch (e) {} window.__gbTurnstileReady = false; var s = document.getElementById('turnstile-status'); if (s) { s.textContent = 'Verification failed' + (code ? ' (' + code + '). ' : '. ') + 'Try Chrome, a private window, or disable VPN/extensions. Add konerocat.github.io in Turnstile → Hostname Management.'; s.classList.add('turnstile-status-error'); } };
+      window.__gbTurnstileSuccess = function (token) { window.__gbTurnstileReady = true; window.__gbTurnstileToken = token || null; var s = document.getElementById('turnstile-status'); if (s) s.textContent = ''; s && s.classList.remove('turnstile-status-error'); };
+      window.__gbTurnstileError = function (code) { window.__gbTurnstileReady = false; window.__gbTurnstileToken = null; var s = document.getElementById('turnstile-status'); if (s) { s.textContent = 'Verification failed' + (code ? ' (' + code + '). ' : '. ') + 'Try Chrome, a private window, or disable VPN/extensions. Add konerocat.github.io in Turnstile → Hostname Management.'; s.classList.add('turnstile-status-error'); } };
     </script>
 </head>
 <body>
@@ -91,7 +90,7 @@
                     </div>
 
                     <div class="form-row submit-row">
-                        <button type="button" id="gb-submit" class="gb-submit-btn" onclick="var s=document.getElementById('form-status'); if(s){ s.textContent='Checking…'; s.className='form-status'; s.scrollIntoView({block:'nearest'}); }">Submit</button>
+                        <button type="button" id="gb-submit" class="gb-submit-btn">Submit</button>
                         <span class="form-status" id="form-status" aria-live="polite"></span>
                     </div>
                 </form>
