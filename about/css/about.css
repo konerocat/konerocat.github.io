@@ -102,27 +102,27 @@
     margin-left: 1px;
 }
 
-
 .signature .windowbuttons {
     margin-right: auto;
     order: 1;
 }
 
-.ascii-art {
-    color: var(--purple);
-    line-height: 1.2;
-    margin: 0 auto;
-    font-size: 0.7em;
+.gallery-single {
     border-top: 2px solid color-mix(in srgb, var(--purple) 70%, black);
     border-bottom: 3px ridge var(--purple);
     border-left: 3px ridge var(--purple);
     border-right: 3px ridge var(--purple);
+    background: rgba(10, 10, 10, 0.7);
+    text-align: center;
+    padding: 10px;
 }
 
-.copyright {
-    font-size: 0.8em;
-    color: #666;
-    margin-top: 5px;
+.gallery-single img {
+    max-width: 100%;
+    max-height: 350px;
+    width: auto;
+    height: auto;
+    image-rendering: auto;
 }
 
 

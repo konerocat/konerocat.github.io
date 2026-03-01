@@ -173,5 +173,100 @@ var facts = [
         image: "Niko_yawn.png",
         text: "'*yawn* I'm getting sleepy...'",
         source: "- Niko (OneShot)"
+    },
+    {
+        image: "Niko.png",
+        text: "Cats can't move their jaws sideways, so they can't chew large chunks of food.",
+        source: "- Feline anatomy"
+    },
+    {
+        image: "Niko.png",
+        text: "A cat's brain is 90% similar in structure to a human brain.",
+        source: "- Neuroscience"
+    },
+    {
+        image: "Niko.png",
+        text: "Cats have fewer toes on their back paws (4) than their front paws (5).",
+        source: "- Feline anatomy"
+    },
+    {
+        image: "Niko.png",
+        text: "Ancient Egyptians shaved their eyebrows when their cat died, as a sign of mourning.",
+        source: "- Herodotus"
+    },
+    {
+        image: "Niko.png",
+        text: "A cat named Stubbs was honorary mayor of Talkeetna, Alaska for 20 years.",
+        source: "- Local history"
+    },
+    {
+        image: "Niko.png",
+        text: "Cats can drink seawater — their kidneys filter out salt more efficiently than ours.",
+        source: "- Physiology"
+    },
+    {
+        image: "Niko.png",
+        text: "The CIA once spent $20 million training a cat to spy. It got hit by a taxi on its first mission.",
+        source: "- Declassified (Operation Acoustic Kitty)"
+    },
+    {
+        image: "Niko.png",
+        text: "Isaac Newton is credited with inventing the cat flap.",
+        source: "- Apocryphal history"
+    },
+    {
+        image: "Niko.png",
+        text: "A cat's top speed is about 30 mph — faster than Usain Bolt.",
+        source: "- Biomechanics"
+    },
+    {
+        image: "Niko.png",
+        text: "Cats only sweat through their paw pads.",
+        source: "- Thermoregulation"
+    },
+    {
+        image: "Niko4.png",
+        text: "You've been staring at this screen for a while. Blink.",
+        source: "- Niko (OneShot)"
+    },
+    {
+        image: "Niko_what.png",
+        text: "Why are you still clicking? Go pet a cat.",
+        source: "- Niko (OneShot)"
+    },
+    {
+        image: "Niko.png",
+        text: "There are over 500 million domestic cats in the world.",
+        source: "- Ecology International"
+    },
+    {
+        image: "Niko.png",
+        text: "A cat named Tama was a stationmaster in Japan. She boosted the local economy by $10 million.",
+        source: "- Wakayama Electric Railway"
+    },
+    {
+        image: "Niko.png",
+        text: "Cats can hear ultrasonic sounds that mice use to communicate.",
+        source: "- Auditory research"
+    },
+    {
+        image: "Niko.png",
+        text: "The world's richest cat inherited £7 million. His name was Tommasino.",
+        source: "- News archives"
+    },
+    {
+        image: "Niko_what.png",
+        text: "This fact is a lie. Or is it?",
+        source: "- # ex"
+    },
+    {
+        image: "Niko.png",
+        text: "Cats can rotate each ear independently, like satellite dishes.",
+        source: "- Feline senses"
+    },
+    {
+        image: "Niko.png",
+        text: "A group of kittens is called a 'kindle'.",
+        source: "- Etymology"
     }
 ];
