@@ -344,7 +344,7 @@
             var tw = document.querySelector('[name="cf-turnstile-response"]');
             if (tw) turnstileResponse = tw.value;
             if (!turnstileResponse) {
-                setStatus('Please complete the verification.', true);
+                setStatus('Verification required. Complete the checkbox above. If it never appears or shows an error, add konerocat.github.io in Cloudflare Turnstile → Hostname Management, then refresh or try Chrome.', true);
                 return;
             }
 
@@ -379,7 +379,10 @@
                     }
                 })
                 .catch(function (err) {
-                    setStatus('Network or CORS error. Check console. ' + (err && err.message ? err.message : ''), true);
+                    var msg = 'Request failed. ';
+                    if (err && err.message) msg += err.message;
+                    else msg += 'Check Network tab for CORS or connection errors.';
+                    setStatus(msg, true);
                 })
                 .finally(function () {
                     if (submitBtn) submitBtn.disabled = false;
