@@ -207,6 +207,16 @@
     margin: 16px 0;
 }
 
+.turnstile-status {
+    margin-top: 8px;
+    font-size: 0.9em;
+    color: var(--main-light);
+}
+
+.turnstile-status-error {
+    color: var(--orange);
+}
+
 
 .submit-row {
     display: flex;

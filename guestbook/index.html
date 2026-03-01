@@ -13,6 +13,10 @@
     <script src="/js/guestbook.js"></script>
 
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <script>
+      window.__gbTurnstileSuccess = function () { window.__gbTurnstileReady = true; var s = document.getElementById('turnstile-status'); if (s) s.textContent = ''; };
+      window.__gbTurnstileError = function () { window.__gbTurnstileReady = false; var s = document.getElementById('turnstile-status'); if (s) s.textContent = 'Verification failed to load. Add this site\'s domain in Cloudflare Turnstile → Hostname Management, then refresh or try Chrome.'; s && s.classList.add('turnstile-status-error'); };
+    </script>
 </head>
 <body>
     <div id="overlay"></div>
@@ -82,7 +86,8 @@
                     </div>
 
                     <div class="form-row turnstile-row">
-                        <div class="cf-turnstile" id="turnstile-widget" data-sitekey="0x4AAAAAACkdA6oxedLvFrgL" data-theme="dark"></div>
+                        <div class="cf-turnstile" id="turnstile-widget" data-sitekey="0x4AAAAAACkdA6oxedLvFrgL" data-theme="dark" data-callback="window.__gbTurnstileSuccess" data-error-callback="window.__gbTurnstileError"></div>
+                        <p class="turnstile-status" id="turnstile-status" aria-live="polite"></p>
                     </div>
 
                     <div class="form-row submit-row">
