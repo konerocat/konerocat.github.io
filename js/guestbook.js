@@ -360,12 +360,12 @@
                 setStatus('Verification required. Complete the checkbox above. If it never appears or shows an error, add konerocat.github.io in Cloudflare Turnstile → Hostname Management, then refresh or try Chrome.', true);
                 return;
             }
-            if (typeof console !== 'undefined' && console.log) console.log('[Guestbook] Token found, sending to', url);
-
+           
             if (submitBtn) submitBtn.disabled = true;
             setStatus('Sending...', false);
 
             var url = GUESTBOOK_API_BASE + '/api/guestbook/submit';
+            if (typeof console !== 'undefined' && console.log) console.log('[Guestbook] Token found, sending to', url);
             var payload = {
                 name: name.slice(0, 80),
                 message: message.slice(0, 2000),
