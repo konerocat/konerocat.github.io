@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>guestbook — konero::chronicles</title>
+    <link rel="shortcut icon" href="/images/cat.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/guestbook/css/guestbook.css">
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <script src="/js/home.js"></script>
+    <script>window.GUESTBOOK_API_URL = 'https://konerocat-github-io.pages.dev';</script>
+    <script src="/js/guestbook.js"></script>
+
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+<body>
+    <div id="overlay"></div>
+    <nav></nav>
+    <div class="mainwindow guestbook-window">
+        <div class="mainwindowbar"></div>
+        <br>
+        <h1 class="guestbook-title">guestbook</h1>
+        <p class="guestbook-intro">Leave a message, a drawing, or both. Public entries appear below after approval; private entries are only visible to me.</p>
+
+
+        <section class="guestbook-form-section retro-terminal" aria-labelledby="form-heading">
+            <div class="terminal-bar">
+                <a class="windowbuttons"><img src="/images/underscore.png" alt=""><img src="/images/X.png" alt=""></a>
+                <span id="form-heading">sign the guestbook</span>
+            </div>
+            <div class="terminal-content form-content">
+                <form id="guestbook-form" novalidate>
+
+                    <div class="hp" aria-hidden="true">
+                        <label for="website_url">Leave this blank</label>
+                        <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off">
+                    </div>
+
+                    <div class="form-row">
+                        <label for="gb-name">Name <span class="optional">(optional)</span></label>
+                        <input type="text" id="gb-name" name="name" maxlength="80" autocomplete="name" class="gb-input">
+                    </div>
+
+                    <div class="form-row">
+                        <label for="gb-message">Message <span class="optional">(optional if you add a drawing)</span></label>
+                        <textarea id="gb-message" name="message" rows="4" maxlength="2000" class="gb-input gb-textarea" placeholder="Say something..."></textarea>
+                        <span class="char-count" id="message-count">0 / 2000</span>
+                    </div>
+
+                    <div class="form-row">
+                        <label>Drawing <span class="optional">(optional)</span></label>
+                        <div class="canvas-wrap">
+                            <canvas id="gb-canvas" width="400" height="300" aria-label="Drawing canvas"></canvas>
+                            <div class="canvas-toolbar" role="toolbar" aria-label="Drawing tools">
+                                <button type="button" class="gb-tool-btn active" data-tool="pen" title="Pen">Pen</button>
+                                <button type="button" class="gb-tool-btn" data-tool="eraser" title="Eraser">Eraser</button>
+                                <button type="button" class="gb-tool-btn" data-tool="undo" title="Undo">Undo</button>
+                                <button type="button" class="gb-tool-btn" data-tool="clear" title="Clear">Clear</button>
+                                <div class="color-swatch" role="group" aria-label="Pen color">
+                                    <button type="button" class="color-btn" data-color="#EAE7DE" title="Light" style="background:#EAE7DE"></button>
+                                    <button type="button" class="color-btn" data-color="#78589d" title="Purple" style="background:#78589d"></button>
+                                    <button type="button" class="color-btn" data-color="#c58c65" title="Orange" style="background:#c58c65"></button>
+                                    <button type="button" class="color-btn" data-color="#111111" title="Dark" style="background:#111111"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row privacy-row">
+                        <fieldset class="privacy-fieldset">
+                            <legend>Visibility</legend>
+                            <label class="privacy-option">
+                                <input type="radio" name="visibility" value="public" checked>
+                                <span>Public</span> — Shown in the guestbook list (after approval).
+                            </label>
+                            <label class="privacy-option">
+                                <input type="radio" name="visibility" value="private">
+                                <span>Private</span> — Only visible to me. I can still reply; you won’t get a notification.
+                            </label>
+                        </fieldset>
+                    </div>
+
+                    <div class="form-row turnstile-row">
+                        <div class="cf-turnstile" id="turnstile-widget" data-sitekey="0x4AAAAAACkdA6oxedLvFrgL" data-theme="dark"></div>
+                    </div>
+
+                    <div class="form-row submit-row">
+                        <button type="submit" id="gb-submit" class="gb-submit-btn">Submit</button>
+                        <span class="form-status" id="form-status" aria-live="polite"></span>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+
+        <section class="guestbook-entries-section" aria-labelledby="entries-heading">
+            <h2 id="entries-heading" class="entries-title">messages</h2>
+            <div id="guestbook-entries" class="guestbook-entries">
+                <p class="entries-loading" id="entries-loading">Loading...</p>
+            </div>
+        </section>
+    </div>
+    <div class="botbar"></div>
+</body>
+</html>

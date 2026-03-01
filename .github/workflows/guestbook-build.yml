@@ -1,0 +1,39 @@
+name: Guestbook build
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # every hour
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GITHUB_OWNER: konerocat
+      GITHUB_REPO: guestbook
+      GITHUB_TOKEN: ${{ secrets.GUESTBOOK_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Build guestbook.json
+        run: node scripts/build-guestbook-json.js
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/guestbook.json
+          if git diff --staged --quiet; then
+            echo "No changes to guestbook.json"
+          else
+            git commit -m "chore: update guestbook.json [skip ci]"
+            git push
+          fi
