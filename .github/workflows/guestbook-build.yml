@@ -2,25 +2,28 @@ name: Guestbook build
 
 on:
   schedule:
-    - cron: '0 * * * *'   # every hour
+    - cron: "0 * * * *" # every hour
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     env:
       GITHUB_OWNER: konerocat
       GITHUB_REPO: guestbook
       GITHUB_TOKEN: ${{ secrets.GUESTBOOK_TOKEN }}
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
+          cache: ""
 
       - name: Build guestbook.json
         run: node scripts/build-guestbook-json.js
