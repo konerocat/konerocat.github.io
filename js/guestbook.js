@@ -353,14 +353,17 @@
             var turnstileResponse = null;
             var tw = document.querySelector('[name="cf-turnstile-response"]');
             if (tw) turnstileResponse = tw.value;
+            if (!turnstileResponse && typeof window.__gbTurnstileToken === 'string') turnstileResponse = window.__gbTurnstileToken;
             if (!turnstileResponse) {
                 setStatus('Verification required. Complete the checkbox above. If it never appears or shows an error, add konerocat.github.io in Cloudflare Turnstile → Hostname Management, then refresh or try Chrome.', true);
                 return;
             }
+            if (typeof console !== 'undefined' && console.log) console.log('[Guestbook] Token found, sending to', url);
 
             if (submitBtn) submitBtn.disabled = true;
             setStatus('Sending...', false);
 
+            var url = GUESTBOOK_API_BASE + '/api/guestbook/submit';
             var payload = {
                 name: name.slice(0, 80),
                 message: message.slice(0, 2000),
@@ -369,13 +372,18 @@
                 'cf-turnstile-response': turnstileResponse
             };
 
-            fetch(GUESTBOOK_API_BASE + '/api/guestbook/submit', {
+            fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             })
-                .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, status: r.status, json: j }; }); })
+                .then(function (r) {
+                    return r.text().then(function (text) {
+                        try { var j = JSON.parse(text); return { ok: r.ok, status: r.status, json: j }; } catch (e) { return { ok: false, status: r.status, json: null, raw: text }; }
+                    });
+                })
                 .then(function (res) {
+                    if (typeof console !== 'undefined' && console.log) console.log('[Guestbook] Response', res.status, res.json || res.raw);
                     if (res.ok && res.json && res.json.success) {
                         setStatus('Thanks! Your entry was submitted.');
                         form.reset();
@@ -385,10 +393,12 @@
                         redrawCanvas();
                         if (typeof turnstile !== 'undefined' && turnstile.reset) turnstile.reset();
                     } else {
-                        setStatus((res.json && res.json.error) || 'Submission failed. Try again.', true);
+                        var errMsg = (res.json && res.json.error) ? res.json.error : ('Server returned ' + res.status + (res.raw ? ': ' + res.raw.slice(0, 100) : ''));
+                        setStatus(errMsg, true);
                     }
                 })
                 .catch(function (err) {
+                    if (typeof console !== 'undefined' && console.error) console.error('[Guestbook] Request failed', err);
                     var msg = 'Request failed. ';
                     if (err && err.message) msg += err.message;
                     else msg += 'Check Network tab for CORS or connection errors.';
