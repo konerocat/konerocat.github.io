@@ -15,6 +15,11 @@
         var DOWNSAMPLE = 3;
 
         var expanded = false;
+        var MAX_IMAGES = 3;
+        var IMG_MAX_DIM = 200;
+        var IMG_QUALITY = 0.6;
+        var HANDLE_SIZE = 8;
+
         var drawing = {
             strokes: [],
             current: null,
@@ -23,7 +28,10 @@
             bgColor: '#111111',
             penWidth: 2,
             eraserWidth: 20,
-            undoStack: []
+            undoStack: [],
+            images: [],
+            selectedImage: -1,
+            imgDrag: null
         };
 
         var canvasEl = document.getElementById('gb-canvas');
@@ -58,7 +66,7 @@
 
 
         function getCanvasDrawing() {
-            if (!drawing.strokes.length) return null;
+            if (!drawing.strokes.length && !drawing.images.length) return null;
             var out = drawing.strokes.map(function (s) {
                 var pts = s.points;
                 if (DOWNSAMPLE > 1) {
@@ -67,7 +75,10 @@
                 pts = pts.map(function (p) { return { x: Math.round(p.x), y: Math.round(p.y) }; });
                 return { color: s.color, width: s.width, points: pts };
             });
-            return { width: canvasEl.width, height: canvasEl.height, backgroundColor: drawing.bgColor, strokes: out };
+            var imgs = drawing.images.map(function (img) {
+                return { src: img.src, x: Math.round(img.x), y: Math.round(img.y), w: Math.round(img.w), h: Math.round(img.h) };
+            });
+            return { width: canvasEl.width, height: canvasEl.height, backgroundColor: drawing.bgColor, strokes: out, images: imgs };
         }
 
         function drawStroke(c, s) {
@@ -82,11 +93,45 @@
             c.stroke();
         }
 
+        function drawImages(c, imgs) {
+            imgs.forEach(function (img) {
+                if (img._el && img._el.complete) {
+                    c.drawImage(img._el, img.x, img.y, img.w, img.h);
+                }
+            });
+        }
+
+        function drawSelectionUI(c, img) {
+            c.save();
+            c.strokeStyle = '#EAE7DE';
+            c.lineWidth = 1;
+            c.setLineDash([4, 3]);
+            c.strokeRect(img.x, img.y, img.w, img.h);
+            c.setLineDash([]);
+            c.fillStyle = '#78589d';
+            var corners = [
+                [img.x, img.y],
+                [img.x + img.w, img.y],
+                [img.x, img.y + img.h],
+                [img.x + img.w, img.y + img.h]
+            ];
+            corners.forEach(function (p) {
+                c.fillRect(p[0] - HANDLE_SIZE / 2, p[1] - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE);
+                c.strokeStyle = '#EAE7DE';
+                c.strokeRect(p[0] - HANDLE_SIZE / 2, p[1] - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE);
+            });
+            c.restore();
+        }
+
         function redraw() {
             if (!ctx || !canvasEl) return;
             ctx.fillStyle = drawing.bgColor;
             ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
+            drawImages(ctx, drawing.images);
             drawing.strokes.forEach(function (s) { drawStroke(ctx, s); });
+            if (drawing.selectedImage >= 0 && drawing.selectedImage < drawing.images.length) {
+                drawSelectionUI(ctx, drawing.images[drawing.selectedImage]);
+            }
         }
 
         function getPos(e) {
@@ -130,57 +175,155 @@
 
 
 
+        function hitTestImage(px, py) {
+            for (var i = drawing.images.length - 1; i >= 0; i--) {
+                var img = drawing.images[i];
+                if (px >= img.x && px <= img.x + img.w && py >= img.y && py <= img.y + img.h) return i;
+            }
+            return -1;
+        }
+
+        function hitTestHandle(px, py, img) {
+            var corners = [
+                { cx: img.x, cy: img.y, corner: 'tl' },
+                { cx: img.x + img.w, cy: img.y, corner: 'tr' },
+                { cx: img.x, cy: img.y + img.h, corner: 'bl' },
+                { cx: img.x + img.w, cy: img.y + img.h, corner: 'br' }
+            ];
+            for (var i = 0; i < corners.length; i++) {
+                if (Math.abs(px - corners[i].cx) <= HANDLE_SIZE && Math.abs(py - corners[i].cy) <= HANDLE_SIZE) {
+                    return corners[i].corner;
+                }
+            }
+            return null;
+        }
+
+        function canvasPointerDown(e) {
+            e.preventDefault();
+            if (e.pointerId != null) canvasEl.setPointerCapture(e.pointerId);
+            var p = getPos(e);
+
+            if (drawing.selectedImage >= 0 && drawing.selectedImage < drawing.images.length) {
+                var sel = drawing.images[drawing.selectedImage];
+                var handle = hitTestHandle(p.x, p.y, sel);
+                if (handle) {
+                    drawing.imgDrag = { type: 'resize', corner: handle, startX: p.x, startY: p.y, origX: sel.x, origY: sel.y, origW: sel.w, origH: sel.h };
+                    return;
+                }
+            }
+
+            var hit = hitTestImage(p.x, p.y);
+            if (hit >= 0) {
+                drawing.selectedImage = hit;
+                var img = drawing.images[hit];
+                drawing.imgDrag = { type: 'move', offsetX: p.x - img.x, offsetY: p.y - img.y };
+                redraw();
+                return;
+            }
+
+            drawing.selectedImage = -1;
+            drawing.imgDrag = null;
+            beginStroke(p.x, p.y);
+            redraw();
+        }
+
+        function canvasPointerMove(e) {
+            if (drawing.imgDrag) {
+                e.preventDefault();
+                var p = getPos(e);
+                var img = drawing.images[drawing.selectedImage];
+                if (!img) return;
+
+                if (drawing.imgDrag.type === 'move') {
+                    img.x = p.x - drawing.imgDrag.offsetX;
+                    img.y = p.y - drawing.imgDrag.offsetY;
+                    redraw();
+                } else if (drawing.imgDrag.type === 'resize') {
+                    var d = drawing.imgDrag;
+                    var aspect = d.origW / d.origH;
+                    var dx = p.x - d.startX;
+                    var dy = p.y - d.startY;
+
+                    var newW, newH;
+                    if (d.corner === 'br') {
+                        newW = Math.max(16, d.origW + dx);
+                    } else if (d.corner === 'bl') {
+                        newW = Math.max(16, d.origW - dx);
+                    } else if (d.corner === 'tr') {
+                        newW = Math.max(16, d.origW + dx);
+                    } else {
+                        newW = Math.max(16, d.origW - dx);
+                    }
+                    newH = newW / aspect;
+
+                    if (d.corner === 'tl') {
+                        img.x = d.origX + d.origW - newW;
+                        img.y = d.origY + d.origH - newH;
+                    } else if (d.corner === 'tr') {
+                        img.y = d.origY + d.origH - newH;
+                    } else if (d.corner === 'bl') {
+                        img.x = d.origX + d.origW - newW;
+                    }
+                    img.w = newW;
+                    img.h = newH;
+                    redraw();
+                }
+                return;
+            }
+            if (!drawing.current) return;
+            e.preventDefault();
+            var p = getPos(e);
+            extendStroke(p.x, p.y);
+        }
+
+        function canvasPointerUp(e) {
+            if (drawing.imgDrag) {
+                drawing.imgDrag = null;
+                return;
+            }
+            finishStroke();
+            if (e.pointerId != null) canvasEl.releasePointerCapture(e.pointerId);
+        }
+
         function initCanvas() {
             if (!canvasEl || !ctx) return;
             redraw();
 
             if (window.PointerEvent) {
-                canvasEl.addEventListener('pointerdown', function (e) {
-                    e.preventDefault();
-                    canvasEl.setPointerCapture(e.pointerId);
-                    var p = getPos(e);
-                    beginStroke(p.x, p.y);
-                });
-                canvasEl.addEventListener('pointermove', function (e) {
-                    if (!drawing.current) return;
-                    e.preventDefault();
-                    var p = getPos(e);
-                    extendStroke(p.x, p.y);
-                });
-                canvasEl.addEventListener('pointerup', function (e) {
+                canvasEl.addEventListener('pointerdown', canvasPointerDown);
+                canvasEl.addEventListener('pointermove', canvasPointerMove);
+                canvasEl.addEventListener('pointerup', canvasPointerUp);
+                canvasEl.addEventListener('pointercancel', function () {
+                    drawing.imgDrag = null;
                     finishStroke();
-                    canvasEl.releasePointerCapture(e.pointerId);
                 });
-                canvasEl.addEventListener('pointercancel', function () { finishStroke(); });
             } else {
-                canvasEl.addEventListener('mousedown', function (e) {
-                    e.preventDefault();
-                    var p = getPos(e);
-                    beginStroke(p.x, p.y);
-                });
-                document.addEventListener('mousemove', function (e) {
-                    if (!drawing.current) return;
-                    var p = getPos(e);
-                    extendStroke(p.x, p.y);
-                });
-                document.addEventListener('mouseup', finishStroke);
-
+                canvasEl.addEventListener('mousedown', canvasPointerDown);
+                document.addEventListener('mousemove', canvasPointerMove);
+                document.addEventListener('mouseup', canvasPointerUp);
                 canvasEl.addEventListener('touchstart', function (e) {
-                    e.preventDefault();
-                    var p = getPos(e);
-                    beginStroke(p.x, p.y);
+                    canvasPointerDown(e);
                 }, { passive: false });
                 canvasEl.addEventListener('touchmove', function (e) {
-                    if (!drawing.current) return;
-                    e.preventDefault();
-                    var p = getPos(e);
-                    extendStroke(p.x, p.y);
+                    canvasPointerMove(e);
                 }, { passive: false });
                 canvasEl.addEventListener('touchend', function (e) {
                     e.preventDefault();
-                    finishStroke();
+                    canvasPointerUp(e);
                 }, { passive: false });
             }
+
+            document.addEventListener('keydown', function (e) {
+                if (drawing.selectedImage >= 0 && (e.key === 'Delete' || e.key === 'Backspace')) {
+                    var target = e.target;
+                    if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
+                    e.preventDefault();
+                    drawing.images.splice(drawing.selectedImage, 1);
+                    drawing.selectedImage = -1;
+                    updateImgCount();
+                    redraw();
+                }
+            });
         }
 
 
@@ -207,6 +350,11 @@
             if (bgPreview) bgPreview.style.background = drawing.bgColor;
         }
 
+        function updateImgCount() {
+            var el = document.getElementById('gb-img-count');
+            if (el) el.textContent = drawing.images.length + '/' + MAX_IMAGES;
+        }
+
         document.querySelectorAll('.gb-tool[data-tool]').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 var t = btn.dataset.tool;
@@ -219,6 +367,10 @@
                     drawing.undoStack = [];
                     drawing.strokes = [];
                     drawing.current = null;
+                    drawing.images = [];
+                    drawing.selectedImage = -1;
+                    drawing.imgDrag = null;
+                    updateImgCount();
                     redraw();
                 } else if (t === 'bg') {
                     drawing.bgColor = drawing.color;
@@ -284,6 +436,64 @@
 
 
 
+        var imgBtn = document.getElementById('gb-img-btn');
+        var imgInput = document.getElementById('gb-img-input');
+        if (imgBtn && imgInput) {
+            imgBtn.addEventListener('click', function () {
+                if (drawing.images.length >= MAX_IMAGES) return;
+                imgInput.click();
+            });
+            imgInput.addEventListener('change', function () {
+                if (!imgInput.files || !imgInput.files[0]) return;
+                if (drawing.images.length >= MAX_IMAGES) { imgInput.value = ''; return; }
+                var file = imgInput.files[0];
+                var reader = new FileReader();
+                reader.onload = function () {
+                    var img = new Image();
+                    img.onload = function () {
+                        var w = img.width, h = img.height;
+                        if (w > IMG_MAX_DIM || h > IMG_MAX_DIM) {
+                            var ratio = Math.min(IMG_MAX_DIM / w, IMG_MAX_DIM / h);
+                            w = Math.round(w * ratio);
+                            h = Math.round(h * ratio);
+                        }
+                        var oc = document.createElement('canvas');
+                        oc.width = w;
+                        oc.height = h;
+                        var octx = oc.getContext('2d');
+                        octx.drawImage(img, 0, 0, w, h);
+
+                        var isGif = file.type === 'image/gif';
+                        var src;
+                        if (isGif && file.size <= 40960) {
+                            src = reader.result;
+                        } else {
+                            src = oc.toDataURL('image/jpeg', IMG_QUALITY);
+                        }
+
+                        if (src.length > 55000) {
+                            src = oc.toDataURL('image/jpeg', 0.4);
+                        }
+
+                        var cx = (canvasEl.width - w) / 2;
+                        var cy = (canvasEl.height - h) / 2;
+
+                        var el = new Image();
+                        el.onload = function () {
+                            drawing.images.push({ src: src, x: cx, y: cy, w: w, h: h, _el: el });
+                            drawing.selectedImage = drawing.images.length - 1;
+                            updateImgCount();
+                            redraw();
+                        };
+                        el.src = src;
+                    };
+                    img.src = reader.result;
+                };
+                reader.readAsDataURL(file);
+                imgInput.value = '';
+            });
+        }
+
         var messageEl = document.getElementById('gb-message');
         var countEl = document.getElementById('message-count');
         if (messageEl && countEl) {
@@ -294,15 +504,41 @@
 
 
         function renderDrawingToCanvas(canvas, data) {
-            if (!data || !data.strokes || !data.strokes.length) return;
+            if (!data) return;
+            var hasStrokes = data.strokes && data.strokes.length;
+            var hasImages = data.images && data.images.length;
+            if (!hasStrokes && !hasImages) return;
             var w = data.width || CANVAS_W;
             var h = data.height || CANVAS_H;
             canvas.width = w;
             canvas.height = h;
             var c = canvas.getContext('2d');
-            c.fillStyle = data.backgroundColor || '#111111';
-            c.fillRect(0, 0, w, h);
-            data.strokes.forEach(function (s) { drawStroke(c, s); });
+
+            function paintAll(loadedImgs) {
+                c.fillStyle = data.backgroundColor || '#111111';
+                c.fillRect(0, 0, w, h);
+                if (loadedImgs) {
+                    loadedImgs.forEach(function (item) {
+                        if (item.el) c.drawImage(item.el, item.x, item.y, item.w, item.h);
+                    });
+                }
+                if (hasStrokes) data.strokes.forEach(function (s) { drawStroke(c, s); });
+            }
+
+            if (!hasImages) { paintAll(null); return; }
+
+            var pending = data.images.length;
+            var loaded = [];
+            data.images.forEach(function (imgData, idx) {
+                var el = new Image();
+                el.onload = el.onerror = function () {
+                    loaded[idx] = { el: el.complete && el.naturalWidth ? el : null, x: imgData.x, y: imgData.y, w: imgData.w, h: imgData.h };
+                    pending--;
+                    if (pending <= 0) paintAll(loaded);
+                };
+                el.src = imgData.src;
+            });
+            paintAll(null);
         }
 
         function buildEntryEl(entry, idx, chronoNum) {
@@ -340,7 +576,8 @@
                 body.appendChild(msgP);
             }
 
-            if (entry.drawing && entry.drawing.strokes && entry.drawing.strokes.length) {
+            var hasDrawContent = entry.drawing && ((entry.drawing.strokes && entry.drawing.strokes.length) || (entry.drawing.images && entry.drawing.images.length));
+            if (hasDrawContent) {
                 var dWrap = document.createElement('div');
                 dWrap.className = 'gb-entry-drawing';
                 var cv = document.createElement('canvas');
@@ -428,7 +665,8 @@
                 if (hp && hp.value) { setStatus('Submission ignored.', true); return; }
 
                 var drawingData = getCanvasDrawing();
-                if (!message.trim() && (!drawingData || !drawingData.strokes.length)) {
+                var hasDrawing = drawingData && (drawingData.strokes.length || (drawingData.images && drawingData.images.length));
+                if (!message.trim() && !hasDrawing) {
                     setStatus('Please add a message and/or a drawing.', true);
                     return;
                 }
@@ -472,8 +710,12 @@
                         if (countEl) countEl.textContent = '0 / 2000';
                         drawing.strokes = [];
                         drawing.undoStack = [];
+                        drawing.images = [];
+                        drawing.selectedImage = -1;
+                        drawing.imgDrag = null;
                         drawing.bgColor = '#111111';
                         updateBgPreview();
+                        updateImgCount();
                         redraw();
                         if (typeof turnstile !== 'undefined' && turnstile.reset) turnstile.reset();
                     } else {
@@ -506,13 +748,13 @@
 
 
         var legacyEntries = [
-            { displayName: 'Shaymihgn', message: 'Hhhhhhh', created_at: '2026-02-15' },
+            { displayName: 'Shaymihgn', message: '😯 Hhhhhhh', created_at: '2026-02-15' },
             { displayName: 'OLA', message: 'asdfasdfasdfasdf', created_at: '2026-01-02' },
-            { displayName: ';3', message: 'wow', created_at: '2025-05-19' },
+            { displayName: ';3', message: 'wow 😯', created_at: '2025-05-19' },
             { displayName: 'rat', message: 'squeak', created_at: '2025-05-15' },
-            { displayName: ':D', message: ': [', created_at: '2025-04-20' },
-            { displayName: 'kat', message: 'wadadsaa hi', created_at: '2025-03-27' },
-            { displayName: 'ME', message: 'HIP', created_at: '2025-03-27' }
+            { displayName: ':D', message: '😡😡😡😡😡:😡[😡😡😡😡😡😡😡😁😁😁😁😁', created_at: '2025-04-20' },
+            { displayName: 'kat', message: 'wadadsaa hi 😯😯😯', created_at: '2025-03-27' },
+            { displayName: 'ME', message: 'HIP😁😁😁', created_at: '2025-03-27' }
         ];
 
         function loadStats(entryCount) {

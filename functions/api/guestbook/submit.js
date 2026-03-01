@@ -1,6 +1,8 @@
 
 
-const MAX_BODY_BYTES = 100 * 1024; // 100KB
+const MAX_BODY_BYTES = 250 * 1024; // 250KB
+const MAX_IMAGES = 3;
+const MAX_IMAGE_SRC_BYTES = 40 * 1024; // 40KB per image base64
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_NAME_LENGTH = 80;
 const MAX_STROKES = 100;
@@ -79,10 +81,25 @@ async function validateTurnstile(token, remoteip, secret) {
   }
 }
 
+function validateImages(images) {
+  if (!Array.isArray(images)) return [];
+  const out = [];
+  for (const img of images.slice(0, MAX_IMAGES)) {
+    if (!img || typeof img !== 'object') continue;
+    if (typeof img.src !== 'string' || !img.src.startsWith('data:image/')) continue;
+    if (img.src.length > MAX_IMAGE_SRC_BYTES) continue;
+    if (typeof img.x !== 'number' || typeof img.y !== 'number') continue;
+    if (typeof img.w !== 'number' || typeof img.h !== 'number') continue;
+    if (img.w <= 0 || img.h <= 0 || img.w > 800 || img.h > 800) continue;
+    out.push({ src: img.src, x: Math.round(img.x), y: Math.round(img.y), w: Math.round(img.w), h: Math.round(img.h) });
+  }
+  return out;
+}
+
 function validateDrawing(drawing) {
   if (!drawing || typeof drawing !== 'object') return null;
-  const strokes = drawing.strokes;
-  if (!Array.isArray(strokes) || strokes.length > MAX_STROKES) return null;
+  const strokes = Array.isArray(drawing.strokes) ? drawing.strokes : [];
+  if (strokes.length > MAX_STROKES) return null;
   const out = [];
   for (const s of strokes) {
     if (!s || !Array.isArray(s.points)) continue;
@@ -92,13 +109,16 @@ function validateDrawing(drawing) {
     const width = typeof s.width === 'number' && s.width > 0 && s.width <= 50 ? s.width : 2;
     out.push({ color, width, points });
   }
-  if (out.length === 0) return null;
-  return {
+  const images = validateImages(drawing.images);
+  if (out.length === 0 && images.length === 0) return null;
+  const result = {
     width: Math.min(Number(drawing.width) || 400, 800),
     height: Math.min(Number(drawing.height) || 300, 600),
     backgroundColor: drawing.backgroundColor || null,
     strokes: out,
   };
+  if (images.length > 0) result.images = images;
+  return result;
 }
 
 export async function onRequestOptions() {
@@ -157,7 +177,8 @@ export async function onRequestPost(context) {
   const isPublic = body.public === true;
   const drawing = validateDrawing(body.drawing);
 
-  if (!message && !drawing) {
+  const hasDrawingContent = drawing && (drawing.strokes.length > 0 || (drawing.images && drawing.images.length > 0));
+  if (!message && !hasDrawingContent) {
     return new Response(JSON.stringify({ success: false, error: 'Add a message and/or a drawing.' }), { status: 400, headers: { ...headers, 'Content-Type': 'application/json' } });
   }
 
