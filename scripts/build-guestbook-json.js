@@ -25,6 +25,37 @@ if (!token || !owner || !repo) {
 }
 
 const OUT_PATH = path.join(__dirname, '..', 'public', 'guestbook.json');
+const REPLY_IMG_DIR = path.join(__dirname, '..', 'public', 'reply-images');
+
+function fetchBinary(urlStr) {
+  return new Promise((resolve, reject) => {
+    const get = (u, depth) => {
+      if (depth > 5) return reject(new Error('Too many redirects'));
+      const parsed = new URL(u);
+      const mod = parsed.protocol === 'https:' ? https : require('http');
+      mod.get({
+        hostname: parsed.hostname,
+        path: parsed.pathname + parsed.search,
+        headers: {
+          'User-Agent': 'guestbook-build',
+          ...(parsed.hostname.includes('github.com') ? { 'Authorization': `Bearer ${token}` } : {}),
+        },
+      }, (res) => {
+        if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+          return get(res.headers.location, depth + 1);
+        }
+        if (res.statusCode !== 200) {
+          res.resume();
+          return reject(new Error('HTTP ' + res.statusCode + ' for ' + u));
+        }
+        const chunks = [];
+        res.on('data', (c) => chunks.push(c));
+        res.on('end', () => resolve({ buf: Buffer.concat(chunks), type: res.headers['content-type'] || '' }));
+      }).on('error', reject);
+    };
+    get(urlStr, 0);
+  });
+}
 
 function request(opts, postBody) {
   return new Promise((resolve, reject) => {
@@ -95,13 +126,31 @@ async function main() {
       const first = comments[0];
       const raw = first.body && first.body.trim();
       if (raw) {
-        const images = [];
+        const imageUrls = [];
         const cleaned = raw.replace(/!\[[^\]]*\]\((https?:\/\/[^)]+)\)/g, (_, url) => {
-          images.push(url);
+          imageUrls.push(url);
           return '';
         }).trim();
         ownerReply = { text: cleaned };
-        if (images.length > 0) ownerReply.images = images;
+        if (imageUrls.length > 0) {
+          const localPaths = [];
+          for (const imgUrl of imageUrls) {
+            try {
+              const { buf, type } = await fetchBinary(imgUrl);
+              const ext = type.includes('png') ? '.png' : type.includes('gif') ? '.gif' : type.includes('webp') ? '.webp' : '.jpg';
+              const hash = require('crypto').createHash('md5').update(imgUrl).digest('hex').slice(0, 12);
+              const filename = hash + ext;
+              if (!fs.existsSync(REPLY_IMG_DIR)) fs.mkdirSync(REPLY_IMG_DIR, { recursive: true });
+              fs.writeFileSync(path.join(REPLY_IMG_DIR, filename), buf);
+              localPaths.push('/public/reply-images/' + filename);
+              console.log('  Downloaded reply image:', filename);
+            } catch (e) {
+              console.warn('  Failed to download reply image:', imgUrl, e.message);
+              localPaths.push(imgUrl);
+            }
+          }
+          ownerReply.images = localPaths;
+        }
       }
     }
 
