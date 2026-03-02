@@ -57,7 +57,7 @@ function fetchBinary(urlStr) {
   });
 }
 
-function request(opts, postBody) {
+function request(opts, postBody, acceptHeader) {
   return new Promise((resolve, reject) => {
     const url = new URL(opts.path, 'https://api.github.com');
     const req = https.request({
@@ -66,7 +66,7 @@ function request(opts, postBody) {
       method: opts.method || 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Accept': 'application/vnd.github+json',
+        'Accept': acceptHeader || 'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28',
         'User-Agent': 'guestbook-build',
         ...(postBody ? { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(postBody) } : {}),
@@ -88,6 +88,16 @@ function request(opts, postBody) {
     if (postBody) req.write(postBody);
     req.end();
   });
+}
+
+function extractCdnUrls(bodyHtml) {
+  const urls = [];
+  const re = /<img[^>]+src="([^"]+)"/g;
+  let m;
+  while ((m = re.exec(bodyHtml)) !== null) {
+    if (m[1] && !m[1].startsWith('data:')) urls.push(m[1]);
+  }
+  return urls;
 }
 
 function parseSubmissionFromBody(body) {
@@ -121,35 +131,36 @@ async function main() {
     if (!payload) continue;
 
     let ownerReply = null;
-    const comments = await request({ path: `/repos/${owner}/${repo}/issues/${issue.number}/comments` });
+    const comments = await request(
+      { path: `/repos/${owner}/${repo}/issues/${issue.number}/comments` },
+      null,
+      'application/vnd.github.full+json'
+    );
     if (Array.isArray(comments) && comments.length > 0) {
       const first = comments[0];
       const raw = first.body && first.body.trim();
       if (raw) {
-        const imageUrls = [];
-        const cleaned = raw.replace(/!\[[^\]]*\]\((https?:\/\/[^)]+)\)/g, (_, url) => {
-          imageUrls.push(url);
-          return '';
-        }).trim();
+        const cleaned = raw.replace(/!\[[^\]]*\]\((https?:\/\/[^)]+)\)/g, '').trim();
         ownerReply = { text: cleaned };
-        if (imageUrls.length > 0) {
+
+        const cdnUrls = first.body_html ? extractCdnUrls(first.body_html) : [];
+        if (cdnUrls.length > 0) {
           const localPaths = [];
-          for (const imgUrl of imageUrls) {
+          for (const cdnUrl of cdnUrls) {
             try {
-              const { buf, type } = await fetchBinary(imgUrl);
+              const { buf, type } = await fetchBinary(cdnUrl);
               const ext = type.includes('png') ? '.png' : type.includes('gif') ? '.gif' : type.includes('webp') ? '.webp' : '.jpg';
-              const hash = require('crypto').createHash('md5').update(imgUrl).digest('hex').slice(0, 12);
+              const hash = require('crypto').createHash('md5').update(cdnUrl.split('?')[0]).digest('hex').slice(0, 12);
               const filename = hash + ext;
               if (!fs.existsSync(REPLY_IMG_DIR)) fs.mkdirSync(REPLY_IMG_DIR, { recursive: true });
               fs.writeFileSync(path.join(REPLY_IMG_DIR, filename), buf);
               localPaths.push('/public/reply-images/' + filename);
               console.log('  Downloaded reply image:', filename);
             } catch (e) {
-              console.warn('  Failed to download reply image:', imgUrl, e.message);
-              localPaths.push(imgUrl);
+              console.warn('  Failed to download reply image:', cdnUrl.slice(0, 80), e.message);
             }
           }
-          ownerReply.images = localPaths;
+          if (localPaths.length > 0) ownerReply.images = localPaths;
         }
       }
     }
