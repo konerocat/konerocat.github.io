@@ -179,6 +179,37 @@ async function main() {
     return;
   }
 
+  if (cmd === 'reply-img') {
+    const num = parseInt(arg1, 10);
+    const imgPath = rest[0];
+    const text = rest.slice(1).join(' ').replace(/^["']|["']$/g, '');
+    if (!num || !imgPath) {
+      console.error('Usage: reply-img <issue_number> <image_path> ["optional text"]');
+      process.exit(1);
+    }
+    const absPath = path.resolve(imgPath);
+    if (!fs.existsSync(absPath)) {
+      console.error('File not found:', absPath);
+      process.exit(1);
+    }
+    const buf = fs.readFileSync(absPath);
+    const ext = path.extname(absPath).toLowerCase();
+    const mime = ext === '.png' ? 'image/png' : ext === '.gif' ? 'image/gif' : ext === '.webp' ? 'image/webp' : 'image/jpeg';
+    const b64 = buf.toString('base64');
+    const dataUrl = `data:${mime};base64,${b64}`;
+    const sizeKB = Math.round(b64.length / 1024);
+    if (b64.length > 45000) {
+      console.warn(`Warning: base64 is ${sizeKB}KB. GitHub comments have a ~65KB limit.`);
+      console.warn('Consider resizing the image to under 200x200 or lowering quality first.');
+    }
+    let body = '';
+    if (text) body += text + '\n\n';
+    body += `![reply](${dataUrl})`;
+    await postComment(num, body);
+    console.log(`Posted image reply (${sizeKB}KB base64) to #${num}`);
+    return;
+  }
+
   if (cmd === 'rebuild') {
     const { execSync } = require('child_process');
     const scriptPath = path.join(__dirname, 'build-guestbook-json.js');
@@ -190,11 +221,12 @@ async function main() {
   console.log(`
 Guestbook admin CLI
 
-  list [pending|public|private|all]   List issues (default: all)
-  approve <issue_number>              Add "approved", remove "pending"
-  spam <issue_number>                 Mark as spam (removes approved/pending)
-  reply <issue_number> "text"         Post your reply as first comment
-  rebuild                             Regenerate public/guestbook.json locally
+  list [pending|public|private|all]      List issues (default: all)
+  approve <issue_number>                 Add "approved", remove "pending"
+  spam <issue_number>                    Mark as spam (removes approved/pending)
+  reply <issue_number> "text"            Post text reply as first comment
+  reply-img <issue_number> <img> ["text"]  Reply with a local image (base64 encoded)
+  rebuild                                Regenerate public/guestbook.json locally
 
 Private entries and replies are only visible to you in this CLI and on GitHub.
 We do not send DMs to submitters.

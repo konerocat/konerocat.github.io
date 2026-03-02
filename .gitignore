@@ -1,1 +1,5 @@
 .env
+.env.*
+node_modules/
+*.log
+public/reply-images/

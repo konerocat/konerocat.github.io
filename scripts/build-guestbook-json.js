@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+const http = require('http');
 
 const token = process.env.GITHUB_TOKEN;
 const repoEnv = process.env.GITHUB_REPOSITORY;
@@ -25,51 +26,19 @@ if (!token || !owner || !repo) {
 }
 
 const OUT_PATH = path.join(__dirname, '..', 'public', 'guestbook.json');
-const REPLY_IMG_DIR = path.join(__dirname, '..', 'public', 'reply-images');
 
-function fetchBinary(urlStr) {
+function apiRequest(apiPath, acceptHeader) {
   return new Promise((resolve, reject) => {
-    const get = (u, depth) => {
-      if (depth > 5) return reject(new Error('Too many redirects'));
-      const parsed = new URL(u);
-      const mod = parsed.protocol === 'https:' ? https : require('http');
-      mod.get({
-        hostname: parsed.hostname,
-        path: parsed.pathname + parsed.search,
-        headers: {
-          'User-Agent': 'guestbook-build',
-          ...(parsed.hostname.includes('github.com') ? { 'Authorization': `Bearer ${token}` } : {}),
-        },
-      }, (res) => {
-        if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-          return get(res.headers.location, depth + 1);
-        }
-        if (res.statusCode !== 200) {
-          res.resume();
-          return reject(new Error('HTTP ' + res.statusCode + ' for ' + u));
-        }
-        const chunks = [];
-        res.on('data', (c) => chunks.push(c));
-        res.on('end', () => resolve({ buf: Buffer.concat(chunks), type: res.headers['content-type'] || '' }));
-      }).on('error', reject);
-    };
-    get(urlStr, 0);
-  });
-}
-
-function request(opts, postBody, acceptHeader) {
-  return new Promise((resolve, reject) => {
-    const url = new URL(opts.path, 'https://api.github.com');
+    const url = new URL(apiPath, 'https://api.github.com');
     const req = https.request({
       hostname: url.hostname,
       path: url.pathname + url.search,
-      method: opts.method || 'GET',
+      method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': acceptHeader || 'application/vnd.github+json',
         'X-GitHub-Api-Version': '2022-11-28',
         'User-Agent': 'guestbook-build',
-        ...(postBody ? { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(postBody) } : {}),
       },
     }, (res) => {
       let data = '';
@@ -85,19 +54,39 @@ function request(opts, postBody, acceptHeader) {
       });
     });
     req.on('error', reject);
-    if (postBody) req.write(postBody);
     req.end();
   });
 }
 
-function extractCdnUrls(bodyHtml) {
-  const urls = [];
-  const re = /<img[^>]+src="([^"]+)"/g;
-  let m;
-  while ((m = re.exec(bodyHtml)) !== null) {
-    if (m[1] && !m[1].startsWith('data:')) urls.push(m[1]);
-  }
-  return urls;
+function downloadImage(urlStr, depth) {
+  depth = depth || 0;
+  if (depth > 8) return Promise.reject(new Error('Too many redirects'));
+  return new Promise((resolve, reject) => {
+    const parsed = new URL(urlStr);
+    const mod = parsed.protocol === 'https:' ? https : http;
+    mod.get({
+      hostname: parsed.hostname,
+      path: parsed.pathname + parsed.search,
+      headers: { 'User-Agent': 'guestbook-build' },
+    }, (res) => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        res.resume();
+        return resolve(downloadImage(res.headers.location, depth + 1));
+      }
+      if (res.statusCode !== 200) {
+        res.resume();
+        return reject(new Error('HTTP ' + res.statusCode));
+      }
+      const chunks = [];
+      res.on('data', (c) => chunks.push(c));
+      res.on('end', () => {
+        const buf = Buffer.concat(chunks);
+        const ct = (res.headers['content-type'] || '').split(';')[0].trim();
+        const mime = ct.startsWith('image/') ? ct : 'image/jpeg';
+        resolve('data:' + mime + ';base64,' + buf.toString('base64'));
+      });
+    }).on('error', reject);
+  });
 }
 
 function parseSubmissionFromBody(body) {
@@ -115,10 +104,52 @@ function getLabelNames(issue) {
   return (issue.labels || []).map((l) => (typeof l === 'string' ? l : l.name));
 }
 
+async function processReply(issueNumber) {
+  const comments = await apiRequest(
+    `/repos/${owner}/${repo}/issues/${issueNumber}/comments`,
+    'application/vnd.github.full+json'
+  );
+  if (!Array.isArray(comments) || comments.length === 0) return null;
+
+  const first = comments[0];
+  const raw = first.body && first.body.trim();
+  if (!raw) return null;
+
+  const text = raw.replace(/!\[[^\]]*\]\([^)]+\)/g, '').trim();
+  const reply = {};
+  if (text) reply.text = text;
+
+  const html = first.body_html || '';
+  const imgSrcRe = /<img[^>]+src="([^"]+)"/g;
+  const cdnUrls = [];
+  let m;
+  while ((m = imgSrcRe.exec(html)) !== null) {
+    if (m[1] && !m[1].startsWith('data:')) cdnUrls.push(m[1]);
+  }
+
+  if (cdnUrls.length > 0) {
+    console.log('  Found', cdnUrls.length, 'image(s) in reply, converting to base64...');
+    const b64images = [];
+    for (const url of cdnUrls) {
+      try {
+        const dataUrl = await downloadImage(url);
+        const sizeKB = Math.round(dataUrl.length / 1024);
+        console.log('    OK:', sizeKB + 'KB');
+        b64images.push(dataUrl);
+      } catch (e) {
+        console.warn('    FAIL:', e.message, '- url:', url.slice(0, 100));
+      }
+    }
+    if (b64images.length > 0) reply.images = b64images;
+  }
+
+  return (reply.text || reply.images) ? reply : null;
+}
+
 async function main() {
-  const issues = await request({
-    path: `/repos/${owner}/${repo}/issues?state=all&labels=public,approved&per_page=100`,
-  });
+  const issues = await apiRequest(
+    `/repos/${owner}/${repo}/issues?state=all&labels=public,approved&per_page=100`
+  );
   if (!Array.isArray(issues)) {
     throw new Error('Expected array of issues');
   }
@@ -130,40 +161,8 @@ async function main() {
     const payload = parseSubmissionFromBody(issue.body);
     if (!payload) continue;
 
-    let ownerReply = null;
-    const comments = await request(
-      { path: `/repos/${owner}/${repo}/issues/${issue.number}/comments` },
-      null,
-      'application/vnd.github.full+json'
-    );
-    if (Array.isArray(comments) && comments.length > 0) {
-      const first = comments[0];
-      const raw = first.body && first.body.trim();
-      if (raw) {
-        const cleaned = raw.replace(/!\[[^\]]*\]\((https?:\/\/[^)]+)\)/g, '').trim();
-        ownerReply = { text: cleaned };
-
-        const cdnUrls = first.body_html ? extractCdnUrls(first.body_html) : [];
-        if (cdnUrls.length > 0) {
-          const localPaths = [];
-          for (const cdnUrl of cdnUrls) {
-            try {
-              const { buf, type } = await fetchBinary(cdnUrl);
-              const ext = type.includes('png') ? '.png' : type.includes('gif') ? '.gif' : type.includes('webp') ? '.webp' : '.jpg';
-              const hash = require('crypto').createHash('md5').update(cdnUrl.split('?')[0]).digest('hex').slice(0, 12);
-              const filename = hash + ext;
-              if (!fs.existsSync(REPLY_IMG_DIR)) fs.mkdirSync(REPLY_IMG_DIR, { recursive: true });
-              fs.writeFileSync(path.join(REPLY_IMG_DIR, filename), buf);
-              localPaths.push('/public/reply-images/' + filename);
-              console.log('  Downloaded reply image:', filename);
-            } catch (e) {
-              console.warn('  Failed to download reply image:', cdnUrl.slice(0, 80), e.message);
-            }
-          }
-          if (localPaths.length > 0) ownerReply.images = localPaths;
-        }
-      }
-    }
+    console.log('Processing #' + issue.number);
+    const ownerReply = await processReply(issue.number);
 
     const created_at = issue.created_at ? new Date(issue.created_at).toISOString().slice(0, 10) : '';
     entries.push({
@@ -175,7 +174,6 @@ async function main() {
       ownerReply,
     });
   }
-
 
   entries.sort((a, b) => (a.id || 0) - (b.id || 0));
 
