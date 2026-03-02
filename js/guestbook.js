@@ -618,6 +618,7 @@
                     entry.ownerReply.images.forEach(function (src) {
                         var img = document.createElement('img');
                         img.className = 'gb-reply-img';
+                        img.referrerPolicy = 'no-referrer';
                         img.src = src;
                         img.alt = 'reply image';
                         img.loading = 'lazy';
