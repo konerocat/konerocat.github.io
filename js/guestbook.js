@@ -631,6 +631,10 @@
                         img.src = src;
                         img.alt = 'reply image';
                         img.loading = 'lazy';
+                        img.addEventListener('click', function (e) {
+                            e.stopPropagation();
+                            openImageLightbox(src);
+                        });
                         reply.appendChild(img);
                     });
                 }
@@ -643,7 +647,7 @@
 
         var lightbox = null;
 
-        function openLightbox(drawingData) {
+        function ensureLightbox() {
             if (!lightbox) {
                 lightbox = document.createElement('div');
                 lightbox.className = 'gb-lightbox';
@@ -655,10 +659,25 @@
             }
             var old = lightbox.querySelector('canvas');
             if (old) old.remove();
+            var oldImg = lightbox.querySelector('img');
+            if (oldImg) oldImg.remove();
+        }
 
+        function openLightbox(drawingData) {
+            ensureLightbox();
             var cv = document.createElement('canvas');
             lightbox.appendChild(cv);
             renderDrawingToCanvas(cv, drawingData);
+            lightbox.classList.add('is-open');
+        }
+
+        function openImageLightbox(src) {
+            ensureLightbox();
+            var img = document.createElement('img');
+            img.className = 'gb-lightbox-img';
+            img.src = src;
+            img.alt = 'reply image';
+            lightbox.appendChild(img);
             lightbox.classList.add('is-open');
         }
 

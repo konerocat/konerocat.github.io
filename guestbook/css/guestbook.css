@@ -789,7 +789,8 @@ body.guestbook-page .botbar {
     background: rgba(0, 0, 0, 0.75);
 }
 
-.gb-lightbox canvas {
+.gb-lightbox canvas,
+.gb-lightbox-img {
     position: relative;
     z-index: 1;
     max-width: 90vw;
