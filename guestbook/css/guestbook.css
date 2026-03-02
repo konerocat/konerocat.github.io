@@ -396,6 +396,16 @@ body.guestbook-page .botbar {
     line-height: 1.55;
 }
 
+.gb-reply-img {
+    display: block;
+    max-width: 280px;
+    max-height: 280px;
+    margin-top: 8px;
+    border: 2px solid rgba(120, 88, 157, 0.4);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
 .gb-modal {
     position: fixed;
     inset: 0;

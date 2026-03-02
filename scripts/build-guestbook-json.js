@@ -93,9 +93,15 @@ async function main() {
     const comments = await request({ path: `/repos/${owner}/${repo}/issues/${issue.number}/comments` });
     if (Array.isArray(comments) && comments.length > 0) {
       const first = comments[0];
-      const text = first.body && first.body.trim();
-      if (text) {
-        ownerReply = { text };
+      const raw = first.body && first.body.trim();
+      if (raw) {
+        const images = [];
+        const cleaned = raw.replace(/!\[[^\]]*\]\((https?:\/\/[^)]+)\)/g, (_, url) => {
+          images.push(url);
+          return '';
+        }).trim();
+        ownerReply = { text: cleaned };
+        if (images.length > 0) ownerReply.images = images;
       }
     }
 

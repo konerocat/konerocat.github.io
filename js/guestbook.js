@@ -599,17 +599,31 @@
                 });
             }
 
-            if (entry.ownerReply && entry.ownerReply.text) {
+            var hasReplyText = entry.ownerReply && entry.ownerReply.text;
+            var hasReplyImages = entry.ownerReply && entry.ownerReply.images && entry.ownerReply.images.length;
+            if (hasReplyText || hasReplyImages) {
                 var reply = document.createElement('div');
                 reply.className = 'gb-entry-reply';
                 var label = document.createElement('div');
                 label.className = 'gb-entry-reply-label';
                 label.textContent = 'konero:';
                 reply.appendChild(label);
-                var rtxt = document.createElement('div');
-                rtxt.className = 'gb-entry-reply-text';
-                rtxt.textContent = entry.ownerReply.text;
-                reply.appendChild(rtxt);
+                if (hasReplyText) {
+                    var rtxt = document.createElement('div');
+                    rtxt.className = 'gb-entry-reply-text';
+                    rtxt.textContent = entry.ownerReply.text;
+                    reply.appendChild(rtxt);
+                }
+                if (hasReplyImages) {
+                    entry.ownerReply.images.forEach(function (src) {
+                        var img = document.createElement('img');
+                        img.className = 'gb-reply-img';
+                        img.src = src;
+                        img.alt = 'reply image';
+                        img.loading = 'lazy';
+                        reply.appendChild(img);
+                    });
+                }
                 body.appendChild(reply);
             }
 
