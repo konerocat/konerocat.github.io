@@ -158,9 +158,15 @@
         function extendStroke(x, y) {
             if (!drawing.current) return;
             var pts = drawing.current.points;
-            if (pts.length >= MAX_POINTS) return;
             var total = drawing.strokes.reduce(function (n, s) { return n + s.points.length; }, 0) + pts.length;
             if (total >= MAX_TOTAL) return;
+            if (pts.length >= MAX_POINTS) {
+                if (drawing.strokes.length >= MAX_STROKES - 1) return;
+                var last = pts[pts.length - 1];
+                drawing.strokes.push(drawing.current);
+                drawing.current = { color: drawing.current.color, width: drawing.current.width, points: [{ x: last.x, y: last.y }] };
+                pts = drawing.current.points;
+            }
             pts.push({ x: x, y: y });
             drawStroke(ctx, { color: drawing.current.color, width: drawing.current.width, points: pts.slice(-2) });
         }
@@ -297,6 +303,8 @@
         function initCanvas() {
             if (!canvasEl || !ctx) return;
             redraw();
+
+            canvasEl.addEventListener('contextmenu', function (e) { e.preventDefault(); });
 
             if (window.PointerEvent) {
                 canvasEl.addEventListener('pointerdown', canvasPointerDown);
@@ -748,7 +756,7 @@
                 })
                 .then(function (res) {
                     if (res.ok && res.json && res.json.success) {
-                        setStatus('Thank you! Your message was submitted.', false);
+                        setStatus('Thanks! I will reply to you soon.', false);
                         form.reset();
                         if (countEl) countEl.textContent = '0 / 2000';
                         drawing.strokes = [];
