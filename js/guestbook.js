@@ -198,9 +198,15 @@
             return null;
         }
 
+        var activePointerId = null;
+
         function canvasPointerDown(e) {
             e.preventDefault();
-            if (e.pointerId != null) canvasEl.setPointerCapture(e.pointerId);
+            if (activePointerId != null && e.pointerId != null && e.pointerId !== activePointerId) return;
+            if (e.pointerId != null) {
+                activePointerId = e.pointerId;
+                canvasEl.setPointerCapture(e.pointerId);
+            }
             var p = getPos(e);
 
             if (drawing.selectedImage >= 0 && drawing.selectedImage < drawing.images.length) {
@@ -228,6 +234,7 @@
         }
 
         function canvasPointerMove(e) {
+            if (e.pointerId != null && e.pointerId !== activePointerId) return;
             if (drawing.imgDrag) {
                 e.preventDefault();
                 var p = getPos(e);
@@ -277,6 +284,8 @@
         }
 
         function canvasPointerUp(e) {
+            if (e.pointerId != null && e.pointerId !== activePointerId) return;
+            activePointerId = null;
             if (drawing.imgDrag) {
                 drawing.imgDrag = null;
                 return;
@@ -294,6 +303,7 @@
                 canvasEl.addEventListener('pointermove', canvasPointerMove);
                 canvasEl.addEventListener('pointerup', canvasPointerUp);
                 canvasEl.addEventListener('pointercancel', function () {
+                    activePointerId = null;
                     drawing.imgDrag = null;
                     finishStroke();
                 });
