@@ -12,11 +12,19 @@ body{
     background-position: center;
 }
 
+body.transitioning .skies {
+    animation: hard-blink-out 0.15s steps(1) forwards;
+    pointer-events: none;
+}
+
 .skies{
     background-color: var(--main-dark);
     border: solid 6px var(--purple);
     width: 85vw;
     max-width: 1300px;
+    
+    opacity: 0;
+    animation: hard-blink 0.3s steps(1) forwards;
 }
 
 h1{

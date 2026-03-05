@@ -10,8 +10,6 @@ var footerHTML = `
     </a>
 `;
 
-
-
 function reloadPrevious() {
     try {
         const ref = document.referrer;
@@ -33,33 +31,75 @@ $(document).ready(function(){
     setInterval(setStatusBar, 1000);
     
     $(".mainwindow").focus();
+    let originalFactHTML = "";
+    let originalTitleHTML = "";
+    let originalSourceHTML = "";
+
     $('.folder-icon').on('click', function (e) {
         e.preventDefault();
         const link = $(this).attr('href');
 
-
         $('.folder-icon').css('pointer-events', 'none');
         
+        originalFactHTML = $('.fact-text .fact').html();
+        originalTitleHTML = $('.fact-titlebar').html();
+        originalSourceHTML = $('.fact-text .fact-source').html();
 
         $('.fact-text .fact').text("Opening...");
         $('.fact-titlebar').text("See you soon!");
         $('.fact-text .fact-source').text("");
 
-
         $('body').addClass('transitioning');
 
-        window.location.href = link;
         setTimeout(() => {
-            document.body.classList.remove('transitioning');
+            window.location.href = link;
             
-        }, 150);
+            setTimeout(() => {
+                document.body.classList.remove('transitioning');
+                $('.folder-icon').css('pointer-events', '');
+                
+                if (originalFactHTML) {
+                    $('.fact-text .fact').html(originalFactHTML);
+                    $('.fact-titlebar').html(originalTitleHTML);
+                    $('.fact-text .fact-source').html(originalSourceHTML);
+                }
+            }, 1000);
+        }, 650);
     });
 
-
     window.addEventListener('pageshow', function (event) {
-        if (event.persisted) {
+        // Hide transitioning if it got stuck going to bfcache
+        if (event.persisted || (window.performance && window.performance.getEntriesByType("navigation").length > 0 && window.performance.getEntriesByType("navigation")[0].type === "back_forward")) {
             $('.folder-icon').css('pointer-events', '');
             document.body.classList.remove('transitioning');
+            
+            if (originalFactHTML) {
+                $('.fact-text .fact').html(originalFactHTML);
+                $('.fact-titlebar').html(originalTitleHTML);
+                $('.fact-text .fact-source').html(originalSourceHTML);
+            }
+        }
+    });
+
+    // Handle generic state restoration in case pageshow doesn't catch the bfcache completely correctly on some browsers
+    $(window).on('popstate', function() {
+        if (originalFactHTML) {
+            $('.folder-icon').css('pointer-events', '');
+            document.body.classList.remove('transitioning');
+            $('.fact-text .fact').html(originalFactHTML);
+            $('.fact-titlebar').html(originalTitleHTML);
+            $('.fact-text .fact-source').html(originalSourceHTML);
+        }
+    });
+
+    // Also restore before unloading to bfcache, some browsers snapshot after pagehide
+    window.addEventListener('pagehide', function() {
+        if (originalFactHTML && document.body.classList.contains('transitioning')) {
+            $('.folder-icon').css('pointer-events', '');
+            document.body.classList.remove('transitioning');
+            $('.fact-text .fact').html(originalFactHTML);
+            $('.fact-titlebar').html(originalTitleHTML);
+            $('.fact-text .fact-source').html(originalSourceHTML);
         }
     });
 });
@@ -197,13 +237,39 @@ if (typeof facts !== 'undefined'){
                     $factBox.off('animationend webkitAnimationEnd')
                     $factBox.removeClass('niko-leaving').addClass('niko-left')
                     $factText.text("")
-                    $factSource.text("Niko has left.")
+                    $factSource.text("")
+                    
+                    var leaveText = "Niko has left.";
+                    var chars = "!<>-_\\\\/[]{}—=+*^?#";
+                    var iterations = 0;
+                    var decodeInterval = setInterval(function() {
+                        var str = "";
+                        for (var i = 0; i < leaveText.length; i++) {
+                            if (leaveText[i] === " ") {
+                                str += " ";
+                                continue;
+                            }
+                            if (iterations > i) {
+                                str += leaveText[i];
+                            } else {
+                                str += chars[Math.floor(Math.random() * chars.length)];
+                            }
+                        }
+                        $factSource.text(str);
+                        iterations++;
+                        if (iterations > leaveText.length + 3) {
+                            clearInterval(decodeInterval);
+                            $factSource.text(leaveText);
+                        }
+                    }, 40);
+
                     $factBox.css('pointer-events', 'auto')
                 }
                 $factBox.on('animationend webkitAnimationEnd', function(e) {
-                    if (e.animationName === 'fact-box-glitch-out') finishLeave()
+                    var animName = (e.originalEvent && e.originalEvent.animationName) || e.animationName;
+                    if (animName === 'fact-box-glitch-out') finishLeave()
                 })
-                setTimeout(finishLeave, 500)
+                setTimeout(finishLeave, 800)
             }, 1800)
         }
     

@@ -122,8 +122,9 @@ body {
     
 }
 
-.listtable.transitioning{
-    opacity: 0;
+.listtable.transitioning {
+    animation: hard-blink-out 0.15s steps(1) forwards;
+    pointer-events: none;
 }
 
 .listtable th {

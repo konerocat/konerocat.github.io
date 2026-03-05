@@ -615,22 +615,48 @@ nav {
     animation: none;
 }
 
-body.transitioning #overlay {
-    position: fixed;
-    background: white;
-    mix-blend-mode: difference;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    animation: blinkTransition 0.5s steps(2, end) forwards;
+@keyframes hard-blink-out {
+    0%, 49% { opacity: 1; }
+    50%, 99% { opacity: 0; }
+    100% { opacity: 0; }
+}
+
+body.transitioning .home {
+    animation: crt-off 0.6s steps(1) forwards;
     pointer-events: none;
 }
 
-@keyframes blinkTransition {
-    0% { opacity: 1; }
-    100% { opacity: 0; }
+@keyframes crt-off {
+    0% {
+        clip-path: inset(0 0 0 0);
+        filter: brightness(1);
+        opacity: 1;
+    }
+    15% {
+        clip-path: inset(0 0 0 0);
+        filter: brightness(1.2);
+        opacity: 1;
+    }
+    40% {
+        clip-path: inset(44% 0 44% 0);
+        filter: brightness(1.5);
+        opacity: 0.9;
+    }
+    60% {
+        clip-path: inset(49% 5% 49% 5%);
+        filter: brightness(1);
+        opacity: 0.7;
+    }
+    80% {
+        clip-path: inset(49.5% 25% 49.5% 25%);
+        filter: brightness(0.6);
+        opacity: 0.4;
+    }
+    100% {
+        clip-path: inset(50% 50% 50% 50%);
+        filter: brightness(0);
+        opacity: 0;
+    }
 }
 
 
@@ -642,7 +668,15 @@ img.folder-icon-img.disabled {
 .explorer-window.ready .fact-box.niko-leaving,
 .fact-box.niko-leaving {
   transform-origin: center center;
-  animation: fact-box-glitch-out 420ms steps(2, end) forwards;
+  animation: fact-box-glitch-out 400ms steps(1) forwards;
+}
+
+@keyframes fact-box-glitch-out {
+  0% { opacity: 1; filter: brightness(1) contrast(1); transform: scale(1); }
+  25% { opacity: 1; filter: invert(1) brightness(2) contrast(1.5); transform: scale(0.95) skewX(-4deg); }
+  50% { opacity: 0.8; filter: brightness(3); transform: scale(0.9, 0.05); }
+  75% { opacity: 0.8; filter: brightness(5); transform: scale(0.1, 0.02); }
+  100% { opacity: 0; transform: scale(0, 0); }
 }
 
 .fact-box.niko-left .fact-image,
@@ -652,8 +686,10 @@ img.folder-icon-img.disabled {
 
 .fact-box.niko-left .fact-content {
   padding: 15px;
-  display: block;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .fact-box.niko-left .fact-text p {
@@ -661,17 +697,21 @@ img.folder-icon-img.disabled {
 }
 
 .fact-box.niko-left .fact-source {
-  margin-top: 8px;
+  margin: 0;
   text-align: center;
+  color: var(--orange);
+  font-family: "dos", monospace;
+  font-size: 1.1em;
+  letter-spacing: 1px;
 }
 
 .fact-box.niko-left {
-  opacity: 1;
+  opacity: 0;
   min-height: 80px;
+  animation: niko-left-fade-in 0.8s 0.2s ease-out forwards;
 }
 
-@keyframes fact-box-glitch-out {
-  0%   { opacity: 1; transform: scale(1); filter: brightness(1) contrast(1); }
-  50%  { opacity: 1; transform: scale(0.98) scaleY(0.92) skewX(-6deg); filter: brightness(1.2); }
-  100% { opacity: 0; transform: scale(1.14) scaleY(0.04); filter: brightness(2.2) contrast(1.2); }
+@keyframes niko-left-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

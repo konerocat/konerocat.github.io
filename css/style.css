@@ -396,6 +396,21 @@ p.backtotop, .smalltext{
     border: solid 2px var(--main-light);
 }
 
+@keyframes hard-blink {
+    0%, 40%, 80% { opacity: 0; }
+    20%, 60%, 100% { opacity: 1; }
+}
+
+@keyframes hard-blink-out {
+    0%, 50% { opacity: 1; }
+    25%, 75%, 100% { opacity: 0; }
+}
+
+body.transitioning .mainwindow {
+    animation: hard-blink-out 0.15s steps(1) forwards;
+    pointer-events: none;
+}
+
 /********* content blocks *********/
 .mainwindow{ 
     position: absolute;
@@ -413,6 +428,9 @@ p.backtotop, .smalltext{
     background-color: var(--transparent-dark);
 
     overflow-y: scroll;
+
+    opacity: 0;
+    animation: hard-blink 0.3s steps(1) forwards;
 }
 
 .mainwindow-wide{
