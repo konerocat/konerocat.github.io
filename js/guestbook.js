@@ -702,6 +702,63 @@
             }
         }
 
+        function getTurnstileToken() {
+            var token = null;
+            var tw = document.querySelector('[name="cf-turnstile-response"]');
+            if (tw) token = tw.value;
+            if (!token && typeof window.__gbTurnstileToken === 'string') token = window.__gbTurnstileToken;
+            return token || null;
+        }
+
+        function resetTurnstileWidget() {
+            window.__gbTurnstileToken = null;
+            window.__gbTurnstileReady = false;
+            if (typeof turnstile !== 'undefined' && turnstile.reset) {
+                try { turnstile.reset('#turnstile-widget'); }
+                catch (_) {
+                    try { turnstile.reset(document.getElementById('turnstile-widget')); }
+                    catch (_) {}
+                }
+            }
+        }
+
+        function requestTurnstileToken() {
+            return new Promise(function (resolve, reject) {
+                var existing = getTurnstileToken();
+                if (existing) { resolve(existing); return; }
+
+                var widget = document.getElementById('turnstile-widget');
+                if (typeof turnstile === 'undefined' || !turnstile.execute || !widget) {
+                    reject(new Error('Verification widget unavailable. Try Chrome or disable extensions.'));
+                    return;
+                }
+
+                window.__gbTurnstileToken = null;
+                window.__gbTurnstileReady = false;
+
+                try {
+                    turnstile.execute(widget);
+                } catch (err) {
+                    reject(err);
+                    return;
+                }
+
+                var started = Date.now();
+                (function pollForToken() {
+                    var token = getTurnstileToken();
+                    if (token) {
+                        resolve(token);
+                        return;
+                    }
+                    if (Date.now() - started > 10000) {
+                        reject(new Error('Verification timed out. Please try again.'));
+                        return;
+                    }
+                    window.setTimeout(pollForToken, 150);
+                })();
+            });
+        }
+
         function doSubmit() {
             try { setStatus('Checking…', false); } catch (_) {}
             try {
@@ -722,31 +779,27 @@
                     return;
                 }
 
-                var token = null;
-                var tw = document.querySelector('[name="cf-turnstile-response"]');
-                if (tw) token = tw.value;
-                if (!token && typeof window.__gbTurnstileToken === 'string') token = window.__gbTurnstileToken;
-                if (!token) {
-                    setStatus('Verification required. If it never appears, try Chrome or disable extensions.', true);
-                    return;
-                }
-
                 if (submitBtn) submitBtn.disabled = true;
-                setStatus('Sending...', false);
+                setStatus('Verifying...', false);
 
-                var url = API_BASE + '/api/guestbook/submit';
-                var payload = {
-                    name: name.slice(0, 80),
-                    message: message.slice(0, 2000),
-                    public: isPublic,
-                    drawing: drawingData,
-                    'cf-turnstile-response': token
-                };
+                requestTurnstileToken()
+                .then(function (token) {
+                    setStatus('Sending...', false);
 
-                fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    var url = API_BASE + '/api/guestbook/submit';
+                    var payload = {
+                        name: name.slice(0, 80),
+                        message: message.slice(0, 2000),
+                        public: isPublic,
+                        drawing: drawingData,
+                        'cf-turnstile-response': token
+                    };
+
+                    return fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
                 })
                 .then(function (r) {
                     return r.text().then(function (t) {
@@ -768,7 +821,6 @@
                         updateBgPreview();
                         updateImgCount();
                         redraw();
-                        if (typeof turnstile !== 'undefined' && turnstile.reset) turnstile.reset();
                     } else {
                         var msg = (res.json && res.json.error) ? res.json.error : ('Server returned ' + res.status);
                         setStatus(msg, true);
@@ -778,10 +830,12 @@
                     setStatus('Request failed. ' + (err && err.message ? err.message : 'Check your connection.'), true);
                 })
                 .finally(function () {
+                    resetTurnstileWidget();
                     if (submitBtn) submitBtn.disabled = false;
                 });
             } catch (e) {
                 setStatus('Error: ' + (e && e.message ? e.message : 'Something went wrong'), true);
+                resetTurnstileWidget();
                 if (submitBtn) submitBtn.disabled = false;
             }
         }
