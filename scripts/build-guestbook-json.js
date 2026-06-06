@@ -3,6 +3,17 @@ const path = require('path');
 const https = require('https');
 const http = require('http');
 
+function loadEnv() {
+  const envPath = path.join(__dirname, '..', '.env');
+  if (!fs.existsSync(envPath)) return;
+  const content = fs.readFileSync(envPath, 'utf8');
+  content.split('\n').forEach((line) => {
+    const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/);
+    if (m) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '').trim();
+  });
+}
+loadEnv();
+
 const token = process.env.GITHUB_TOKEN;
 const repoEnv = process.env.GITHUB_REPOSITORY;
 let owner = process.env.GITHUB_OWNER;

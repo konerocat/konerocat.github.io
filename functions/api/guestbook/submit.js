@@ -361,8 +361,11 @@ export async function onRequestPost(context) {
 
     if (!createRes.ok) {
       const errBody = await createRes.text();
-      const detail = createRes.status + ': ' + errBody.slice(0, 200);
-      return jsonResponse({ success: false, error: 'Could not save submission. GitHub: ' + detail }, 500, headers);
+      console.error('Guestbook create failed', {
+        status: createRes.status,
+        body: errBody.slice(0, 500),
+      });
+      return jsonResponse({ success: false, error: 'Could not save submission. Please try again later.' }, 500, headers);
     }
     await rememberDuplicateSubmission(env, duplicateKey);
     return jsonResponse({ success: true }, 200, headers);
