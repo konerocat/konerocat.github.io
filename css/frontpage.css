@@ -22,6 +22,7 @@ body.transitioning .skies {
     border: solid 6px var(--purple);
     width: 85vw;
     max-width: 1300px;
+    padding: 0 12px;
     
     opacity: 0;
     animation: hard-blink 0.3s steps(1) forwards;
@@ -60,6 +61,33 @@ pre#clouds{
 }
 
 @media only screen and (orientation: portrait){
+    .skies {
+        width: calc(100vw - 28px);
+        max-height: calc(100dvh - 52px);
+        overflow: auto;
+    }
+
+    .skies h1 {
+        padding: 10px 0;
+    }
+
+    .skies .biggerh1 {
+        font-size: clamp(1.75rem, 8.8vw, 2.45rem);
+        line-height: 1.08;
+    }
+
+    .skies h3 {
+        font-size: clamp(0.95rem, 4.8vw, 1.15rem);
+        line-height: 1.2;
+        padding: 0 12px;
+    }
+
+    pre.cat {
+        font-size: 0.72em;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
     pre#clouds{
         font-size: 0.36em;
         line-height: 10px;

@@ -371,20 +371,22 @@ nav {
         top: 0;
         left: 0;
         transform: none;
-        width: 100vw;
+        width: 100%;
         height: auto;
         margin-top: 20px;
         flex-direction: column;
+        gap: 20px;
+        padding: 0 12px 54px;
     }
     
     .explorer-window, .logmenu {
-        width: 50%;
+        width: min(100%, 500px);
         max-width: none;
-        margin: 15px auto;
+        margin: 0 auto;
     }
 
     .main{
-        width: 95%;
+        width: min(100%, 500px);
         margin: auto;
     }
 
@@ -398,10 +400,10 @@ nav {
     }
 
     .logmenu {
-        width: 95%;
+        width: min(100%, 560px);
         max-width: none;
         height: auto;
-        margin: 20px auto;
+        margin: 0 auto;
     }
     
     .home {
@@ -409,7 +411,7 @@ nav {
     }
     
     .main, .logmenu {
-        width: 65%;
+        width: min(100%, 560px);
     }
 
     .homebar a{
@@ -438,7 +440,7 @@ nav {
 }
 
 .fact-image {
-    flex: 0 0 150px;
+    flex: 0 0 170px;
     padding: 10px;
     display: flex;
     align-items: center;
@@ -458,6 +460,8 @@ nav {
     flex: 1;
     display: flex;
     flex-direction: column;
+    position: relative;
+    min-width: 0;
 }
 
 .fact-titlebar {
@@ -486,6 +490,26 @@ nav {
     font-style: italic;
     text-align: right;
     margin-top: 10px;
+}
+
+.fact-scroll-hint {
+    position: absolute;
+    right: 9px;
+    bottom: 9px;
+    z-index: 2;
+    width: 20px;
+    height: 20px;
+    image-rendering: pixelated;
+    pointer-events: none;
+    opacity: 0;
+    rotate: 90deg;
+    filter: invert(42%) sepia(16%) saturate(1520%) hue-rotate(225deg) brightness(86%) contrast(87%);
+    animation: fact-arrow-bob 0.5s steps(2) infinite;
+}
+
+@keyframes fact-arrow-bob {
+    0% { bottom: 9px; }
+    100% { bottom: 4px; }
 }
 
 @keyframes shake {
@@ -613,6 +637,21 @@ nav {
     pointer-events: auto;
     opacity: 1;
     animation: none;
+}
+
+.explorer-window.ready .fact-content .fact-scroll-hint {
+    pointer-events: none;
+    opacity: 0;
+    animation: fact-arrow-bob 0.5s steps(2) infinite;
+}
+
+.explorer-window.ready .fact-content.fact-overflowing .fact-scroll-hint {
+    opacity: 0.9;
+}
+
+.explorer-window.ready .fact-content.fact-overflowing .fact-text {
+    padding-right: 38px;
+    padding-bottom: 38px;
 }
 
 @keyframes hard-blink-out {

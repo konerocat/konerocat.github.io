@@ -151,7 +151,7 @@
         .game-title {
             font-style: italic;
             font-size: 0.9em;
-            opacity: 0.8;
+            opacity: 0.6;
         }
 
         .band-group {
@@ -310,6 +310,7 @@
             padding: 20px;
             background-color: var(--transparent-dark);
             overflow-x: hidden;
+            overflow-y: auto;
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
@@ -343,6 +344,15 @@
             
         }
 
+        .section-gif {
+            display: block;
+            width: min(100%, 498px);
+            height: auto;
+            max-height: calc(100vh - 180px);
+            object-fit: contain;
+            margin: 24px auto 36px;
+        }
+
         .section-nav {
             position: relative;
             width: 100%;
@@ -352,8 +362,8 @@
 
         .section-nav img {
             padding: 25px;
-            width: 4vw;
-            height: 4vw;
+            width: 5vw;
+            height: 5vw;
             
         }
 
@@ -414,6 +424,7 @@
             opacity: 1;
             pointer-events: auto;
             padding: 10px;
+            user-select: none;
         }
 
         .nav-arrow.hidden {
@@ -429,15 +440,92 @@
         }
 
         @media only screen and (orientation: portrait) {
+            .main {
+                padding: 38px 10px 54px;
+            }
+
+            .page-section {
+                padding: 10px 0 24px;
+            }
+
+            .character-name {
+                font-size: 1.1em;
+            }
+            
+            .game-title {
+                font-size: 0.8em;
+                opacity: 0.5;
+            }
+
+            .section-gif {
+                width: 100%;
+                max-width: 498px;
+                max-height: min(52vh, 280px);
+                margin: 18px auto 28px;
+            }
+
+            .taglist {
+                padding: 0 8px;
+            }
+
+            .taglist h1 {
+                font-size: clamp(1.45rem, 9.1vw, 2rem);
+                line-height: 1.08;
+                word-break: normal;
+                overflow-wrap: normal;
+            }
+
+            .taglist h2 {
+                font-size: clamp(1.45rem, 7vw, 2rem);
+                line-height: 1.12;
+            }
+
+            .taglist p {
+                font-size: 1rem;
+            }
+
+            .marquee {
+                margin: 24px 0;
+                padding: 10px 0;
+            }
+
+            .marquee-container .image-crop {
+                width: min(56vw, 205px);
+                height: min(76vw, 285px);
+            }
+
+            .marquee-container .image-crop img {
+                width: 100%;
+                height: 100%;
+            }
+
+            .band-members {
+                gap: 8px;
+            }
+
+            .band-member-wrap .image-crop {
+                width: min(46vw, 165px);
+                height: min(64vw, 232px);
+            }
+
+            .band-member-wrap .image-crop img {
+                width: 100%;
+                height: 100%;
+            }
+
             .nav-up{
                 padding: 35px;
             }
 
             .section-nav img{
-                width: 10vw;
-                height: 10vw;
+                width: 44px;
+                height: 44px;
+                padding: 10px;
+                user-select: none;
             }
         }
+
+
 
         .interest-section {
             margin: 60px auto;
@@ -592,6 +680,16 @@
                             <div class="game-title">Girls' Last Tour</div>
                         </div>
                     </div>
+
+                    <div class="character-card">
+                        <div class="image-crop">
+                            <img src="/images/fever_dreams/Kit.png" alt="Kit">
+                        </div>
+                        <div class="character-info">
+                            <div class="character-name">Kit Bodega</div>
+                            <div class="game-title">GAMEOVERSE</div>
+                        </div>
+                    </div>
                    
                     <div class="band-group">
                         <div class="band-members">
@@ -712,7 +810,7 @@
 
                     <div class="character-card">
                         <div class="image-crop">
-                            <img src="/images/fever_dreams/Sachie.jpg" alt="Sachie">
+                            <img src="/images/fever_dreams/Sachie.png" alt="Sachie">
                         </div>  
                         <div class="character-info">
                             <div class="character-name">Sachie Shinohata</div>
@@ -727,7 +825,7 @@
             </div>           
             <div class="section-nav">
                 
-                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-down">
+                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-down" draggable="false">
             </div>
         </div>
     
@@ -735,7 +833,7 @@
 
         <div class="page-section">
             <div class="section-nav">
-                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-up">
+                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-up" draggable="false">
             </div>
             <div class="taglist">
                 <h1 class="secret">-something will be here soon-</h1>
@@ -788,18 +886,18 @@
 
             
             <div class="section-nav">
-                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-down">
+                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-down" draggable="false">
             </div>
 
         </div>
         
         <div class="page-section">
             <div class="section-nav">
-                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-up">
+                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-up" draggable="false">
             </div>
-                <img src="/images/fever_dreams/ishowspeed-speed-backflip.gif">
+                <img src="/images/fever_dreams/ishowspeed-speed-backflip.gif" class="section-gif" draggable="false">
             <div class="section-nav">
-                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-down">
+                <img src="/images/fever_dreams/arrow_down.png" class="nav-arrow nav-down" draggable="false">
             </div>
 
         </div>
@@ -840,19 +938,9 @@
                         $sections.removeClass('active');
                         $sections.eq(newIndex).addClass('active');
                         currentSection = newIndex;
-                        
-                        const scrollPos = $sections.eq(newIndex).offset().top;
-                        const steps = 8;
-                        const stepSize = (scrollPos - window.scrollY) / steps;
-                        
-                        let currentStep = 0;
-                        const choppyScroll = setInterval(() => {
-                            window.scrollTo(0, window.scrollY + stepSize);
-                            if(++currentStep >= steps) {
-                                clearInterval(choppyScroll);
-                                finishTransition();
-                            }
-                        }, 30);
+                        $('.main').scrollTop(0);
+                        window.scrollTo(0, 0);
+                        finishTransition();
                     }, 300);
                 }
             

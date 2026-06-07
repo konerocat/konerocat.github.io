@@ -42,6 +42,12 @@
     cursor: crosshair;
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 
 
 
@@ -94,6 +100,9 @@ h4{
 
 h1{
     font-size: 2.85em;
+    word-break: normal;
+    overflow-wrap: normal;
+    line-height: 1.1;
 }
 
 h1.biggerh1{
@@ -102,10 +111,16 @@ h1.biggerh1{
 
 h2{
     font-size: 2em;
+    word-break: normal;
+    overflow-wrap: normal;
+    line-height: 1.15;
 }
 
 h3 {
     font-size: 1.4em;
+    word-break: normal;
+    overflow-wrap: normal;
+    line-height: 1.2;
 }
 
 h4 {
@@ -122,8 +137,19 @@ pre{
     margin: 1px;
     color: var(--purple);
     background-color: var(--second-dark);
-    padding: 20px;
+    padding: 15px;
 }
+
+.proceed{
+    user-select: none;
+}
+
+@media only screen and (orientation: portrait) {
+    .proceed{
+        font-size: 0.65em;
+    }
+}
+
 .proceed:hover{
     border: solid 3px var(--orange);
     color: var(--orange);
@@ -251,6 +277,7 @@ nav #status,
 .botbar{
     background-color: var(--main-dark);
     width: 100%;
+    height: 46px;
     
     position: fixed;
     bottom: 0%;
@@ -258,7 +285,9 @@ nav #status,
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    align-items: center;
     border-top: 2px solid var(--purple);
+    z-index: 50;
 }
 
 .botbar div{
@@ -440,6 +469,12 @@ body.transitioning .mainwindow {
 
 .mainwindow p{
     padding: 0px 20px;
+}
+
+.mainwindow:focus,
+.mainwindow *:focus {
+    outline: none;
+    box-shadow: none;
 }
 
 
@@ -702,6 +737,8 @@ body::before{
 
     .mainwindow{
         width: 90vw;
+        max-height: calc(100dvh - 76px);
+        padding: 0 12px;
     }
 
     p{
@@ -712,12 +749,14 @@ body::before{
     }
     
     nav, .navbar {
-        height: 6vw;
+        min-height: 34px;
+        height: auto;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 3vw;
-        font-size: 1.5em;
+        padding: 3px 8px;
+        font-size: 0.95rem;
+        line-height: 1.2;
     }
     
     nav #status,
@@ -732,9 +771,10 @@ body::before{
     }
 
     .botbar{
-        height: 6vw;
+        min-height: 38px;
+        height: 38px;
+        align-items: center;
         text-align: right;
-        z-index: 1;
     }
 
 
@@ -744,21 +784,27 @@ body::before{
     }
 }
 
+.botbar a.footer-button,
 .footer-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-top: 3px;
+    margin-top: 0;
+    margin-right: 6px;
     border: none;
     background: none !important;
-    width: 29px;
-    height: 29px;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
     padding: 0;
+    line-height: 0;
 }
 
 .footer-icon {
-    width: 100%;
-    height: 100%;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    object-fit: contain;
     image-rendering: pixelated;
     filter: invert(42%) sepia(16%) saturate(1520%) hue-rotate(225deg) brightness(86%) contrast(87%);
     
@@ -778,9 +824,19 @@ body::before{
 }
 
 @media only screen and (orientation: portrait){
+    h1.biggerh1 {
+        font-size: clamp(2.2rem, 11vw, 3.1rem);
+    }
+
     .footer-button{
-        width: 55px;
-        height: 55px; 
+        width: 30px;
+        height: 30px;
+        flex-basis: 30px;
+    }
+
+    .footer-icon {
+        width: 30px;
+        height: 30px;
     }
 }
 

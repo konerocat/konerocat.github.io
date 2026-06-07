@@ -95,11 +95,19 @@ nav {
     }
 
     .mainwindows {
-        
         -webkit-overflow-scrolling: touch;
-        
-
+        top: 44px;
+        left: 8px;
+        right: 8px;
+        bottom: 48px;
+        width: auto;
+        max-width: none;
+        max-height: none;
         height: auto;
+        transform: none;
+        padding: 8px;
+        border-width: 4px;
+        font-size: clamp(0.66rem, 2.65vw, 0.8rem);
     }
     html, body {
         overflow-x: hidden;
@@ -218,6 +226,118 @@ body {
     }
     .ascii-art {
         font-size: 0.4em;
+    }
+}
+
+@media (max-width: 700px) {
+    .mainwindows center {
+        margin: 0;
+    }
+
+    .system-msg {
+        font-size: 0.94em;
+        line-height: 1.25;
+        margin: 8px 0 10px;
+        padding: 8px;
+    }
+
+    .listtable {
+        width: 96%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 10px;
+        table-layout: fixed;
+        font-size: 0.96em;
+    }
+
+    .listtable col:nth-child(1) {
+        width: 44% !important;
+    }
+
+    .listtable col:nth-child(2) {
+        width: 21% !important;
+    }
+
+    .listtable col:nth-child(3) {
+        width: 21% !important;
+    }
+
+    .listtable col:nth-child(4) {
+        width: 14% !important;
+    }
+
+    .listtable tr th {
+        font-size: 1.08em;
+        letter-spacing: 0.1em;
+        padding: 5px 1px;
+        white-space: nowrap;
+    }
+
+    .listtable tr td {
+        padding: 3px 3px;
+        line-height: 1.2;
+        word-break: normal;
+        overflow-wrap: normal;
+    }
+
+    .listtable tr td a {
+        padding-left: 14px;
+        overflow-wrap: normal;
+    }
+
+    .listtable td a:before {
+        left: 2px;
+    }
+
+    .directory-header {
+        letter-spacing: 0.12em;
+        padding: 7px 0 5px 8px !important;
+        margin: 0;
+    }
+
+    .system-alert {
+        max-width: 100%;
+        margin: 14px auto 0;
+        padding: 10px 0 4px;
+    }
+
+    .ascii-art {
+        max-width: 100%;
+        font-size: 0.45em;
+    }
+}
+
+@media (max-width: 430px) {
+    .mainwindows {
+        left: 6px;
+        right: 6px;
+        padding: 8px;
+        font-size: 0.66rem;
+    }
+
+    .listtable {
+        width: 94%;
+        font-size: 0.94em;
+    }
+
+    .listtable tr th {
+        font-size: 1.04em;
+        letter-spacing: 0.08em;
+    }
+
+    .listtable tr td a {
+        padding-left: 12px;
+    }
+}
+
+@media (max-width: 370px) {
+    .mainwindows {
+        font-size: 0.6rem;
+    }
+
+    .listtable tr th {
+        font-size: 1em;
+        letter-spacing: 0.06em;
     }
 }
 .dos-prompt span.purple {

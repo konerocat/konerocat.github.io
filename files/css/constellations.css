@@ -411,18 +411,22 @@ body.constellations-page .botbar {
   }
 
   body.constellations-page .botbar {
-    padding: 6px 10px;
-    min-height: 0;
+    height: 46px;
+    min-height: 38px;
+    padding: 0;
+    align-items: center;
   }
 
   body.constellations-page .footer-button {
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
+    padding: 0;
   }
 
   body.constellations-page .footer-icon {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
   }
 
   .constellation-node {

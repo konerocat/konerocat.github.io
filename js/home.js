@@ -122,6 +122,34 @@ function showFarewellMessage() {
 if (typeof facts !== 'undefined'){
     let previousFacts = [];
     let factPool = [...facts];
+
+    function updateFactScrollHint() {
+        const factText = document.querySelector('.fact-text');
+        const factContent = document.querySelector('.fact-content');
+        const fact = document.querySelector('.fact');
+        const factSource = document.querySelector('.fact-source');
+        if (!factText || !factContent || !fact) return;
+
+        const tolerance = 4;
+        const lastVisibleLine = factSource && factSource.textContent.trim() ? factSource : fact;
+        const textBox = factText.getBoundingClientRect();
+        const lastLine = lastVisibleLine.getBoundingClientRect();
+        const canScrollDown = factText.scrollTop + factText.clientHeight < factText.scrollHeight - tolerance;
+        const hintGutter = factContent.classList.contains('fact-overflowing') ? 32 : 0;
+        const safeBottom = textBox.bottom - hintGutter;
+        const contentBelowView = lastLine.bottom > safeBottom + tolerance;
+
+        factContent.classList.toggle('fact-overflowing', canScrollDown && contentBelowView);
+    }
+
+    function scheduleFactScrollHint() {
+        if (window.requestAnimationFrame) {
+            window.requestAnimationFrame(updateFactScrollHint);
+        } else {
+            setTimeout(updateFactScrollHint, 0);
+        }
+    }
+
     function showRandomFact() {
 
         if (factPool.length < 3) {
@@ -150,6 +178,8 @@ if (typeof facts !== 'undefined'){
             sourceText = sourceText.replace("# ex", "# " + randomNum);
         }
         document.querySelector('.fact-source').textContent = sourceText;
+        document.querySelector('.fact-text').scrollTop = 0;
+        scheduleFactScrollHint();
     }
 
     $(function() {
@@ -172,6 +202,7 @@ if (typeof facts !== 'undefined'){
         const $factSource = $('.fact-source')
         const $explorer = $('.explorer-window')
         const $image = $('.fact-image img')
+        const factTextEl = document.querySelector('.fact-text')
     
         let resetTimeout
         let isAnimating = false
@@ -226,6 +257,8 @@ if (typeof facts !== 'undefined'){
             $factText.text(quote)
             $factSource.text("")
             $image.attr('src', '/images/Niko.png')
+            if (factTextEl) factTextEl.scrollTop = 0
+            scheduleFactScrollHint()
             var $factBox = $('.fact-box')
             $factBox.css('pointer-events', 'none')
             setTimeout(function() {
@@ -238,6 +271,8 @@ if (typeof facts !== 'undefined'){
                     $factBox.removeClass('niko-leaving').addClass('niko-left')
                     $factText.text("")
                     $factSource.text("")
+                    if (factTextEl) factTextEl.scrollTop = 0
+                    scheduleFactScrollHint()
                     
                     var leaveText = "Niko has left.";
                     var chars = "!<>-_\\\\/[]{}—=+*^?#";
@@ -275,6 +310,7 @@ if (typeof facts !== 'undefined'){
     
         setTimeout(() => {
             $('.explorer-window').addClass('ready');
+            scheduleFactScrollHint()
             introTimeoutId = setTimeout(() => {
                 introTimeoutId = null
                 $('.fact-titlebar').html('Did You Know?')
@@ -316,6 +352,8 @@ if (typeof facts !== 'undefined'){
     
             $factText.text(newMessage);
             $factSource.text("");
+            if (factTextEl) factTextEl.scrollTop = 0
+            scheduleFactScrollHint()
     
             const newImage = `/images/${images[Math.floor(Math.random() * images.length)]}`;
             $image.attr('src', newImage);
@@ -336,6 +374,21 @@ if (typeof facts !== 'undefined'){
                 startFactInterval();
             }, 5000);
         });
+
+        if (factTextEl) {
+            factTextEl.addEventListener('scroll', scheduleFactScrollHint, { passive: true });
+        }
+        window.addEventListener('resize', scheduleFactScrollHint);
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(scheduleFactScrollHint);
+        }
+        if (window.ResizeObserver && factTextEl) {
+            const factResizeObserver = new ResizeObserver(scheduleFactScrollHint);
+            factResizeObserver.observe(factTextEl);
+            const factContentEl = document.querySelector('.fact-content');
+            if (factContentEl) factResizeObserver.observe(factContentEl);
+        }
+        scheduleFactScrollHint();
     });
 }
 
